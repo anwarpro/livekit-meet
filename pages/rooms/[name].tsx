@@ -46,7 +46,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>LiveKit Meet</title>
+        <title>PH Meet | Conference app hosted by Programming Hero</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
