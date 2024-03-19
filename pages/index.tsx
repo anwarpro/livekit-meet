@@ -1,8 +1,9 @@
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { encodePassphrase, generateRoomId, randomString } from '../lib/client-utils';
 import styles from '../styles/Home.module.css';
+import authService from '../service/auth/authService';
 
 interface TabsProps {
   children: ReactElement[];
@@ -48,6 +49,48 @@ function DemoMeetingTab({ label }: { label: string }) {
       router.push(`/rooms/${generateRoomId()}`);
     }
   };
+
+  const navigateUser = () => {
+    if (
+      process.env.NEXT_PUBLIC_ENVIRONMENT === 'development' ||
+      process.env.NEXT_PUBLIC_ENVIRONMENT === 'stage'
+    ) {
+      window.location.href = 'https://jsdude.com/login?ref=meetify';
+      return;
+    } else if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'production') {
+      window.location.href = 'https://web.programming-hero.com/login?ref=meetify';
+      return;
+    } else {
+      console.log('No environment found');
+    }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    const savedToken = sessionStorage.getItem('jwt-token');
+    const checkCookie = async () => {
+      try {
+        await authService.verifyCookie().then((res) => {
+          if (!mounted) return;
+          if (res.data.success) {
+            sessionStorage.setItem('jwt-token', res.data.token);
+          } else {
+            // navigateUser();
+          }
+        });
+      } catch (error) {
+        // navigateUser();
+      }
+    };
+
+    if (savedToken === null) {
+      checkCookie();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <div className={styles.tabContent}>
@@ -158,9 +201,9 @@ function CustomConnectionTab({ label }: { label: string }) {
 }
 
 export const getServerSideProps: GetServerSideProps<{ tabIndex: number }> = async ({
-                                                                                     query,
-                                                                                     res,
-                                                                                   }) => {
+  query,
+  res,
+}) => {
   res.setHeader('Cache-Control', 'public, max-age=7200');
   const tabIndex = query.tab === 'custom' ? 1 : 0;
   return { props: { tabIndex } };
@@ -179,10 +222,15 @@ const Home = ({ tabIndex }: InferGetServerSidePropsType<typeof getServerSideProp
       <main className={styles.main} data-lk-theme="default">
         <div className="header">
           <h1>
-            <img src="https://web.programming-hero.com/home/ph_logo.svg" alt="PH Meet" height="32" /> PH Meet
+            <img
+              src="https://web.programming-hero.com/home/ph_logo.svg"
+              alt="PH Meet"
+              height="32"
+            />{' '}
+            PH Meet
           </h1>
           <h2>
-            Conference app hosted by {' '}
+            Conference app hosted by{' '}
             <a href="https://www.programming-hero.com" rel="noopener">
               Programming Hero
             </a>
@@ -191,7 +239,7 @@ const Home = ({ tabIndex }: InferGetServerSidePropsType<typeof getServerSideProp
         <DemoMeetingTab label="" />
       </main>
       <footer data-lk-theme="default">
-        Hosted by {' '}
+        Hosted by{' '}
         <a href="https://www.programming-hero.com" rel="noopener">
           Programming Hero
         </a>
