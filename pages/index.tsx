@@ -8,6 +8,8 @@ import RootLayout from '../components/layouts/RootLayout';
 import Image from 'next/image';
 import { setToken, setUserData } from '../lib/Slicers/authSlice';
 import { useAppDispatch, useAppSelector } from '../types/common';
+import SkeletonRoot from '../components/elements/skeleton-root';
+import Error from '../components/elements/error';
 
 export const getServerSideProps: GetServerSideProps<{ tabIndex: number }> = async ({
   query,
@@ -24,7 +26,7 @@ const Home = () => {
   const [sharedPassphrase, setSharedPassphrase] = useState(randomString(64));
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth);
-  console.log("🚀 ~ Home ~ user:", user)
+  const [error, setError] = useState(false);
 
   const startMeeting = () => {
     if (e2ee) {
@@ -69,7 +71,8 @@ const Home = () => {
         await authService.verifyCookie().then((res) => {
           if (!mounted) return;
           if (res.data.success) {
-            sessionStorage.setItem('jwt-token', res.data.token);
+            setError(false);
+            getUserDetails();
           } else {
             // navigateUser();
           }
@@ -79,23 +82,23 @@ const Home = () => {
       }
     };
 
-    const getUserDetails = async () => {
+    const getUserDetails = async (hasOldToken?: boolean) => {
       try {
-        const user: any = await authService.getUser(true);
-        if (user.user._id) {
-          sessionStorage.setItem('jwt-token', user.token);
-          dispatch(setToken(user.token));
-          dispatch(setUserData({ ...user.user }));
+        const user: any = await authService.getUser(hasOldToken);
+        if (user.data.user._id) {
+          sessionStorage.setItem('jwt-token', `Bearer ${user.data.token}`);
+          dispatch(setToken(user.data.token));
+          dispatch(setUserData({ ...user.data.user }));
         }
       } catch (error) {
-        sessionStorage.clear();
-        await deleteAllCookies();
+        // sessionStorage.clear();
+        // await deleteAllCookies();
         await checkCookie();
       }
     };
 
     if (savedToken && savedToken !== null) {
-      getUserDetails();
+      getUserDetails(false);
     } else {
       checkCookie();
     }
@@ -139,17 +142,6 @@ const Home = () => {
             ></input>
             <label htmlFor="use-e2ee">Enable end-to-end encryption</label>
           </div>
-          {e2ee && (
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}>
-              <label htmlFor="passphrase">Passphrase</label>
-              <input
-                id="passphrase"
-                type="password"
-                value={sharedPassphrase}
-                onChange={(ev) => setSharedPassphrase(ev.target.value)}
-              />
-            </div>
-          )}
         </div>
       </div>
     </main>
