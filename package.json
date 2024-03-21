@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "@datadog/browser-logs": "^5.10.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
     "@livekit/components-react": "2.0.3",
     "@livekit/components-styles": "1.0.10",
     "@livekit/krisp-noise-filter": "^0.1.3",
+    "@mui/icons-material": "^5.15.14",
+    "@mui/material": "^5.15.14",
     "axios": "^1.6.8",
     "livekit-client": "2.0.7",
     "livekit-server-sdk": "2.1.1",

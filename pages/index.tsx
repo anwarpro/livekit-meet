@@ -4,6 +4,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { encodePassphrase, generateRoomId, randomString } from '../lib/client-utils';
 import styles from '../styles/Home.module.css';
 import authService from '../service/auth/authService';
+import RootLayout from '../layouts/RootLayout';
 
 interface TabsProps {
   children: ReactElement[];
@@ -238,14 +239,12 @@ const Home = ({ tabIndex }: InferGetServerSidePropsType<typeof getServerSideProp
         </div>
         <DemoMeetingTab label="" />
       </main>
-      <footer data-lk-theme="default">
-        Hosted by{' '}
-        <a href="https://www.programming-hero.com" rel="noopener">
-          Programming Hero
-        </a>
-      </footer>
     </>
   );
 };
 
 export default Home;
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <RootLayout>{page}</RootLayout>;
+};
