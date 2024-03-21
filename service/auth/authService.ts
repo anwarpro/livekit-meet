@@ -1,4 +1,6 @@
 import axios from "axios";
+import { UserResponse } from "../../types/user";
+import objectToParams from "../../utils/objectToParams";
 
 const getAuthorization = () => {
     // Getting user token and set to session storage
@@ -31,6 +33,11 @@ class AuthService {
             }
         });
     };
+
+    getUser = (cached?: boolean) => {
+        return axios.get<UserResponse>(`${API_URL}/${objectToParams({ cached })}`);
+    };
+
 
 }
 const authService = new AuthService()
