@@ -5,6 +5,8 @@ import '../styles/globals.css';
 import '@livekit/components-styles';
 import '@livekit/components-styles/prefabs';
 import { DefaultSeo } from 'next-seo';
+import { Provider } from 'react-redux';
+import store from '../lib/store';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -19,7 +21,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return getLayout(
-    <>
+    <Provider store={store}>
       <DefaultSeo
         title="LiveKit Meet | Conference app build with LiveKit Open Source"
         titleTemplate="%s"
@@ -66,6 +68,6 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         ]}
       />
       <Component {...pageProps} />
-    </>,
+    </Provider>,
   );
 }

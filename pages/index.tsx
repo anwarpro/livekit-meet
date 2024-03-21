@@ -6,6 +6,8 @@ import styles from '../styles/Home.module.css';
 import authService from '../service/auth/authService';
 import RootLayout from '../components/layouts/RootLayout';
 import Image from 'next/image';
+import { setToken, setUserData } from '../lib/Slicers/authSlice';
+import { useAppDispatch, useAppSelector } from '../types/common';
 
 export const getServerSideProps: GetServerSideProps<{ tabIndex: number }> = async ({
   query,
@@ -20,6 +22,9 @@ const Home = () => {
   const router = useRouter();
   const [e2ee, setE2ee] = useState(false);
   const [sharedPassphrase, setSharedPassphrase] = useState(randomString(64));
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth);
+  console.log("🚀 ~ Home ~ user:", user)
 
   const startMeeting = () => {
     if (e2ee) {
@@ -27,6 +32,18 @@ const Home = () => {
     } else {
       router.push(`/rooms/${generateRoomId()}`);
     }
+  };
+
+  const deleteAllCookies = async (): Promise<boolean> => {
+    const cookies = document.cookie.split(';');
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
+    return true;
   };
 
   const navigateUser = () => {
@@ -62,7 +79,24 @@ const Home = () => {
       }
     };
 
-    if (savedToken === null) {
+    const getUserDetails = async () => {
+      try {
+        const user: any = await authService.getUser(true);
+        if (user.user._id) {
+          sessionStorage.setItem('jwt-token', user.token);
+          dispatch(setToken(user.token));
+          dispatch(setUserData({ ...user.user }));
+        }
+      } catch (error) {
+        sessionStorage.clear();
+        await deleteAllCookies();
+        await checkCookie();
+      }
+    };
+
+    if (savedToken && savedToken !== null) {
+      getUserDetails();
+    } else {
       checkCookie();
     }
 
