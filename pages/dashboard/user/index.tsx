@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import DashboardLayout from '../../../layouts/DashboardLayout';
+import DashboardLayout from '../../../components/layouts/DashboardLayout';
 
 const UserManagement = () => {
   return <div>user management page</div>;
