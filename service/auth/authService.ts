@@ -21,13 +21,13 @@ class AuthService {
     // Current logged in user token from ph
     verifyCookie = async () => {
 
-        // const domain =
-        //     process.env.NEXT_PUBLIC_ENVIRONMENT === 'development' ||
-        //         process.env.NEXT_PUBLIC_ENVIRONMENT === 'stage'
-        //         ? 'https://jsdude.com/api/user/verify-cookie'
-        //         : 'https://web.programming-hero.com/api/user/verify-cookie';
+        const domain =
+            process.env.NEXT_PUBLIC_ENVIRONMENT === 'development' ||
+                process.env.NEXT_PUBLIC_ENVIRONMENT === 'stage'
+                ? 'https://jsdude.com/api/user'
+                : 'https://web.programming-hero.com/api/user';
 
-        return axios.get<{ success: boolean, token: string }>(`${API_URL}/verify-cookie`, {
+        return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
             headers: {
                 withCredentials: true,
             }
