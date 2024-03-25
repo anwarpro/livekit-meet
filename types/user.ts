@@ -1,3 +1,4 @@
+import { AccessToken } from 'livekit-server-sdk';
 export interface User {
   id: string;
   _id: string;
@@ -39,6 +40,10 @@ export interface UserState {
 export interface UserResponse {
   user: User;
   token: string;
+}
+export interface MeetResponse {
+  roomId: string;
+  accessToken: string;
 }
 
 export interface CountList {

@@ -26,6 +26,8 @@ import * as React from 'react';
 import { DebugMode } from '../../lib/Debug';
 import { decodePassphrase, useServerUrl } from '../../lib/client-utils';
 import { SettingsMenu } from '../../lib/SettingsMenu';
+import meetService from '../../service/meet/meetService';
+import { useAppSelector } from '../../types/common';
 
 const PreJoinNoSSR = dynamic(
   async () => {
@@ -96,6 +98,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
       },
     };
   }, [userChoices.username]);
+
   const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, roomName, tokenOptions);
 
   const router = useRouter();
@@ -151,6 +154,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   }, [userChoices, hq, codec]);
 
   const room = React.useMemo(() => new Room(roomOptions), []);
+  console.log("🚀 ~ ActiveRoom ~ room:", room)
 
   if (e2eeEnabled) {
     keyProvider.setKey(decodePassphrase(e2eePassphrase));
@@ -169,12 +173,17 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     };
   }, []);
 
+  const { roomInfo } = useAppSelector((state) => state.room);
+  console.log('🚀 ~ ActiveRoom ~ privetRoom:', roomInfo);
+
+  
+
   return (
     <>
       {liveKitUrl && (
         <LiveKitRoom
           room={room}
-          token={token}
+          token={roomInfo?.accessToken}
           serverUrl={liveKitUrl}
           connectOptions={connectOptions}
           video={userChoices.videoEnabled}
