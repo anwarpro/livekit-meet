@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import Footer from './Footer';
 import { Grid, Paper, styled } from '@mui/material';
 import SideNav from './SideNav';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../types/common';
+import RootLayout from './RootLayout';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#1A2027',

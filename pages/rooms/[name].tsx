@@ -27,7 +27,10 @@ import { DebugMode } from '../../lib/Debug';
 import { decodePassphrase, useServerUrl } from '../../lib/client-utils';
 import { SettingsMenu } from '../../lib/SettingsMenu';
 import meetService from '../../service/meet/meetService';
-import { useAppSelector } from '../../types/common';
+import { useAppDispatch, useAppSelector } from '../../types/common';
+import Footer from '../../components/layouts/Footer';
+import { useSelector } from 'react-redux';
+import { clearRoom, setRoom } from '../../lib/Slicers/meetSlice';
 
 const PreJoinNoSSR = dynamic(
   async () => {
@@ -38,8 +41,10 @@ const PreJoinNoSSR = dynamic(
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { name: roomName } = router.query;
-
+  const { name: roomName } = router.query as { name: string };
+  const user = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const { roomInfo } = useAppSelector((state) => state.room);
   const [preJoinChoices, setPreJoinChoices] = React.useState<LocalUserChoices | undefined>(
     undefined,
   );
@@ -47,6 +52,26 @@ const Home: NextPage = () => {
   function handlePreJoinSubmit(values: LocalUserChoices) {
     setPreJoinChoices(values);
   }
+
+  React.useEffect(() => {
+    if (roomName) {
+      meetService
+        .joinMeet(roomName)
+        .then((res: any) => {
+          dispatch(setRoom(res?.data?.data));
+        })
+        .catch((err) => {
+          dispatch(clearRoom());
+        });
+
+      const input: any = document.getElementById('username');
+      if (input) {
+        input.value = user?.userData?.fullName || 'Guest User';
+        input.disabled = true;
+      }
+    }
+  }, [roomName, user]);
+
   return (
     <>
       <Head>
@@ -72,6 +97,15 @@ const Home: NextPage = () => {
                 videoEnabled: true,
                 audioEnabled: true,
               }}
+              userLabel={user?.userData?.fullName}
+              joinLabel="Join Meeting"
+              onValidate={(values: LocalUserChoices) => {
+                if (roomInfo?.accessToken) {
+                  return true;
+                } else {
+                  return false;
+                }
+              }}
               onSubmit={handlePreJoinSubmit}
             ></PreJoinNoSSR>
           </div>
@@ -90,17 +124,6 @@ type ActiveRoomProps = {
   onLeave?: () => void;
 };
 const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
-  const tokenOptions = React.useMemo(() => {
-    return {
-      userInfo: {
-        identity: userChoices.username,
-        name: userChoices.username,
-      },
-    };
-  }, [userChoices.username]);
-
-  const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, roomName, tokenOptions);
-
   const router = useRouter();
   const { region, hq, codec } = router.query;
 
@@ -154,7 +177,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   }, [userChoices, hq, codec]);
 
   const room = React.useMemo(() => new Room(roomOptions), []);
-  console.log("🚀 ~ ActiveRoom ~ room:", room)
+  console.log('🚀 ~ ActiveRoom ~ room:', room);
 
   if (e2eeEnabled) {
     keyProvider.setKey(decodePassphrase(e2eePassphrase));
@@ -175,8 +198,6 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
 
   const { roomInfo } = useAppSelector((state) => state.room);
   console.log('🚀 ~ ActiveRoom ~ privetRoom:', roomInfo);
-
-  
 
   return (
     <>
