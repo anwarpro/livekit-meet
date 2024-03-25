@@ -7,6 +7,7 @@ import '@livekit/components-styles/prefabs';
 import { DefaultSeo } from 'next-seo';
 import { Provider } from 'react-redux';
 import store from '../lib/store';
+import RootLayout from '../components/layouts/RootLayout';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -67,7 +68,9 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           },
         ]}
       />
-      <Component {...pageProps} />
+      <RootLayout>
+        <Component {...pageProps} />
+      </RootLayout>
     </Provider>,
   );
 }
