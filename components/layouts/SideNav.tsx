@@ -29,7 +29,7 @@ const navItems = [
     icon: <PeopleIcon />,
   },
   {
-    title: 'Schedule Management',
+    title: 'Meet Management',
     href: '/dashboard/schedule',
     icon: <WatchLaterIcon />,
   },

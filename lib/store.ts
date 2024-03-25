@@ -4,15 +4,17 @@ import { combineReducers } from "redux";
 import { persistReducer, persistStore } from "redux-persist";
 // import thunk from "redux-thunk";
 import authSlice from "./Slicers/authSlice";
+import meetSlice from './Slicers/meetSlice';
 
 
 const reducers = combineReducers({
     auth: authSlice,
+    room: meetSlice
 });
 
 const persistConfig = {
     key: "root",
-    whitelist: ["auth"],
+    whitelist: ["auth", "room"],
     blacklist: [],
     storage
 };

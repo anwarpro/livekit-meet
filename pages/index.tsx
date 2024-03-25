@@ -1,4 +1,3 @@
-import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { encodePassphrase, generateRoomId, randomString } from '../lib/client-utils';
@@ -11,15 +10,6 @@ import { useAppDispatch, useAppSelector } from '../types/common';
 import SkeletonRoot from '../components/elements/skeleton-root';
 import Error from '../components/elements/error';
 
-export const getServerSideProps: GetServerSideProps<{ tabIndex: number }> = async ({
-  query,
-  res,
-}) => {
-  res.setHeader('Cache-Control', 'public, max-age=7200');
-  const tabIndex = query.tab === 'custom' ? 1 : 0;
-  return { props: { tabIndex } };
-};
-
 const Home = () => {
   const router = useRouter();
   const [e2ee, setE2ee] = useState(false);
@@ -29,11 +19,7 @@ const Home = () => {
   const [error, setError] = useState(false);
 
   const startMeeting = () => {
-    if (e2ee) {
-      router.push(`/rooms/${generateRoomId()}#${encodePassphrase(sharedPassphrase)}`);
-    } else {
-      router.push(`/rooms/${generateRoomId()}`);
-    }
+    router.push(`/rooms/${generateRoomId()}`);
   };
 
   const deleteAllCookies = async (): Promise<boolean> => {
@@ -107,6 +93,8 @@ const Home = () => {
       mounted = false;
     };
   }, []);
+
+  console.log('calling');
 
   return (
     <main className={styles.main} data-lk-theme="default">
