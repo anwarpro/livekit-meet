@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import Footer from './Footer';
 import authService from '../../service/auth/authService';
 import { setToken, setUserData } from '../../lib/Slicers/authSlice';
 import { useAppDispatch, useAppSelector } from '../../types/common';
 import { useRouter } from 'next/router';
+import Header from './Header';
+import DashboardLayout from './DashboardLayout';
 
 type Props = {
   children: string | JSX.Element | JSX.Element[];
@@ -92,10 +94,9 @@ const RootLayout = ({ children }: Props) => {
 
   return (
     <main>
+      {/* {router?.pathname?.includes('/dashboard') && <Header />} */}
       {children}
-      {/* {!router?.pathname?.includes('/dashboard') ||
-        (!router?.pathname?.includes('rooms/') && <Footer />)} */}
-        <Footer/>
+      {!router?.pathname?.includes('/dashboard') && <Footer />}
     </main>
   );
 };

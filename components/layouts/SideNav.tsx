@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Divider,
-  Grid,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-  styled,
-} from '@mui/material';
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 import GridViewIcon from '@mui/icons-material/GridView';
 import PeopleIcon from '@mui/icons-material/People';
@@ -29,7 +18,12 @@ const navItems = [
     icon: <PeopleIcon />,
   },
   {
-    title: 'Meet Management',
+    title: 'Instant Meet',
+    href: '/dashboard/instant-meet',
+    icon: <WatchLaterIcon />,
+  },
+  {
+    title: 'Schedule Management',
     href: '/dashboard/schedule',
     icon: <WatchLaterIcon />,
   },
@@ -42,7 +36,7 @@ const navItems = [
 
 const SideNav = () => {
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box role="presentation">
       <List>
         {navItems.map((item, index) => (
           <ListItem key={index} disablePadding>

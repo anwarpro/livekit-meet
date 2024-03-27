@@ -6,13 +6,13 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useAppSelector } from '../../types/common';
 import RootLayout from './RootLayout';
+import Header from './Header';
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#1A2027',
-  ...theme.typography.body2,
+  // backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#1A2027',
+  // ...theme.typography.body2,
   padding: theme.spacing(1),
-  //   textAlign: 'center',
-  color: '#fff',
+  // color: '#fff',
   height: '100vh',
 }));
 
@@ -22,19 +22,18 @@ type Props = {
 
 const DashboardLayout = ({ children }: Props) => {
   return (
-    <>
+    <div className="container-fluid">
+      {/* <Header /> */}
       <Grid container spacing={1}>
         <Grid item xs={2}>
-          <Item>
-            <SideNav />
-          </Item>
+          <SideNav />
         </Grid>
         <Grid item xs={10}>
-          <Item>{children}</Item>
+          {children}
         </Grid>
       </Grid>
-      <Footer />
-    </>
+      {/* <Footer /> */}
+    </div>
   );
 };
 
