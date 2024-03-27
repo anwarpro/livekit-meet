@@ -1,13 +1,9 @@
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-
-import styles from '../styles/Home.module.css';
-
+import React from 'react';
 import Image from 'next/image';
 
 const Home = () => {
   return (
-    <main className={styles.main} data-lk-theme="default">
+    <main>
       <div className="header">
         <h1>
           <Image
