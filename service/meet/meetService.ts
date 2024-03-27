@@ -27,6 +27,10 @@ class MeetService {
         return axios.post<MeetResponse>(`${API_URL}/schedule`, { ...payload });
     };
 
+    joinMeet = (roomId: string) => {
+        return axios.get<MeetResponse>(`${API_URL}/join/${roomId}`);
+    };
+
 }
 const meetService = new MeetService()
 export default meetService;
