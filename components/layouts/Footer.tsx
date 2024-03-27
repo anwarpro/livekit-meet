@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer data-lk-theme="default">
+    <footer className="footer-component">
       Hosted by{' '}
       <a href="https://www.programming-hero.com" rel="noopener">
         Programming Hero

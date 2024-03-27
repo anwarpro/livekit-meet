@@ -1,25 +1,44 @@
 import React from 'react';
 import Image from 'next/image';
+import clockIcon from '../components/assets/icons/clock.png';
+import playIcon from '../components/assets/icons/play.png';
+import moment from 'moment';
+
+const event = [
+  {
+    _id: 1,
+    startTime: new Date(),
+    title: 'Javascript Fundamental',
+  },
+];
 
 const Home = () => {
   return (
-    <main>
-      <div className="header">
-        <h1>
-          <Image
-            src="https://web.programming-hero.com/home/ph_logo.svg"
-            width={32}
-            height={32}
-            alt="PH Meet"
-          />
-          PH Meet
-        </h1>
-        <h2>
-          Conference app hosted by{' '}
-          <a href="https://www.programming-hero.com" rel="noopener">
-            Programming Hero
-          </a>
-        </h2>
+    <main className="container">
+      <div className="homepage-component d-flex justify-content-center align-items-center">
+        <div>
+          <div className="header text-center">
+            <h1>
+              Video calls and meetings <br /> for everyone
+            </h1>
+            <p>
+              Meetify meet provides secure, easy-to-use video calls and meetings <br /> for
+              everyone, on any device.
+            </p>
+          </div>
+          <div className="event mt-5">
+            {event.map((event) => (
+              <div key={event._id} className='d-flex justify-content-between align-items-center p-5'>
+                <p className='m-0 clock-text'>
+                  <Image src={clockIcon} width={24} height={24} alt="clock" />{' '}
+                  {moment(event.startTime).format('hh:mm A')}
+                </p>
+                <p className='m-0'>{event.title}</p>
+                <button className="btn btn-primary">Join Now <Image src={playIcon} width={24} height={24} alt=""/></button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );
