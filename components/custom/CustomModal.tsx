@@ -36,7 +36,7 @@ function CustomeModal(props: Props) {
     backgroundColor: 'white',
     outline: 'none',
     borderRadius: 20,
-    p: 4,
+    padding: "25px",
     ...props.customStyle,
   };
 
@@ -84,7 +84,7 @@ function CustomeModal(props: Props) {
         <Box sx={customStyles}>
           <Box
             onClick={(event) => closeModal()}
-            sx={{ position: 'absolute', right: 10, top: 10, cursor: 'pointer' }}
+            sx={{ position: 'absolute', right: 25, top: 25, cursor: 'pointer' }}
           >
             <CloseIcon />
           </Box>
