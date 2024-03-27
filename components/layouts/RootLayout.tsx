@@ -93,8 +93,9 @@ const RootLayout = ({ children }: Props) => {
   return (
     <main>
       {children}
-      {!router?.pathname?.includes('/dashboard') ||
-        (!router?.pathname?.includes('rooms/') && <Footer />)}
+      {/* {!router?.pathname?.includes('/dashboard') ||
+        (!router?.pathname?.includes('rooms/') && <Footer />)} */}
+        <Footer/>
     </main>
   );
 };

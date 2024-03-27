@@ -1,0 +1,44 @@
+.homepage-component {
+  font-family: Inter;
+  height: 100vh;
+  .header {
+    h1 {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 60px;
+      color: #100324;
+    }
+    p {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 30px;
+      text-align: center;
+      color: #100324b2;
+    }
+  }
+  .event {
+    border: 1px solid #10032426;
+    border-radius: 12px;
+    .clock-text {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 16.94px;
+      color: #10032499;
+    }
+    p {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 21.78px;
+      color: #100324cc;
+    }
+    .btn-primary {
+      padding: 12px 25px !important;
+      border-radius: 8px !important;
+
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 17px;
+      background: linear-gradient(270deg, #006eff 0%, #2170d8 100%) !important;
+    }
+  }
+}
