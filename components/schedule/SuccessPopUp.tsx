@@ -6,6 +6,7 @@ import successIcon from '../assets/icons/success.png';
 
 type Iprops = {
   openModal: { edit: boolean };
+  reschedule?: boolean;
 };
 
 const SuccessPopUp = (props: Iprops) => {
@@ -45,7 +46,7 @@ const SuccessPopUp = (props: Iprops) => {
         <div className="text-center">
           <Image src={successIcon} width={88} height={88} alt="success" />
           <div className="pt-2">
-            <h1>Meeting has been created</h1>
+            <h1>{props.reschedule ? 'Meeting has been rescheduled' : 'Meeting has been created'}</h1>
             <p className="pt-2 m-0">
               your meeting has been created, now you can check the meeting details or display the
               self-serve page.

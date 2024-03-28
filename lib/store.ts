@@ -5,11 +5,13 @@ import { persistReducer, persistStore } from "redux-persist";
 // import thunk from "redux-thunk";
 import authSlice from "./Slicers/authSlice";
 import meetSlice from './Slicers/meetSlice';
+import eventSlice from './Slicers/eventSlice';
 
 
 const reducers = combineReducers({
     auth: authSlice,
-    room: meetSlice
+    room: meetSlice,
+    events: eventSlice
 });
 
 const persistConfig = {

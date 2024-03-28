@@ -1,5 +1,5 @@
 'use client';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import CustomModal from '../custom/CustomModal';
 import Image from 'next/image';
 import userIcon from '../assets/icons/user-colored.png';
@@ -8,17 +8,19 @@ import meetService from '../../service/meet/meetService';
 import readXlsxFile from 'read-excel-file';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import moment from 'moment';
 import dayjs, { Dayjs } from 'dayjs';
 import { Autocomplete, Box, Chip, Stack, Switch, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
+import { IMeet } from '../../types/meet';
 
 type Iprops = {
   openModal: { edit: boolean };
   reschedule?: boolean;
   setSuccessModal?: Dispatch<SetStateAction<{ edit: boolean }>>;
+  fetchData: Dispatch<SetStateAction<void>>;
+  editable?: IMeet;
 };
 
 type Inputs = {
@@ -35,34 +37,80 @@ const ScheduleModal = (props: Iprops) => {
   const [closeModal, setCloseModal] = useState<{ status: boolean }>({ status: false });
   const [internalParticipantList, setInternalParticipantList] = useState<string[]>([]);
   const [externalParticipantList, setExternalParticipantList] = useState<string[]>([]);
+  const [checked, setChecked] = React.useState(false);
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     watch,
     formState: { errors },
   } = useForm<Inputs>();
+  console.log(watch('eventDate'));
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    data.internalParticipantList = internalParticipantList;
-    data.externalParticipantList = externalParticipantList;
-    data.isScheduled = true;
-    console.log('🚀 ~ ScheduleManagement ~ data:', data);
-    if (data) {
-      setCloseModal({ status: false });
-      props.setSuccessModal!({ edit: true });
+    if (props.reschedule) {
+      //reschedule session/update
+      const startTime = dateTimeConverter(data.eventDate, data.startTime);
+      const endTime = dateTimeConverter(data.eventDate, data.endTime);
+      const newData = {
+        title: data.title,
+        // internalParticipantList: internalParticipantList,
+        // externalParticipantList: externalParticipantList,
+        startTime: startTime,
+        endTime: endTime,
+      };
+      meetService
+        .reScheduleMeeting(props.editable?._id as string, newData as any)
+        .then((res) => {
+          console.log('res ==>', res);
+          setCloseModal({ status: false });
+          props.setSuccessModal!({ edit: true });
+          props.fetchData();
+        })
+        .catch((err) => {
+          console.log('err', err);
+        });
+    } else {
+      const startTime = dateTimeConverter(data.eventDate, data.startTime);
+      const endTime = dateTimeConverter(data.eventDate, data.endTime);
+      const newData = {
+        title: data.title,
+        isScheduled: true,
+        internalParticipantList: internalParticipantList,
+        externalParticipantList: externalParticipantList,
+        startTime: startTime,
+        endTime: endTime,
+      };
+      meetService
+        .addScheduleMeeting(newData)
+        .then((res) => {
+          console.log('res ==>', res);
+          setCloseModal({ status: false });
+          props.setSuccessModal!({ edit: true });
+          props.fetchData();
+        })
+        .catch((err) => {
+          console.log('err', err);
+        });
     }
-    // meetService
-    //   .addScheduleMeeting(data)
-    //   .then((res) => {
-    //     console.log('res ==>', res);
-    //   })
-    //   .catch((err) => {
-    //     console.log('err', err);
-    //   });
   };
 
-  // console.log(watch('example')); // watch input value by passing the name of it
+  const dateTimeConverter = (date: string, time: string) => {
+    const year = new Date(date).getFullYear();
+    const month = String(new Date(date).getMonth() + 1).padStart(2, '0');
+    const day = String(new Date(date).getDate()).padStart(2, '0');
+    const dateString = year + '-' + month + '-' + day;
+
+    const hour = String(new Date(time).getHours()).padStart(2, '0');
+    const minute = String(new Date(time).getMinutes()).padStart(2, '0');
+    const second = String(new Date(time).getSeconds()).padStart(2, '0');
+    const timeString = `${hour}:${minute}:${second}`;
+
+    const dateTime = moment(`${dateString} ${timeString}`, 'YYYY-MM-DD HH:mm:ss').format();
+    return dateTime;
+  };
 
   const handleExcelSheet = (event: any) => {
     const schema = {
@@ -85,15 +133,20 @@ const ScheduleModal = (props: Iprops) => {
     });
   };
 
-  const [checked, setChecked] = React.useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
 
   const handleExternalSelect = (e: any, newValue: any) => {
-    // setExternalParticipantList((prev) => [...prev, value]);
     setExternalParticipantList(newValue);
   };
+
+  useEffect(() => {
+    if (props.editable) {
+      // @ts-ignore
+      reset(props.editable);
+    }
+  }, [props.editable]);
 
   return (
     <Box>
@@ -181,6 +234,7 @@ const ScheduleModal = (props: Iprops) => {
                           <DatePicker
                             onChange={onChange}
                             slotProps={{ textField: { size: 'small' } }}
+                            defaultValue={dayjs(props.editable?.startTime)}
                           />
                         </Box>
                       </LocalizationProvider>
@@ -203,7 +257,7 @@ const ScheduleModal = (props: Iprops) => {
                     render={({ field: { onChange } }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
-                          defaultValue={dayjs('2022-04-17T15:30')}
+                          defaultValue={dayjs(props.editable?.startTime)}
                           onChange={onChange}
                           name="startTime"
                           slotProps={{ textField: { size: 'small' } }}
@@ -228,7 +282,7 @@ const ScheduleModal = (props: Iprops) => {
                     render={({ field: { onChange } }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
-                          defaultValue={dayjs('2022-04-17T15:30')}
+                          defaultValue={dayjs(props.editable?.endTime)}
                           onChange={onChange}
                           slotProps={{ textField: { size: 'small' } }}
                         />
@@ -240,58 +294,62 @@ const ScheduleModal = (props: Iprops) => {
                   )}
                 </div>
               </Box>
-              <Box
-                className="my-3"
-                sx={{
-                  '& p': {
-                    fontSize: '16px',
-                    fontWeight: 500,
-                    lineHeight: '26px',
-                    color: '#100324',
-                  },
-                  '& .btn-up': {
-                    border: '1px dashed #006EFF',
-                    borderRadius: '12px',
-                    p: 5,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    '& span': {
-                      border: '1px solid #006EFF',
-                      fontSize: '16px',
-                      fontWeight: 400,
-                      lineHeight: '19.2px',
-                      borderRadius: '8px',
-                      padding: '10px 25px',
-                      cursor: 'pointer',
-                      color: '#006EFF',
-                    },
-                  },
-                }}
-              >
-                <p className="m-0 pb-2">Students Sheet Upload</p>
-                <label className="btn-up">
-                  <input
-                    onChange={(e) => handleExcelSheet(e)}
-                    type="file"
-                    name="internalParticipantList"
-                    hidden
-                  />
-                  <span>Browse files</span>
-                </label>
-              </Box>
+              {!props.reschedule && (
+                <>
+                  <Box
+                    className="my-3"
+                    sx={{
+                      '& p': {
+                        fontSize: '16px',
+                        fontWeight: 500,
+                        lineHeight: '26px',
+                        color: '#100324',
+                      },
+                      '& .btn-up': {
+                        border: '1px dashed #006EFF',
+                        borderRadius: '12px',
+                        p: 5,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        '& span': {
+                          border: '1px solid #006EFF',
+                          fontSize: '16px',
+                          fontWeight: 400,
+                          lineHeight: '19.2px',
+                          borderRadius: '8px',
+                          padding: '10px 25px',
+                          cursor: 'pointer',
+                          color: '#006EFF',
+                        },
+                      },
+                    }}
+                  >
+                    <p className="m-0 pb-2">Students Sheet Upload</p>
+                    <label className="btn-up">
+                      <input
+                        onChange={(e) => handleExcelSheet(e)}
+                        type="file"
+                        name="internalParticipantList"
+                        hidden
+                      />
+                      <span>Browse files</span>
+                    </label>
+                  </Box>
 
-              <Box
-                className="mb-3"
-                sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-              >
-                <label htmlFor="">Do you have any Special Guest</label>
-                <Switch
-                  checked={checked}
-                  onChange={handleChange}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              </Box>
+                  <Box
+                    className="mb-3"
+                    sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                  >
+                    <label htmlFor="">Do you have any Special Guest</label>
+                    <Switch
+                      checked={checked}
+                      onChange={handleChange}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  </Box>
+                </>
+              )}
 
               {checked && (
                 <>
@@ -328,7 +386,7 @@ const ScheduleModal = (props: Iprops) => {
                         <TextField
                           {...params}
                           name="externalParticipantList"
-                          placeholder="type and allowed to enter more"
+                          placeholder="type and press enter to add email"
                         />
                       )}
                     />
@@ -341,7 +399,11 @@ const ScheduleModal = (props: Iprops) => {
                 </>
               )}
 
-              <input className="submit-btn form-control" type="submit" />
+              <input
+                className={`submit-btn form-control ${props.reschedule ? 'mt-5' : ''}`}
+                value={props.reschedule ? 'Update ' : 'Submit'}
+                type="submit"
+              />
             </form>
           </Box>
         </Box>
