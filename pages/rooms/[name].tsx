@@ -31,6 +31,7 @@ import { useAppDispatch, useAppSelector } from '../../types/common';
 import Footer from '../../components/layouts/Footer';
 import { useSelector } from 'react-redux';
 import { clearRoom, setRoom } from '../../lib/Slicers/meetSlice';
+import { Box } from '@mui/material';
 
 const PreJoinNoSSR = dynamic(
   async () => {
@@ -41,7 +42,8 @@ const PreJoinNoSSR = dynamic(
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { name: roomName } = router.query as { name: string };
+  const { name: roomName, user_t } = router.query as { name: string; user_t: string };
+  console.log('🚀 ~ roomName:', user_t);
   const user = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const { roomInfo } = useAppSelector((state) => state.room);
@@ -55,14 +57,25 @@ const Home: NextPage = () => {
 
   React.useEffect(() => {
     if (roomName) {
-      meetService
-        .joinMeet(roomName)
-        .then((res: any) => {
-          dispatch(setRoom(res?.data?.data));
-        })
-        .catch((err) => {
-          dispatch(clearRoom());
-        });
+      if (user_t) {
+        meetService
+          .joinMeet(roomName, user_t)
+          .then((res: any) => {
+            dispatch(setRoom(res?.data?.data));
+          })
+          .catch((err) => {
+            dispatch(clearRoom());
+          });
+      } else {
+        meetService
+          .joinMeet(roomName)
+          .then((res: any) => {
+            dispatch(setRoom(res?.data?.data));
+          })
+          .catch((err) => {
+            dispatch(clearRoom());
+          });
+      }
 
       const input: any = document.getElementById('username');
       if (input) {
@@ -79,7 +92,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main data-lk-theme="default">
+      <main data-lk-theme="default" style={{ background: '#111' }}>
         {roomName && !Array.isArray(roomName) && preJoinChoices ? (
           <ActiveRoom
             roomName={roomName}
@@ -89,7 +102,7 @@ const Home: NextPage = () => {
             }}
           ></ActiveRoom>
         ) : (
-          <div style={{ display: 'grid', placeItems: 'center', height: '100%' }}>
+          <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>
             <PreJoinNoSSR
               onError={(err) => console.log('error while setting up prejoin', err)}
               defaults={{
@@ -177,8 +190,6 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   }, [userChoices, hq, codec]);
 
   const room = React.useMemo(() => new Room(roomOptions), []);
-  console.log('🚀 ~ ActiveRoom ~ room:', room);
-
   if (e2eeEnabled) {
     keyProvider.setKey(decodePassphrase(e2eePassphrase));
     room.setE2EEEnabled(true).catch((e) => {
@@ -197,10 +208,9 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   }, []);
 
   const { roomInfo } = useAppSelector((state) => state.room);
-  console.log('🚀 ~ ActiveRoom ~ privetRoom:', roomInfo);
 
   return (
-    <>
+    <Box sx={{ height: '100vh' }}>
       {liveKitUrl && (
         <LiveKitRoom
           room={room}
@@ -220,6 +230,6 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
           <DebugMode />
         </LiveKitRoom>
       )}
-    </>
+    </Box>
   );
 };

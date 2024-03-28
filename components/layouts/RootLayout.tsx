@@ -64,7 +64,7 @@ const RootLayout = ({ children }: Props) => {
       try {
         const user: any = await authService.getUser(hasOldToken);
         if (user.data.user._id) {
-          sessionStorage.setItem('jwt-token', `Bearer ${user.data.token}`);
+          sessionStorage.setItem('jwt-token', `"Bearer ${user.data.token}"`);
           dispatch(setToken(user.data.token));
           dispatch(setUserData({ ...user.data.user }));
         }
@@ -76,7 +76,7 @@ const RootLayout = ({ children }: Props) => {
     };
 
     if (savedToken && savedToken !== null) {
-      getUserDetails(false);
+      getUserDetails(true);
     } else {
       checkCookie();
     }
@@ -96,7 +96,7 @@ const RootLayout = ({ children }: Props) => {
     <main>
       {/* {router?.pathname?.includes('/dashboard') && <Header />} */}
       {children}
-      {!router?.pathname?.includes('/dashboard') && <Footer />}
+      {/* {!router?.pathname?.includes('/dashboard') && <Footer />} */}
     </main>
   );
 };

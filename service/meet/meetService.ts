@@ -32,8 +32,12 @@ class MeetService {
         return axios.put<MeetResponse>(`${API_URL}/schedule/update_meet/${id}`, { ...payload });
     };
 
-    joinMeet = (roomId: string) => {
-        return axios.get<MeetResponse>(`${API_URL}/join/${roomId}`);
+    joinMeet = (roomId: string, user_t?: string) => {
+        if (user_t) {
+            return axios.get<MeetResponse>(`${API_URL}/join/${roomId}?user_t=${user_t}`);
+        } else {
+            return axios.get<MeetResponse>(`${API_URL}/join/${roomId}`);
+        }
     };
 
     upcomingSchedule = () => {
