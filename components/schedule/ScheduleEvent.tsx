@@ -6,6 +6,7 @@ import calenderIcon from '../assets/icons/calender.png';
 import placeholder from '../assets/icons/placeholder.png';
 import playIcon from '../assets/icons/play.png';
 import moment from 'moment';
+import ScheduleModal from './ScheduleModal';
 
 type Events = {
   _id: number;
@@ -20,8 +21,8 @@ type Events = {
 };
 
 const ScheduleEvent = ({ event }: any) => {
+  const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
   const [copied, setCopied] = useState(false);
-
   const handleCopyClick = () => {
     const textToCopy = document.getElementById('textToCopy')!.innerText;
     navigator.clipboard
@@ -33,6 +34,10 @@ const ScheduleEvent = ({ event }: any) => {
         }, 2000); // Reset copied state after 2 seconds
       })
       .catch((err) => console.error('Failed to copy: ', err));
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal({ edit: true });
   };
 
   return (
@@ -72,10 +77,14 @@ const ScheduleEvent = ({ event }: any) => {
             <button className="btn btn-primary">
               Join Now <Image src={playIcon} width={24} height={24} alt="" />
             </button>
-            <button className="btn btn-primary reschedule ms-3">Reschedule</button>
+            <button onClick={() => handleOpenModal()} className="btn btn-primary reschedule ms-3">
+              Reschedule
+            </button>
           </div>
         </div>
       ))}
+
+      <ScheduleModal openModal={openModal} reschedule />
     </div>
   );
 };
