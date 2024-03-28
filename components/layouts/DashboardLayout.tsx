@@ -22,7 +22,7 @@ type Props = {
 
 const DashboardLayout = ({ children }: Props) => {
   return (
-    <div className="container-fluid">
+    <div className="container-fluid mt-3">
       {/* <Header /> */}
       <Grid container spacing={1}>
         <Grid item xs={2}>
