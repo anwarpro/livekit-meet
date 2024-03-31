@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   InputBase,
   Select,
@@ -16,6 +16,7 @@ import EditIcon from '../assets/icons/edit.png';
 import Image from 'next/image';
 import styled from '@emotion/styled';
 import SearchIcon from '@mui/icons-material/Search';
+import UserDetails from './UserDetails';
 
 type IProps = {
   fields: object[];
@@ -29,6 +30,8 @@ type IProps = {
 };
 
 const UserListTable = (props: IProps) => {
+  const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
+
   const handleChangePage = (event: any, newPage: any) => {
     // props?.setPage(newPage + 1);
   };
@@ -74,6 +77,9 @@ const UserListTable = (props: IProps) => {
     //   .catch((error) => {
     //     swal('', 'Delete failed', 'error');
     //   });
+  };
+  const handleEdit = (id: string) => {
+    setOpenModal({ edit: true });
   };
   const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -149,6 +155,7 @@ const UserListTable = (props: IProps) => {
                           <TableCell className="pe-auto">
                             <div className="d-flex">
                               <Image
+                                onClick={() => handleEdit(row?._id)}
                                 className="me-2"
                                 src={EditIcon}
                                 width={24}
@@ -163,14 +170,6 @@ const UserListTable = (props: IProps) => {
                                 alt="delete"
                               />
                             </div>
-                          </TableCell>
-                        ) : column.id === 'role' ? (
-                          <TableCell>
-                            <select className="form-control w-50" defaultValue={value}>
-                              <option value="admin">Admin</option>
-                              <option value="supper_admin">Supper Admin</option>
-                              <option value="student">Student</option>
-                            </select>
                           </TableCell>
                         ) : (
                           <TableCell key={column.id} align={column.align}>
@@ -204,6 +203,8 @@ const UserListTable = (props: IProps) => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      <UserDetails openModal={openModal} />
     </div>
   );
 };
