@@ -1,12 +1,12 @@
 import { Box, Button } from '@mui/material';
 import React from 'react';
 import meetService from '../../service/meet/meetService';
-import { useAppDispatch } from '../../types/common';
 import { useRouter } from 'next/router';
 import { setRoom } from '../../lib/Slicers/meetSlice';
+import { useDispatch } from 'react-redux';
 
 const InstantMeet = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
   const handleInstantMeet = () => {
     meetService

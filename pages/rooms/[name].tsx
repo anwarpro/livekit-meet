@@ -27,11 +27,11 @@ import { DebugMode } from '../../lib/Debug';
 import { decodePassphrase, useServerUrl } from '../../lib/client-utils';
 import { SettingsMenu } from '../../lib/SettingsMenu';
 import meetService from '../../service/meet/meetService';
-import { useAppDispatch, useAppSelector } from '../../types/common';
 import Footer from '../../components/layouts/Footer';
 import { useSelector } from 'react-redux';
 import { clearRoom, setRoom } from '../../lib/Slicers/meetSlice';
 import { Box } from '@mui/material';
+import { useDispatch } from 'react-redux';
 
 const PreJoinNoSSR = dynamic(
   async () => {
@@ -43,10 +43,9 @@ const PreJoinNoSSR = dynamic(
 const Home: NextPage = () => {
   const router = useRouter();
   const { name: roomName, user_t } = router.query as { name: string; user_t: string };
-  console.log('🚀 ~ roomName:', user_t);
-  const user = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
-  const { roomInfo } = useAppSelector((state) => state.room);
+  const user = useSelector((state: any) => state.auth);
+  const dispatch = useDispatch();
+  const { roomInfo } = useSelector((state: any) => state.room);
   const [preJoinChoices, setPreJoinChoices] = React.useState<LocalUserChoices | undefined>(
     undefined,
   );
@@ -207,7 +206,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     };
   }, []);
 
-  const { roomInfo } = useAppSelector((state) => state.room);
+  const { roomInfo } = useSelector((state: any) => state.room);
 
   return (
     <Box sx={{ height: '100vh' }}>

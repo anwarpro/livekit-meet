@@ -9,8 +9,8 @@ import moment from 'moment';
 import ScheduleModal from './ScheduleModal';
 import { IMeet } from '../../types/meet';
 import { useRouter } from 'next/router';
-import { useAppSelector } from '../../types/common';
 import SuccessPopUp from './SuccessPopUp';
+import { useSelector } from 'react-redux';
 
 type Events = {
   _id: number;
@@ -26,7 +26,7 @@ const ScheduleEvent = ({ event, fetchData }: any) => {
   const router = useRouter();
   const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
   const [successModal, setSuccessModal] = useState<{ edit: boolean }>({ edit: false });
-  const { events } = useAppSelector((state) => state.events);
+  const { events } = useSelector((state: any) => state.events);
   const [editable, setEditable] = useState<IMeet>();
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {

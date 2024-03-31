@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import logo from '../assets/image/logo.png';
 import placeholder from '../assets/icons/placeholder.png';
-import { useAppSelector } from '../../types/common';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
   const [isClient, setIsClient] = useState(false);
@@ -13,7 +13,7 @@ const Header = () => {
     setIsClient(true);
   }, []);
 
-  const { userData } = useAppSelector((state) => state.auth);
+  const { userData } = useSelector((state: any) => state.auth);
 
   return (
     <div className="header-component d-flex justify-content-between">

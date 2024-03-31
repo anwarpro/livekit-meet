@@ -5,9 +5,9 @@ import playIcon from '../components/assets/icons/play.png';
 import moment from 'moment';
 import meetService from '../service/meet/meetService';
 import { setEventStore } from '../lib/Slicers/eventSlice';
-import { useAppDispatch } from '../types/common';
 import { IMeet } from '../types/meet';
 import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
 
 const event = [
   {
@@ -19,7 +19,7 @@ const event = [
 
 const Home = () => {
   const router = useRouter();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [event, setEvent] = useState([]);
 
   const fetchData = () => {
