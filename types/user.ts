@@ -1,4 +1,3 @@
-import { AccessToken } from 'livekit-server-sdk';
 export interface User {
   id: string;
   _id: string;

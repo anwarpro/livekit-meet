@@ -2,18 +2,19 @@ import { ReactElement, useEffect } from 'react';
 import Footer from './Footer';
 import authService from '../../service/auth/authService';
 import { setToken, setUserData } from '../../lib/Slicers/authSlice';
-import { useAppDispatch, useAppSelector } from '../../types/common';
 import { useRouter } from 'next/router';
 import Header from './Header';
 import DashboardLayout from './DashboardLayout';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 type Props = {
   children: string | JSX.Element | JSX.Element[];
 };
 const RootLayout = ({ children }: Props) => {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { userData } = useAppSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state: any) => state.auth);
 
   const deleteAllCookies = async (): Promise<boolean> => {
     const cookies = document.cookie.split(';');

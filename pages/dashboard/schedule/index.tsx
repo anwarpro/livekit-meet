@@ -2,7 +2,6 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import DashboardLayout from '../../../components/layouts/DashboardLayout';
 import { Box, Button, FormControl } from '@mui/material';
 import meetService from '../../../service/meet/meetService';
-import { useAppDispatch } from '../../../types/common';
 import { useRouter } from 'next/router';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import moment from 'moment';
@@ -13,10 +12,11 @@ import Image from 'next/image';
 import userIcon from '../../../components/assets/icons/user-colored.png';
 import { IMeet } from '../../../types/meet';
 import { setEventStore } from '../../../lib/Slicers/eventSlice';
+import { useDispatch } from 'react-redux';
 
 const ScheduleManagement = () => {
   const [event, setEvent] = useState([]);
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const fetchData = () => {
     meetService
