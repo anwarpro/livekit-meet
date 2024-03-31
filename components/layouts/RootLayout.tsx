@@ -53,11 +53,11 @@ const RootLayout = ({ children }: Props) => {
           if (res.data.success) {
             getUserDetails();
           } else {
-            // navigateUser();
+            navigateUser();
           }
         });
       } catch (error) {
-        // navigateUser();
+        navigateUser();
       }
     };
 
@@ -70,8 +70,8 @@ const RootLayout = ({ children }: Props) => {
           dispatch(setUserData({ ...user.data.user }));
         }
       } catch (error) {
-        // sessionStorage.clear();
-        // await deleteAllCookies();
+        sessionStorage.clear();
+        await deleteAllCookies();
         await checkCookie();
       }
     };
