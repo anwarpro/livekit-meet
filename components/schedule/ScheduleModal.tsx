@@ -153,12 +153,11 @@ const ScheduleModal = (props: Iprops) => {
       <CustomModal
         openModal={props.openModal}
         closeModal={closeModal}
-        noCloseIcon
         customStyle={{
           borderRadius: '12px',
           border: 0,
           backgroundColor: 'white',
-          width: '600px',
+          maxWidth: '600px',
         }}
       >
         <Box

@@ -32,11 +32,10 @@ function CustomeModal(props: Props) {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
     backgroundColor: 'white',
     outline: 'none',
     borderRadius: 20,
-    padding: "25px",
+    padding: '25px',
     ...props.customStyle,
   };
 
