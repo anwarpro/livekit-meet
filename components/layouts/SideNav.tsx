@@ -1,21 +1,10 @@
 import React from 'react';
-import {
-  Box,
-  Divider,
-  Grid,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-  styled,
-} from '@mui/material';
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 import GridViewIcon from '@mui/icons-material/GridView';
 import PeopleIcon from '@mui/icons-material/People';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { useRouter } from 'next/router';
 
 const navItems = [
   {
@@ -24,29 +13,53 @@ const navItems = [
     icon: <GridViewIcon />,
   },
   {
-    title: 'User Management',
+    title: 'Account',
     href: '/dashboard/user',
     icon: <PeopleIcon />,
   },
   {
-    title: 'Meet Management',
-    href: '/dashboard/schedule',
+    title: 'Instant Meet',
+    href: '/dashboard/instant-meet',
     icon: <WatchLaterIcon />,
   },
   {
-    title: 'Others',
-    href: '/dashboard/others',
-    icon: <AccountBalanceIcon />,
+    title: 'Schedule Management',
+    href: '/dashboard/schedule',
+    icon: <WatchLaterIcon />,
   },
 ];
 
 const SideNav = () => {
+  const { pathname } = useRouter();
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box
+      role="presentation"
+      sx={{
+        '& .active-item': {
+          color: '#100324',
+          '& .MuiTypography-root': {
+            fontFamily: 'Inter',
+            fontSize: '16px',
+            fontWeight: 700,
+          },
+        },
+        '& .item': {
+          color: '#100324B2',
+          '& .MuiTypography-root': {
+            fontFamily: 'Inter',
+            fontSize: '16px',
+            fontWeight: 400,
+          },
+        },
+      }}
+    >
       <List>
         {navItems.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton href={item.href}>
+            <ListItemButton
+              href={item.href}
+              className={pathname === item.href ? 'active-item' : 'item'}
+            >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.title} />
             </ListItemButton>
