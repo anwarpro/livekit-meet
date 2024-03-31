@@ -47,7 +47,6 @@ const ScheduleModal = (props: Iprops) => {
     watch,
     formState: { errors },
   } = useForm<Inputs>();
-  console.log(watch('eventDate'));
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     if (props.reschedule) {
