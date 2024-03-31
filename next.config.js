@@ -1,5 +1,20 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'phero-web.nyc3.cdn.digitaloceanspaces.com',
+        port: '',
+        pathname: '/uat-images/public/**',
+      },
+    ],
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'styles')],
+  },
   reactStrictMode: false,
   swcMinify: false,
   productionBrowserSourceMaps: true,

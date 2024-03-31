@@ -1,202 +1,89 @@
-import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import clockIcon from '../components/assets/icons/clock.png';
+import playIcon from '../components/assets/icons/play.png';
+import moment from 'moment';
+import meetService from '../service/meet/meetService';
+import { setEventStore } from '../lib/Slicers/eventSlice';
+import { useAppDispatch } from '../types/common';
+import { IMeet } from '../types/meet';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useState } from 'react';
-import { encodePassphrase, generateRoomId, randomString } from '../lib/client-utils';
-import styles from '../styles/Home.module.css';
 
-interface TabsProps {
-  children: ReactElement[];
-  selectedIndex?: number;
-  onTabSelected?: (index: number) => void;
-}
+const event = [
+  {
+    _id: 1,
+    startTime: new Date(),
+    title: 'Javascript Fundamental',
+  },
+];
 
-function Tabs(props: TabsProps) {
-  const activeIndex = props.selectedIndex ?? 0;
-  if (!props.children) {
-    return <></>;
-  }
-
-  let tabs = React.Children.map(props.children, (child, index) => {
-    return (
-      <button
-        className="lk-button"
-        onClick={() => {
-          if (props.onTabSelected) props.onTabSelected(index);
-        }}
-        aria-pressed={activeIndex === index}
-      >
-        {child?.props.label}
-      </button>
-    );
-  });
-  return (
-    <div className={styles.tabContainer}>
-      <div className={styles.tabSelect}>{tabs}</div>
-      {props.children[activeIndex]}
-    </div>
-  );
-}
-
-function DemoMeetingTab({ label }: { label: string }) {
+const Home = () => {
   const router = useRouter();
-  const [e2ee, setE2ee] = useState(false);
-  const [sharedPassphrase, setSharedPassphrase] = useState(randomString(64));
-  const startMeeting = () => {
-    if (e2ee) {
-      router.push(`/rooms/${generateRoomId()}#${encodePassphrase(sharedPassphrase)}`);
-    } else {
-      router.push(`/rooms/${generateRoomId()}`);
+  const dispatch = useAppDispatch();
+  const [event, setEvent] = useState([]);
+
+  const fetchData = () => {
+    meetService
+      .upcomingSchedule()
+      .then((res: any) => {
+        setEvent(res?.data?.data);
+        dispatch(setEventStore(res?.data?.data));
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleJoinMeet = (meetId: string) => {
+    const joinLink = `${
+      process.env.NEXT_PUBLIC_ENVIRONMENT === 'development'
+        ? 'http://localhost:7859/'
+        : process.env.NEXT_PUBLIC_ENVIRONMENT === 'uat'
+        ? 'https://meet.jsdude.com/'
+        : 'https://meet.programming-hero.com/'
+    }rooms/${meetId}`;
+    if (joinLink) {
+      router.push(joinLink);
     }
   };
 
   return (
-    <div className={styles.tabContent}>
-      <p style={{ margin: 0 }}>Try PH Meet for free with our live demo project.</p>
-      <button style={{ marginTop: '1rem' }} className="lk-button" onClick={startMeeting}>
-        Start Meeting
-      </button>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}>
-          <input
-            id="use-e2ee"
-            type="checkbox"
-            checked={e2ee}
-            onChange={(ev) => setE2ee(ev.target.checked)}
-          ></input>
-          <label htmlFor="use-e2ee">Enable end-to-end encryption</label>
-        </div>
-        {e2ee && (
-          <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}>
-            <label htmlFor="passphrase">Passphrase</label>
-            <input
-              id="passphrase"
-              type="password"
-              value={sharedPassphrase}
-              onChange={(ev) => setSharedPassphrase(ev.target.value)}
-            />
+    <main className="container">
+      <div className="homepage-component d-flex justify-content-center align-items-center">
+        <div>
+          <div className="header text-center">
+            <h1>
+              Video calls and meetings <br /> for everyone
+            </h1>
+            <p>
+              Meetify meet provides secure, easy-to-use video calls and meetings <br /> for
+              everyone, on any device.
+            </p>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function CustomConnectionTab({ label }: { label: string }) {
-  const router = useRouter();
-
-  const [e2ee, setE2ee] = useState(false);
-  const [sharedPassphrase, setSharedPassphrase] = useState(randomString(64));
-
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target as HTMLFormElement);
-    const serverUrl = formData.get('serverUrl');
-    const token = formData.get('token');
-    if (e2ee) {
-      router.push(
-        `/custom/?liveKitUrl=${serverUrl}&token=${token}#${encodePassphrase(sharedPassphrase)}`,
-      );
-    } else {
-      router.push(`/custom/?liveKitUrl=${serverUrl}&token=${token}`);
-    }
-  };
-  return (
-    <form className={styles.tabContent} onSubmit={onSubmit}>
-      <p style={{ marginTop: 0 }}>
-        Connect LiveKit Meet with a custom server using LiveKit Cloud or LiveKit Server.
-      </p>
-      <input
-        id="serverUrl"
-        name="serverUrl"
-        type="url"
-        placeholder="LiveKit Server URL: wss://*.livekit.cloud"
-        required
-      />
-      <textarea
-        id="token"
-        name="token"
-        placeholder="Token"
-        required
-        rows={5}
-        style={{ padding: '1px 2px', fontSize: 'inherit', lineHeight: 'inherit' }}
-      />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}>
-          <input
-            id="use-e2ee"
-            type="checkbox"
-            checked={e2ee}
-            onChange={(ev) => setE2ee(ev.target.checked)}
-          ></input>
-          <label htmlFor="use-e2ee">Enable end-to-end encryption</label>
-        </div>
-        {e2ee && (
-          <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}>
-            <label htmlFor="passphrase">Passphrase</label>
-            <input
-              id="passphrase"
-              type="password"
-              value={sharedPassphrase}
-              onChange={(ev) => setSharedPassphrase(ev.target.value)}
-            />
+          <div className="mt-5">
+            {event.map((event: IMeet) => (
+              <div key={event._id} className="event mb-4">
+                <div className="d-flex justify-content-between align-items-center p-5">
+                  <p className="m-0 clock-text">
+                    <Image src={clockIcon} width={24} height={24} alt="clock" />{' '}
+                    {moment(event.startTime).format('hh:mm A')}
+                  </p>
+                  <p className="m-0">{event.title}</p>
+                  <button
+                    onClick={() => handleJoinMeet(event?.meetId!)}
+                    className="btn btn-primary"
+                  >
+                    Join Now <Image src={playIcon} width={24} height={24} alt="" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
-
-      <hr
-        style={{ width: '100%', borderColor: 'rgba(255, 255, 255, 0.15)', marginBlock: '1rem' }}
-      />
-      <button
-        style={{ paddingInline: '1.25rem', width: '100%' }}
-        className="lk-button"
-        type="submit"
-      >
-        Connect
-      </button>
-    </form>
-  );
-}
-
-export const getServerSideProps: GetServerSideProps<{ tabIndex: number }> = async ({
-                                                                                     query,
-                                                                                     res,
-                                                                                   }) => {
-  res.setHeader('Cache-Control', 'public, max-age=7200');
-  const tabIndex = query.tab === 'custom' ? 1 : 0;
-  return { props: { tabIndex } };
-};
-
-const Home = ({ tabIndex }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter();
-
-  function onTabSelected(index: number) {
-    const tab = index === 1 ? 'custom' : 'demo';
-    router.push({ query: { tab } });
-  }
-
-  return (
-    <>
-      <main className={styles.main} data-lk-theme="default">
-        <div className="header">
-          <h1>
-            <img src="https://web.programming-hero.com/home/ph_logo.svg" alt="PH Meet" height="32" /> PH Meet
-          </h1>
-          <h2>
-            Conference app hosted by {' '}
-            <a href="https://www.programming-hero.com" rel="noopener">
-              Programming Hero
-            </a>
-          </h2>
         </div>
-        <DemoMeetingTab label="" />
-      </main>
-      <footer data-lk-theme="default">
-        Hosted by {' '}
-        <a href="https://www.programming-hero.com" rel="noopener">
-          Programming Hero
-        </a>
-      </footer>
-    </>
+      </div>
+    </main>
   );
 };
 
