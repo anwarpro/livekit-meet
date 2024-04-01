@@ -57,7 +57,7 @@ const RootLayout = ({ children }: Props) => {
           }
         });
       } catch (error) {
-        navigateUser();
+        // navigateUser();
       }
     };
 
