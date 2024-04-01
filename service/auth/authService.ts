@@ -8,7 +8,7 @@ const getAuthorization = () => {
     try {
         const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
         const token = sessionStorageToken && JSON.parse(sessionStorageToken);
-        axios.defaults.headers.common = { Authorization: `${token}`, withCredentials: true, };
+        axios.defaults.headers.common = { Authorization: `${token}` };
     } catch (error) { }
 
 };
@@ -31,9 +31,8 @@ class AuthService {
         return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
             // headers: {
             //     "Content-Type": "application/json",
-            //     "Access-Control-Allow-Headers": "*"
             // },
-            // withCredentials: true,
+            withCredentials: true,
         });
     };
 
