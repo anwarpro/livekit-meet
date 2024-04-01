@@ -29,8 +29,9 @@ class AuthService {
 
         return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
             headers: {
-                withCredentials: true,
-            }
+                "Content-Type": "application/json"
+            },
+            withCredentials: true,
         });
     };
 
