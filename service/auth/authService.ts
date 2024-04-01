@@ -28,20 +28,20 @@ class AuthService {
                 ? 'https://jsdude.com/api/user'
                 : 'https://web.programming-hero.com/api/user';
 
-        // return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
-        //     // headers: {
-        //     //     "Content-Type": "application/json",
-        //     // },
-        //     withCredentials: true,
-        // });
+        return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
+            headers: {
+                withCredentials: true,
+            },
+
+        });
 
 
-        const http = axios.create({
-            baseURL: domain,
-            withCredentials: true
-        })
+        // const http = axios.create({
+        //     baseURL: domain,
+        //     withCredentials: true
+        // })
 
-        return http.get<{ success: boolean, token: string }>(`/verify-cookie`);
+        // return http.get<{ success: boolean, token: string }>(`/verify-cookie`);
     };
 
     getUser = (cached?: boolean) => {
