@@ -93,8 +93,19 @@ const RootLayout = ({ children }: Props) => {
     }
   }, [router, userData]);
 
+  const verifyTest = () => {
+    const checkCookie = async () => {
+      try {
+        await authService.verifyCookie().then((res) => console.log(res));
+      } catch (error) {
+        // navigateUser();
+      }
+    };
+    checkCookie();
+  };
   return (
     <main>
+      <button onClick={() => verifyTest()}>verify test</button>
       {/* {router?.pathname?.includes('/dashboard') && <Header />} */}
       {children}
       {/* {!router?.pathname?.includes('/dashboard') && <Footer />} */}
