@@ -1,5 +1,6 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import {
+  InputAdornment,
   InputBase,
   Select,
   Table,
@@ -9,6 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
   alpha,
 } from '@mui/material';
 import DeleteIcon from '../assets/icons/trust.png';
@@ -17,70 +19,56 @@ import Image from 'next/image';
 import styled from '@emotion/styled';
 import SearchIcon from '@mui/icons-material/Search';
 import UserDetails from './UserDetails';
+import { debounce } from 'lodash';
+import SuccessPopUp from './SuccessPopUp';
 
 type IProps = {
   fields: object[];
   items: object[];
   total: number;
   page: number;
+  searchText: string;
   setPage: Dispatch<SetStateAction<number>>;
   limit: number;
   setLimit: Dispatch<SetStateAction<number>>;
-  setSearch: Dispatch<SetStateAction<string>>;
+  setSearchText: Dispatch<SetStateAction<string>>;
+  fetchData: Dispatch<SetStateAction<void>>;
 };
 
 const UserListTable = (props: IProps) => {
-  console.log(props);
   const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
+  const [editUser, setEditUser] = useState(null);
+  const [successModal, setSuccessModal] = useState<{ edit: boolean }>({ edit: false });
+  const [debounceSearch, setDebounceSearch] = useState("");
+  const handleSearch = (e: any) => {
+    props?.setPage(1);
+    setDebounceSearch(e.target.value);
+  };
+  const searchApi = () => {
+    if (debounceSearch !== null) {
+      props?.setSearchText(debounceSearch);
+    }
+  };
+  const delayedQuery = useCallback(debounce(searchApi, 500), [debounceSearch]);
+  useEffect(() => {
+    delayedQuery();
+    return delayedQuery.cancel;
+  }, [debounceSearch, delayedQuery]);
 
   const handleChangePage = (event: any, newPage: any) => {
-    // props?.setPage(newPage + 1);
-    console.log(newPage);
+    props?.setPage(newPage + 1);
+    setDebounceSearch("");
   };
 
   const handleChangeRowsPerPage = (event: any) => {
     props?.setLimit(+event.target.value);
+    setDebounceSearch("");
     props?.setPage(1);
+    props?.setSearchText('');
   };
 
-  const handleSearch = (e: any) => {
-    // let filterTimeout;
-    // clearTimeout(filterTimeout);
-    // filterTimeout = setTimeout(() => {
-    //   props?.setSearch(e.target.value);
-    //   props?.setPage(1);
-    // }, 500);
-  };
-
-  //   const deleteContact = useMutation((id) => contactService.deleteContactInfo(id), {
-  //     onSuccess() {
-  //       queryClient.invalidateQueries('contact_form');
-  //       swal('', 'contact deleted!', 'success');
-  //     },
-  //     onError(err) {
-  //       if (err.response?.status === 401) {
-  //         swal('Error', err.response?.data?.msg, 'error');
-  //       }
-  //     },
-  //   });
-  const handleDelete = (id: string) => {
-    // swal({
-    //   title: 'Are you sure?',
-    //   text: '',
-    //   icon: 'warning',
-    //   buttons: true,
-    //   dangerMode: true,
-    // })
-    //   .then((isSure) => {
-    //     if (isSure) {
-    //       deleteContact.mutateAsync(id);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     swal('', 'Delete failed', 'error');
-    //   });
-  };
-  const handleEdit = (id: string) => {
+  const handleEdit = (user: any) => {
+    setEditUser(user);
     setOpenModal({ edit: true });
   };
   const Search = styled('div')(({ theme }) => ({
@@ -113,12 +101,23 @@ const UserListTable = (props: IProps) => {
   return (
     <div>
       <div className="search mb-3">
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
-        </Search>
+        <TextField
+          id="input-with-icon-textfield"
+          hiddenLabel
+          placeholder="Search..."
+          size="small"
+          value={debounceSearch}
+          style={{ backgroundColor: '#f7f7f8', color: '#100324B2' }}
+          onChange={(e: any) => handleSearch(e)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+        />
       </div>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
@@ -129,7 +128,8 @@ const UserListTable = (props: IProps) => {
                   sx={{
                     fontFamily: 'Inter',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 800,
+                    backgroundColor: '#f7f7f8',
                     color: '#100324B2',
                   }}
                   key={column.id}
@@ -157,19 +157,13 @@ const UserListTable = (props: IProps) => {
                           <TableCell className="pe-auto">
                             <div className="d-flex">
                               <Image
-                                onClick={() => handleEdit(row?._id)}
+                                onClick={() => handleEdit(row)}
                                 className="me-2"
+                                style={{ cursor: 'pointer' }}
                                 src={EditIcon}
                                 width={24}
                                 height={24}
                                 alt="edit"
-                              />
-                              <Image
-                                onClick={() => handleDelete(row?._id)}
-                                src={DeleteIcon}
-                                width={20}
-                                height={20}
-                                alt="delete"
                               />
                             </div>
                           </TableCell>
@@ -206,7 +200,14 @@ const UserListTable = (props: IProps) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <UserDetails openModal={openModal} />
+      <UserDetails
+        openModal={openModal}
+        user={editUser}
+        setSuccessModal={setSuccessModal}
+        fetchData={props?.fetchData}
+        setDebounceSearch={setDebounceSearch}
+      />
+      <SuccessPopUp openModal={successModal} />
     </div>
   );
 };
