@@ -29,9 +29,12 @@ class AuthService {
                 : 'https://web.programming-hero.com/api/user';
 
         return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
-            // headers: {
-            //     withCredentials: true,
-            // },
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*',
+                'Access-Control-Allow-Headers': '*'
+            },
             withCredentials: true,
 
         });
