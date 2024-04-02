@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 import { UserResponse } from "../../types/user";
 import objectToParams from "../../utils/objectToParams";
 import { GET } from "../../utils/axios.config";
@@ -8,7 +8,6 @@ const getAuthorization = () => {
     try {
         const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
         const token = sessionStorageToken && JSON.parse(sessionStorageToken);
-        axios.defaults.withCredentials = true;
         axios.defaults.headers.common = { Authorization: `${token}` };
 
     } catch (error) { }
