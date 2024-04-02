@@ -1,10 +1,9 @@
-import { ReactElement, useEffect } from 'react';
-import Footer from './Footer';
+import { useEffect } from 'react';
+
 import authService from '../../service/auth/authService';
 import { setToken, setUserData } from '../../lib/Slicers/authSlice';
 import { useRouter } from 'next/router';
-import Header from './Header';
-import DashboardLayout from './DashboardLayout';
+
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
@@ -50,34 +49,34 @@ const RootLayout = ({ children }: Props) => {
       try {
         await authService.verifyCookie().then((res) => {
           if (!mounted) return;
-          if (res.data.success) {
-            getUserDetails();
+          if (res.success) {
+            getUserDetails(res.token);
           } else {
             navigateUser();
           }
         });
       } catch (error) {
-        // navigateUser();
+        navigateUser();
       }
     };
 
-    const getUserDetails = async (hasOldToken?: boolean) => {
+    const getUserDetails = async (token: string, hasOldToken?: boolean) => {
       try {
-        const user: any = await authService.getUser(hasOldToken);
-        if (user.data.user._id) {
-          sessionStorage.setItem('jwt-token', `"Bearer ${user.data.token}"`);
+        const user: any = await authService.getUser(token, hasOldToken);
+        if (user?.user._id) {
+          sessionStorage.setItem('jwt-token', `${user.token}`);
           dispatch(setToken(user.data.token));
           dispatch(setUserData({ ...user.data.user }));
         }
       } catch (error) {
-        sessionStorage.clear();
-        await deleteAllCookies();
-        await checkCookie();
+        // sessionStorage.clear();
+        // await deleteAllCookies();
+        // await checkCookie();
       }
     };
 
     if (savedToken && savedToken !== null) {
-      getUserDetails(true);
+      getUserDetails(savedToken, true);
     } else {
       checkCookie();
     }
@@ -92,20 +91,8 @@ const RootLayout = ({ children }: Props) => {
       router.push('/');
     }
   }, [router, userData]);
-
-  const verifyTest = () => {
-    const checkCookie = async () => {
-      try {
-        await authService.verifyCookie().then((res) => console.log(res));
-      } catch (error) {
-        // navigateUser();
-      }
-    };
-    checkCookie();
-  };
   return (
     <main>
-      <button onClick={() => verifyTest()}>verify test</button>
       {/* {router?.pathname?.includes('/dashboard') && <Header />} */}
       {children}
       {/* {!router?.pathname?.includes('/dashboard') && <Footer />} */}

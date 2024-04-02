@@ -1,14 +1,16 @@
-import { AccessToken } from 'livekit-server-sdk';
 import axios from "axios";
 import { UserResponse } from "../../types/user";
 import objectToParams from "../../utils/objectToParams";
+import { GET } from "../../utils/axios.config";
 
 const getAuthorization = () => {
     // Getting user token and set to session storage
     try {
         const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
-        const token = sessionStorageToken && JSON.parse(sessionStorageToken);
+        const token = sessionStorageToken && sessionStorageToken;
         axios.defaults.headers.common = { Authorization: `${token}` };
+        console.log("🚀 ~ getAuthorization ~ token:", token)
+
     } catch (error) { }
 
 };
@@ -28,16 +30,20 @@ class AuthService {
                 ? 'https://jsdude.com/api/user'
                 : 'https://web.programming-hero.com/api/user';
 
-        return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
-            // headers: {
-            //     "Content-Type": "application/json",
-            // },
+        return GET<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
+            method: 'GET',
             withCredentials: true,
         });
+
     };
 
-    getUser = (cached?: boolean) => {
-        return axios.get<UserResponse>(`${API_URL}/${objectToParams({ cached })}`);
+    getUser = (token: string, cached?: boolean) => {
+        return GET<UserResponse>(`${API_URL}/${objectToParams({ cached })}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
     };
 
 

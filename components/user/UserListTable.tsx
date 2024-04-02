@@ -30,15 +30,17 @@ type IProps = {
 };
 
 const UserListTable = (props: IProps) => {
+  console.log(props);
   const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
 
   const handleChangePage = (event: any, newPage: any) => {
     // props?.setPage(newPage + 1);
+    console.log(newPage);
   };
 
   const handleChangeRowsPerPage = (event: any) => {
-    // props?.setLimit(+event.target.value);
-    // props?.setPage(1);
+    props?.setLimit(+event.target.value);
+    props?.setPage(1);
   };
 
   const handleSearch = (e: any) => {
