@@ -42,26 +42,27 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         crossOrigin="anonymous"
       />
       <DefaultSeo
-        title="LiveKit Meet | Conference app build with LiveKit Open Source"
+        title="Meetify Meet | Conference app hosted by Programming Hero"
         titleTemplate="%s"
-        defaultTitle="LiveKit Meet | Conference app build with LiveKit open source"
-        description="LiveKit is an open source WebRTC project that gives you everything needed to build scalable and real-time audio and/or video experiences in your applications."
+        defaultTitle="Meetify Meet | Video calls and meetings for everyone"
+        description="Meetify meet provides secure, easy-to-use video calls and meetings
+        for everyone, on any device."
         twitter={{
-          handle: '@livekitted',
-          site: '@livekitted',
+          handle: 'Programming Hero',
+          site: 'Programming Hero',
           cardType: 'summary_large_image',
         }}
         openGraph={{
-          url: 'https://meet.livekit.io',
+          url: 'https://meet.programming-hero.com',
           images: [
             {
-              url: 'https://meet.livekit.io/images/livekit-meet-open-graph.png',
+              url: 'https://jsdude.com/home/thumbnail.png',
               width: 2000,
               height: 1000,
               type: 'image/png',
             },
           ],
-          site_name: 'LiveKit Meet',
+          site_name: 'Meetify meet',
         }}
         additionalMetaTags={[
           {

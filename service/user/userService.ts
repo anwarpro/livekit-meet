@@ -3,12 +3,13 @@ import { User, UserResponse } from '../../types/user';
 import objectToParams from '../../utils/objectToParams';
 
 const getAuthorization = () => {
-  // Getting user token and set to session storage
-  try {
-    const sessionStorageToken = localStorage.getItem('jwt-token') || null;
-    const token = sessionStorageToken && JSON.parse(sessionStorageToken);
-    axios.defaults.headers.common = { Authorization: `${token}` };
-  } catch (error) {}
+    // Getting user token and set to session storage
+    try {
+        const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
+        const token = sessionStorageToken && sessionStorageToken;
+        axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
+    } catch (error) { }
+
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL + 'user';

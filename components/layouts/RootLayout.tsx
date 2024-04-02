@@ -1,10 +1,9 @@
-import { ReactElement, useEffect } from 'react';
-import Footer from './Footer';
+import { useEffect } from 'react';
+
 import authService from '../../service/auth/authService';
 import { setToken, setUserData } from '../../lib/Slicers/authSlice';
 import { useRouter } from 'next/router';
-import Header from './Header';
-import DashboardLayout from './DashboardLayout';
+
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
@@ -45,39 +44,39 @@ const RootLayout = ({ children }: Props) => {
 
   useEffect(() => {
     let mounted = true;
-    const savedToken = localStorage.getItem('jwt-token');
+    const savedToken = sessionStorage.getItem('jwt-token');
     const checkCookie = async () => {
       try {
         await authService.verifyCookie().then((res) => {
           if (!mounted) return;
-          if (res.data.success) {
-            getUserDetails();
+          if (res.success) {
+            getUserDetails(res.token);
           } else {
             navigateUser();
           }
         });
       } catch (error) {
-        // navigateUser();
+        navigateUser();
       }
     };
 
-    const getUserDetails = async (hasOldToken?: boolean) => {
+    const getUserDetails = async (token: string, hasOldToken?: boolean) => {
       try {
-        const user: any = await authService.getUser(hasOldToken);
-        if (user.data.user._id) {
-          sessionStorage.setItem('jwt-token', `"Bearer ${user.data.token}"`);
-          dispatch(setToken(user.data.token));
-          dispatch(setUserData({ ...user.data.user }));
+        const userData: any = await authService.getUser(token, hasOldToken);
+        if (userData?.user._id) {
+          sessionStorage.setItem('jwt-token', `${userData.token}`);
+          dispatch(setToken(userData.token));
+          dispatch(setUserData({ ...userData.user }));
         }
       } catch (error) {
-        sessionStorage.clear();
-        await deleteAllCookies();
-        await checkCookie();
+        // sessionStorage.clear();
+        // await deleteAllCookies();
+        // await checkCookie();
       }
     };
 
     if (savedToken && savedToken !== null) {
-      getUserDetails(true);
+      getUserDetails(savedToken, true);
     } else {
       checkCookie();
     }
@@ -88,7 +87,7 @@ const RootLayout = ({ children }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (router.pathname.includes('/dashboard') && userData.role !== 'admin') {
+    if (userData.role && router.pathname.includes('/dashboard') && userData.role !== 'admin') {
       router.push('/');
     }
   }, [router, userData]);
