@@ -96,13 +96,16 @@ const RootLayout = ({ children }: Props) => {
   const verifyTest = () => {
     const checkCookie = async () => {
       try {
-        await authService.verifyCookie().then((res) => console.log(res));
+        await fetch('https://jsdude.com/api/user/verify-cookie', { credentials: 'include' })
+          .then((res) => res.json())
+          .then((result) => console.log(result));
       } catch (error) {
-        // navigateUser();
+        console.log(error);
       }
     };
     checkCookie();
   };
+
   return (
     <main>
       <button onClick={() => verifyTest()}>verify test</button>
