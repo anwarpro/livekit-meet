@@ -9,8 +9,6 @@ const getAuthorization = () => {
         const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
         const token = sessionStorageToken && sessionStorageToken;
         axios.defaults.headers.common = { Authorization: `${token}` };
-        console.log("🚀 ~ getAuthorization ~ token:", token)
-
     } catch (error) { }
 
 };

@@ -86,11 +86,12 @@ const RootLayout = ({ children }: Props) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (router.pathname.includes('/dashboard') && userData.role !== 'admin') {
-  //     router.push('/');
-  //   }
-  // }, [router, userData]);
+  useEffect(() => {
+    if (userData?.role && router.pathname.includes('/dashboard') && userData.role !== 'admin') {
+      router.push('/');
+    }
+  }, [router, userData]);
+
   return (
     <main>
       {/* {router?.pathname?.includes('/dashboard') && <Header />} */}
