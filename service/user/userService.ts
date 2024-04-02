@@ -19,8 +19,13 @@ class UserService {
   }
 
   getAllUsers = (search: string, page: number, limit: number, role: string) => {
-    return axios.get<User[]>(`${API_URL}/all?role=${role}`);
+    return axios.get<User[]>(`${API_URL}/all?role=${role}&limit=${limit}&page=${page}&search=${search}`);
   };
+
+  updateUser = (id: string, payload:any) => {
+    return axios.patch<UserResponse>(`${API_URL}/${id}`,{...payload});
+  };
+
 }
 const userService = new UserService();
 export default userService;

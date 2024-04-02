@@ -24,14 +24,16 @@ const UserManagement = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [role,setRole] = useState("admin");
-  const [search, setSearch] = useState('');
+  const [total, setTotal] = useState(0);
   const [userCountList,setUserCountList] = useState([]);
+  const [searchText, setSearchText] = useState("hello");
+
   const fetchData = () => {
     userService
-      .getAllUsers(search,page,limit,role)
+      .getAllUsers(searchText,page,limit,role)
       .then((res: any) => {
-        console.log(res?.data);
         setcontactList(res?.data?.users);
+        setTotal(res?.data?.totalCount);
         setUserCountList((res?.data?.countList)?.sort((a:any, b:any) => {
           if (a._id < b._id) return -1;
           if (a._id > b._id) return 1;
@@ -42,7 +44,7 @@ const UserManagement = () => {
   };
   useEffect(()=> {
     fetchData();
-  },[role])
+  },[role,limit,page,searchText])
 
   return (
     <Box
@@ -66,43 +68,46 @@ const UserManagement = () => {
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList onChange={handleChange} aria-label="lab API tabs example">
-            {
-              userCountList?.map((obj:any,idx:number) => {
-                return <Tab
-                key={idx+1}
-              value={(idx+1).toString()}
-              onClick={()=> {
-                setRole(obj?._id);
-              }}
-              label={
-                <div className="d-flex align-items-center">
-                  {obj?._id}
-                  <Box
-                    sx={{
-                      position: 'relative',
-                      bottom: '7px',
-                      marginLeft: '5px',
-                    }}
-                  >
-                    {obj?.count}
-                  </Box>
-                </div>
-              }
-            />
-              })
-            }
+            {userCountList?.map((obj: any, idx: number) => {
+              return (
+                <Tab
+                  key={idx + 1}
+                  value={(idx + 1).toString()}
+                  onClick={() => {
+                    setRole(obj?._id);
+                    setPage(1);
+                  }}
+                  label={
+                    <div className="d-flex align-items-center">
+                      {obj?._id}
+                      <Box
+                        sx={{
+                          position: 'relative',
+                          bottom: '7px',
+                          marginLeft: '5px',
+                        }}
+                      >
+                        {obj?.count}
+                      </Box>
+                    </div>
+                  }
+                />
+              );
+            })}
           </TabList>
         </Box>
         <TabPanel value={value}>
           <UserListTable
             fields={fields}
             items={contactList}
-            total={contactList.length}
+            total={total}
             page={page}
             setPage={setPage}
             limit={limit}
             setLimit={setLimit}
-            setSearch={setSearch}
+            setSearchText={setSearchText}
+            searchText={searchText}
+            fetchData={fetchData}
             // isLoading={isLoading}
           />
         </TabPanel>
