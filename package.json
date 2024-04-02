@@ -3,8 +3,6 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "prepare": "npm run co:login",
-    "co:login": "aws codeartifact login --tool npm --repository ph-shaka-player --domain ph-shakap",
     "dev": "next dev --port 7859",
     "build": "next build",
     "start": "next start",
