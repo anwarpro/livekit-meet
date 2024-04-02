@@ -1,15 +1,16 @@
-import { AccessToken } from 'livekit-server-sdk';
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { UserResponse } from "../../types/user";
 import objectToParams from "../../utils/objectToParams";
+import { GET } from "../../utils/axios.config";
 
 const getAuthorization = () => {
     // Getting user token and set to session storage
     try {
         const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
         const token = sessionStorageToken && JSON.parse(sessionStorageToken);
-        axios.defaults.headers.common = { Authorization: `${token}` };
         axios.defaults.withCredentials = true;
+        axios.defaults.headers.common = { Authorization: `${token}` };
+
     } catch (error) { }
 
 };
@@ -29,15 +30,11 @@ class AuthService {
                 ? 'https://jsdude.com/api/user'
                 : 'https://web.programming-hero.com/api/user';
 
-        return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`);
+        return GET<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
+            method: 'GET',
+            withCredentials: true,
+        });
 
-
-        // const http = axios.create({
-        //     baseURL: domain,
-        //     withCredentials: true
-        // })
-
-        // return http.get<{ success: boolean, token: string }>(`/verify-cookie`);
     };
 
     getUser = (cached?: boolean) => {

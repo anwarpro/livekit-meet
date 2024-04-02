@@ -48,7 +48,7 @@ const RootLayout = ({ children }: Props) => {
     const savedToken = sessionStorage.getItem('jwt-token');
     const checkCookie = async () => {
       try {
-        await authService.verifyCookie().then((res) => {
+        await authService.verifyCookie().then((res: any) => {
           if (!mounted) return;
           if (res.data.success) {
             getUserDetails();
@@ -92,23 +92,8 @@ const RootLayout = ({ children }: Props) => {
       router.push('/');
     }
   }, [router, userData]);
-
-  const verifyTest = () => {
-    const checkCookie = async () => {
-      try {
-        await fetch('https://jsdude.com/api/user/verify-cookie', { credentials: 'include' })
-          .then((res) => res.json())
-          .then((result) => console.log(result));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    checkCookie();
-  };
-
   return (
     <main>
-      <button onClick={() => verifyTest()}>verify test</button>
       {/* {router?.pathname?.includes('/dashboard') && <Header />} */}
       {children}
       {/* {!router?.pathname?.includes('/dashboard') && <Footer />} */}
