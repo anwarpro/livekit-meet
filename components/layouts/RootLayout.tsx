@@ -48,9 +48,10 @@ const RootLayout = ({ children }: Props) => {
     const savedToken = sessionStorage.getItem('jwt-token');
     const checkCookie = async () => {
       try {
-        await authService.verifyCookie().then((res: any) => {
+        await authService.verifyCookie().then((res) => {
           if (!mounted) return;
-          if (res.data.success) {
+          if (res.success) {
+            sessionStorage.setItem('jwt-token', `"Bearer ${res.token}"`);
             getUserDetails();
           } else {
             navigateUser();
@@ -70,9 +71,9 @@ const RootLayout = ({ children }: Props) => {
           dispatch(setUserData({ ...user.data.user }));
         }
       } catch (error) {
-        sessionStorage.clear();
-        await deleteAllCookies();
-        await checkCookie();
+        // sessionStorage.clear();
+        // await deleteAllCookies();
+        // await checkCookie();
       }
     };
 
@@ -85,7 +86,7 @@ const RootLayout = ({ children }: Props) => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (router.pathname.includes('/dashboard') && userData.role !== 'admin') {
