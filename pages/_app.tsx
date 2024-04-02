@@ -56,7 +56,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           url: 'https://meet.programming-hero.com',
           images: [
             {
-              url: '/images/thumbnail.png',
+              url: 'https://jsdude.com/home/thumbnail.png',
               width: 2000,
               height: 1000,
               type: 'image/png',
