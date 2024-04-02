@@ -10,6 +10,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SideNav from './SideNav';
+import Image from 'next/image';
+import logo from '../assets/image/logo.png';
+import placeholder from '../assets/icons/placeholder.png';
+import { useSelector } from 'react-redux';
+
 const drawerWidth = 300;
 type Props = {
   children: string | JSX.Element | JSX.Element[];
@@ -87,6 +92,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const DashboardLayout = ({ children }: Props) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  // const { userData } = useSelector((state: any) => state.auth);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -98,8 +104,15 @@ const DashboardLayout = ({ children }: Props) => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
+      <AppBar
+        position="fixed"
+        open={open}
+        sx={{
+          backgroundColor: 'white',
+          color: 'black',
+        }}
+      >
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -111,9 +124,48 @@ const DashboardLayout = ({ children }: Props) => {
             }}
           >
             <MenuIcon />
+
+            <div className="ps-5">
+              <Image src={logo} width={150} height={42} alt="" />
+            </div>
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Meetify Header
+
+          {open && (
+            <div>
+              <Image src={logo} width={150} height={42} alt="" />
+            </div>
+          )}
+
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              '& .name-text': {
+                fontFamily: 'Inter',
+                fontSize: '16px',
+                fontWeight: 600,
+                lineHeight: '19.94px',
+                color: '#100324',
+              },
+              '& .role-text': {
+                fontFamily: 'Inter',
+                fontSize: '14px',
+                fontWeight: 400,
+                lineHeight: '16.94px',
+                color: '#10032480',
+              },
+            }}
+          >
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <p className="m-0 name-text">john deo</p>
+                <p className="m-0 role-text text-end">admin</p>
+              </div>
+              <div className="ms-3">
+                <Image src={placeholder} alt="logo" width={42} height={42} />
+              </div>
+            </div>
           </Typography>
         </Toolbar>
       </AppBar>
