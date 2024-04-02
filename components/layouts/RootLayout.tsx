@@ -62,11 +62,11 @@ const RootLayout = ({ children }: Props) => {
 
     const getUserDetails = async (token: string, hasOldToken?: boolean) => {
       try {
-        const user: any = await authService.getUser(token, hasOldToken);
-        if (user?.user._id) {
-          sessionStorage.setItem('jwt-token', `${user.token}`);
-          dispatch(setToken(user.data.token));
-          dispatch(setUserData({ ...user.data.user }));
+        const userData: any = await authService.getUser(token, hasOldToken);
+        if (userData?.user._id) {
+          sessionStorage.setItem('jwt-token', `${userData.token}`);
+          dispatch(setToken(userData.token));
+          dispatch(setUserData({ ...userData.user }));
         }
       } catch (error) {
         // sessionStorage.clear();
@@ -87,7 +87,7 @@ const RootLayout = ({ children }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (userData?.role && router.pathname.includes('/dashboard') && userData.role !== 'admin') {
+    if (userData.role && router.pathname.includes('/dashboard') && userData.role !== 'admin') {
       router.push('/');
     }
   }, [router, userData]);
