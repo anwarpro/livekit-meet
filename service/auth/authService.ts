@@ -6,9 +6,10 @@ import { GET } from "../../utils/axios.config";
 const getAuthorization = () => {
     // Getting user token and set to session storage
     try {
-        const sessionStorageToken = localStorage.getItem("jwt-token") || null;
-        const token = sessionStorageToken && JSON.parse(sessionStorageToken);
+        const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
+        const token = sessionStorageToken && sessionStorageToken;
         axios.defaults.headers.common = { Authorization: `${token}` };
+        console.log("🚀 ~ getAuthorization ~ token:", token)
 
     } catch (error) { }
 
@@ -36,8 +37,13 @@ class AuthService {
 
     };
 
-    getUser = (cached?: boolean) => {
-        return axios.get<UserResponse>(`${API_URL}/${objectToParams({ cached })}`);
+    getUser = (token: string, cached?: boolean) => {
+        return GET<UserResponse>(`${API_URL}/${objectToParams({ cached })}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
     };
 
 

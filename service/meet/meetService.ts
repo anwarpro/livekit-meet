@@ -6,9 +6,9 @@ import { IMeet } from "../../types/meet";
 const getAuthorization = () => {
     // Getting user token and set to session storage
     try {
-        const sessionStorageToken = localStorage.getItem("jwt-token") || null;
-        const token = sessionStorageToken && JSON.parse(sessionStorageToken);
-        axios.defaults.headers.common = { Authorization: `${token}` };
+        const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
+        const token = sessionStorageToken && sessionStorageToken;
+        axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
     } catch (error) { }
 
 };
