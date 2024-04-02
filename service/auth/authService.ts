@@ -6,7 +6,7 @@ import objectToParams from "../../utils/objectToParams";
 const getAuthorization = () => {
     // Getting user token and set to session storage
     try {
-        const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
+        const sessionStorageToken = localStorage.getItem("jwt-token") || null;
         const token = sessionStorageToken && JSON.parse(sessionStorageToken);
         axios.defaults.headers.common = { Authorization: `${token}` };
     } catch (error) { }

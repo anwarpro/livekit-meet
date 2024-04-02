@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import DashboardLayout from '../../../components/layouts/DashboardLayout';
 import { Box, Tab } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
@@ -6,6 +6,7 @@ import { TabList, TabPanel } from '@mui/lab';
 import UserListTable from '../../../components/user/UserListTable';
 import Image from 'next/image';
 import userIcon from '../../../components/assets/icons/user-colored.png';
+import userService from '../../../service/user/userService';
 
 const UserManagement = () => {
   const [value, setValue] = React.useState('1');
@@ -19,19 +20,27 @@ const UserManagement = () => {
     { id: 'team', label: 'Team Name' },
     { id: 'action', label: 'Action' },
   ];
-  const [contactList, setcontactList] = useState([
-    { fullName: 'israfil', email: 'israfil@gmail.com', role: 'admin', team: 'web' },
-    { fullName: 'israfil', email: 'israfil@gmail.com', role: 'admin', team: 'web' },
-    { fullName: 'israfil', email: 'israfil@gmail.com', role: 'admin', team: 'web' },
-    { fullName: 'israfil', email: 'israfil@gmail.com', role: 'admin', team: 'web' },
-    { fullName: 'israfil', email: 'israfil@gmail.com', role: 'admin', team: 'web' },
-    { fullName: 'israfil', email: 'israfil@gmail.com', role: 'admin', team: 'web' },
-    { fullName: 'israfil', email: 'israfil@gmail.com', role: 'admin', team: 'web' },
-  ]);
+  const [contactList, setcontactList] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
+  const [role,setRole] = useState("student");
   const [search, setSearch] = useState('');
+  const [userCountList,setUserCountList] = useState([]);
+  const fetchData = () => {
+    userService
+      .getAllUsers(search,page,limit,role)
+      .then((res: any) => {
+        console.log(res?.data);
+        setcontactList(res?.data?.users);
+        setTotal(res?.data?.totalCount);
+        setUserCountList(res?.data?.countList);
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(()=> {
+    fetchData();
+  },[])
 
   return (
     <Box
@@ -55,11 +64,14 @@ const UserManagement = () => {
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab
-              value="1"
+            {
+              userCountList?.map((obj:any,idx:number) => {
+                return <Tab
+                key={idx+1}
+              value={(idx+1).toString()}
               label={
                 <div className="d-flex align-items-center">
-                  student
+                  {obj?._id}
                   <Box
                     sx={{
                       position: 'relative',
@@ -67,45 +79,13 @@ const UserManagement = () => {
                       marginLeft: '5px',
                     }}
                   >
-                    50
+                    {obj?.count}
                   </Box>
                 </div>
               }
             />
-            <Tab
-              value="2"
-              label={
-                <div className="d-flex align-items-center">
-                  admin
-                  <Box
-                    sx={{
-                      position: 'relative',
-                      bottom: '7px',
-                      marginLeft: '5px',
-                    }}
-                  >
-                    3
-                  </Box>
-                </div>
-              }
-            />
-            <Tab
-              value="3"
-              label={
-                <div className="d-flex align-items-center">
-                  supper admin
-                  <Box
-                    sx={{
-                      position: 'relative',
-                      bottom: '7px',
-                      marginLeft: '5px',
-                    }}
-                  >
-                    5
-                  </Box>
-                </div>
-              }
-            />
+              })
+            }
           </TabList>
         </Box>
         <TabPanel value={value}>

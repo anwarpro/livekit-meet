@@ -45,7 +45,7 @@ const RootLayout = ({ children }: Props) => {
 
   useEffect(() => {
     let mounted = true;
-    const savedToken = sessionStorage.getItem('jwt-token');
+    const savedToken = localStorage.getItem('jwt-token');
     const checkCookie = async () => {
       try {
         await authService.verifyCookie().then((res) => {
