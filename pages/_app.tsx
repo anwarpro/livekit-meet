@@ -48,20 +48,20 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         description="Meetify meet provides secure, easy-to-use video calls and meetings
         for everyone, on any device."
         twitter={{
-          handle: '@livekitted',
-          site: '@livekitted',
+          handle: 'Programming Hero',
+          site: 'Programming Hero',
           cardType: 'summary_large_image',
         }}
         openGraph={{
           url: 'https://meet.programming-hero.com',
-          // images: [
-          //   {
-          //     url: 'https://meet.livekit.io/images/livekit-meet-open-graph.png',
-          //     width: 2000,
-          //     height: 1000,
-          //     type: 'image/png',
-          //   },
-          // ],
+          images: [
+            {
+              url: '/images/thumbnail.png',
+              width: 2000,
+              height: 1000,
+              type: 'image/png',
+            },
+          ],
           site_name: 'Meetify meet',
         }}
         additionalMetaTags={[
