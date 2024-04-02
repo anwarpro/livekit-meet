@@ -9,6 +9,7 @@ const getAuthorization = () => {
         const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
         const token = sessionStorageToken && JSON.parse(sessionStorageToken);
         axios.defaults.headers.common = { Authorization: `${token}` };
+        axios.defaults.withCredentials = true;
     } catch (error) { }
 
 };
@@ -28,16 +29,7 @@ class AuthService {
                 ? 'https://jsdude.com/api/user'
                 : 'https://web.programming-hero.com/api/user';
 
-        return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': '*',
-                'Access-Control-Allow-Headers': '*'
-            },
-            withCredentials: true,
-
-        });
+        return axios.get<{ success: boolean, token: string }>(`${domain}/verify-cookie`);
 
 
         // const http = axios.create({
