@@ -23,8 +23,7 @@ const UserManagement = () => {
   const [contactList, setcontactList] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [total, setTotal] = useState(0);
-  const [role,setRole] = useState("student");
+  const [role,setRole] = useState("admin");
   const [search, setSearch] = useState('');
   const [userCountList,setUserCountList] = useState([]);
   const fetchData = () => {
@@ -33,14 +32,17 @@ const UserManagement = () => {
       .then((res: any) => {
         console.log(res?.data);
         setcontactList(res?.data?.users);
-        setTotal(res?.data?.totalCount);
-        setUserCountList(res?.data?.countList);
+        setUserCountList((res?.data?.countList)?.sort((a:any, b:any) => {
+          if (a._id < b._id) return -1;
+          if (a._id > b._id) return 1;
+          return 0;
+        }));
       })
       .catch((err) => console.log(err));
   };
   useEffect(()=> {
     fetchData();
-  },[])
+  },[role])
 
   return (
     <Box
@@ -69,6 +71,9 @@ const UserManagement = () => {
                 return <Tab
                 key={idx+1}
               value={(idx+1).toString()}
+              onClick={()=> {
+                setRole(obj?._id);
+              }}
               label={
                 <div className="d-flex align-items-center">
                   {obj?._id}
@@ -92,7 +97,7 @@ const UserManagement = () => {
           <UserListTable
             fields={fields}
             items={contactList}
-            total={total}
+            total={contactList.length}
             page={page}
             setPage={setPage}
             limit={limit}

@@ -30,7 +30,6 @@ type IProps = {
 };
 
 const UserListTable = (props: IProps) => {
-  console.log(props);
   const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
 
   const handleChangePage = (event: any, newPage: any) => {
