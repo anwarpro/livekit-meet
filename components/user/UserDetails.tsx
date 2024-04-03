@@ -24,7 +24,7 @@ const UserDetails = (props: IProps) => {
   useEffect(()=> {
     setUserRole(props?.user?.role);
     setUserTeam(props?.user?.team);
-  },[props])
+  },[props.openModal])
   const handleUserEdit = () => {
     const newData:Inputs = {
       role: userRole,

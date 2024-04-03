@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import React from 'react';
 import meetService from '../../service/meet/meetService';
 import { useRouter } from 'next/router';
@@ -22,9 +22,9 @@ const InstantMeet = () => {
   return (
     <div>
       <Box>
-        <p>Create instant meeting</p>
-        <Button onClick={() => handleInstantMeet()} variant="contained">
-          create new meeting
+      <Typography fontWeight="500" className='my-3' fontSize="18px">Create Instant Meet</Typography>
+        <Button onClick={() => handleInstantMeet()} variant="contained" size='large'>
+          Create Instant Meet
         </Button>
       </Box>
     </div>

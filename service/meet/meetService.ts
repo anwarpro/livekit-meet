@@ -44,6 +44,10 @@ class MeetService {
         return axios.get<IMeet>(`${API_URL}/schedule/upcoming`);
     };
 
+    previousSchedule = () => {
+        return axios.get<IMeet>(`${API_URL}/schedule/previous`);
+    };
+
 }
 const meetService = new MeetService()
 export default meetService;
