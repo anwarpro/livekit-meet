@@ -1,12 +1,37 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import DashboardLayout from '../../../components/layouts/DashboardLayout';
+import meetService from '../../../service/meet/meetService';
 
-const index = () => {
-  return <div>report</div>;
+const ReportManagement = () => {
+  const [previousEvent, setPreviousEvent] = useState([]);
+  const fetchData = () => {
+    meetService
+      .previousSchedule()
+      .then((res: any) => {
+        console.log(res.data);
+        setPreviousEvent(res?.data?.data);
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(()=> {
+    fetchData();
+  },[]);
+  return (
+    <div className="schedule-meet-component ">
+      <div className="row mt-5 justify-content-center">
+        
+        <div className="col-md-8">
+          <p className="sub-title">Upcoming...</p>
+          <p className="sub-title">Previous Total Schedule: {previousEvent.length}</p>
+          
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default index;
+export default ReportManagement;
 
-index.getLayout = function getLayout(page: ReactElement) {
+ReportManagement.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
