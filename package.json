@@ -41,6 +41,7 @@
     "react-redux": "^9.1.0",
     "read-excel-file": "^5.7.1",
     "redux-thunk": "^3.1.0",
+    "sweetalert": "^2.1.2",
     "tinykeys": "^2.1.0"
   },
   "devDependencies": {

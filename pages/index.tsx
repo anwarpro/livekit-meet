@@ -8,6 +8,7 @@ import { setEventStore } from '../lib/Slicers/eventSlice';
 import { IMeet } from '../types/meet';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const event = [
   {
@@ -21,10 +22,11 @@ const Home = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [event, setEvent] = useState([]);
+  const { token } = useSelector((state: any) => state.auth);
 
-  const fetchData = () => {
+  const fetchData = (token: string) => {
     meetService
-      .upcomingSchedule()
+      .upcomingSchedule(token)
       .then((res: any) => {
         setEvent(res?.data?.data);
         dispatch(setEventStore(res?.data?.data));
@@ -33,8 +35,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (token) {
+      fetchData(token);
+    }
+  }, [token]);
 
   const handleJoinMeet = (meetId: string) => {
     const joinLink = `${
@@ -50,8 +54,12 @@ const Home = () => {
   };
 
   return (
-    <main className="container">
-      <div className="homepage-component d-flex justify-content-center align-items-center">
+    <main className="container homepage-component">
+      <div
+        className={`d-flex justify-content-center align-items-center ${
+          event?.length > 0 ? 'active-height' : 'static-height'
+        }`}
+      >
         <div>
           <div className="header text-center">
             <h1>
@@ -65,18 +73,20 @@ const Home = () => {
           <div className="mt-5">
             {event.map((event: IMeet) => (
               <div key={event._id} className="event mb-4">
-                <div className="d-flex justify-content-between align-items-center p-5">
-                  <p className="m-0 clock-text">
-                    <Image src={clockIcon} width={24} height={24} alt="clock" />{' '}
-                    {moment(event.startTime).format('hh:mm A')}
-                  </p>
+                <div className="p-4">
                   <p className="m-0">{event.title}</p>
-                  <button
-                    onClick={() => handleJoinMeet(event?.meetId!)}
-                    className="btn btn-primary"
-                  >
-                    Join Now <Image src={playIcon} width={24} height={24} alt="" />
-                  </button>
+                  <div className="d-flex justify-content-between align-items-center pt-2">
+                    <p className="m-0 clock-text">
+                      <Image src={clockIcon} width={24} height={24} alt="clock" />{' '}
+                      {moment(event.startTime).format('MMMM D YYYY, hh:mm A')}
+                    </p>
+                    <button
+                      onClick={() => handleJoinMeet(event?.meetId!)}
+                      className="btn btn-primary"
+                    >
+                      Join Now <Image src={playIcon} width={24} height={24} alt="" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

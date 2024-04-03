@@ -14,6 +14,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { Autocomplete, Box, Chip, Stack, Switch, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { IMeet } from '../../types/meet';
+import swal from 'sweetalert';
 
 type Iprops = {
   openModal: { edit: boolean };
@@ -38,6 +39,7 @@ const ScheduleModal = (props: Iprops) => {
   const [internalParticipantList, setInternalParticipantList] = useState<string[]>([]);
   const [externalParticipantList, setExternalParticipantList] = useState<string[]>([]);
   const [checked, setChecked] = React.useState(false);
+  const [uploadedFile, setUploadedFile] = useState<{ name: string }>();
 
   const {
     register,
@@ -70,6 +72,7 @@ const ScheduleModal = (props: Iprops) => {
         })
         .catch((err) => {
           console.log('err', err);
+          swal('Oops...', err?.response?.data.message, 'error');
         });
     } else {
       const startTime = dateTimeConverter(data.eventDate, data.startTime);
@@ -92,6 +95,7 @@ const ScheduleModal = (props: Iprops) => {
         })
         .catch((err) => {
           console.log('err', err);
+          swal('Oops...', err?.response?.data.message, 'error');
         });
     }
   };
@@ -112,6 +116,7 @@ const ScheduleModal = (props: Iprops) => {
   };
 
   const handleExcelSheet = (event: any) => {
+    setUploadedFile(event.target.files[0]);
     const schema = {
       email: {
         prop: 'email',
@@ -141,11 +146,24 @@ const ScheduleModal = (props: Iprops) => {
   };
 
   useEffect(() => {
+    let defaultValues: any = {};
+    defaultValues.eventDate = new Date();
+    defaultValues.startTime = new Date();
+    defaultValues.endTime = new Date();
+    reset({ ...defaultValues });
     if (props.editable) {
       // @ts-ignore
       reset(props.editable);
     }
-  }, [props.editable]);
+  }, [props.editable, reset]);
+
+  useEffect(() => {
+    if (props.openModal.edit) {
+      reset();
+      setInternalParticipantList([]);
+      setUploadedFile({ name: '' });
+    }
+  }, [props.openModal, reset]);
 
   return (
     <Box>
@@ -325,13 +343,18 @@ const ScheduleModal = (props: Iprops) => {
                   >
                     <p className="m-0 pb-2">Students Sheet Upload</p>
                     <label className="btn-up">
-                      <input
-                        onChange={(e) => handleExcelSheet(e)}
-                        type="file"
-                        name="internalParticipantList"
-                        hidden
-                      />
-                      <span>Browse files</span>
+                      <div>
+                        <input
+                          onChange={(e) => handleExcelSheet(e)}
+                          type="file"
+                          name="internalParticipantList"
+                          hidden
+                        />
+                        <span>Browse files</span>
+                        {uploadedFile && (
+                          <p className="m-0 pt-2 text-center"> {uploadedFile.name}</p>
+                        )}
+                      </div>
                     </label>
                   </Box>
 
