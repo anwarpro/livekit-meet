@@ -66,14 +66,16 @@ const Home: NextPage = () => {
             dispatch(clearRoom());
           });
       } else {
-        meetService
-          .joinMeet(roomName)
-          .then((res: any) => {
-            dispatch(setRoom(res?.data?.data));
-          })
-          .catch((err) => {
-            dispatch(clearRoom());
-          });
+        if (user?.userData?._id) {
+          meetService
+            .joinMeet(roomName, '', user?.token)
+            .then((res: any) => {
+              dispatch(setRoom(res?.data?.data));
+            })
+            .catch((err) => {
+              dispatch(clearRoom());
+            });
+        }
       }
 
       const input: any = document.getElementById('username');

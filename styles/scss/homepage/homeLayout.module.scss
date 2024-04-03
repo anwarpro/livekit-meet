@@ -1,6 +1,11 @@
 .homepage-component {
   font-family: Inter;
-  height: 100vh;
+  .static-height {
+    height: 100vh;
+  }
+  .active-height{
+    margin-top: 70px;
+  }
   .header {
     h1 {
       font-size: 40px;

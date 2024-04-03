@@ -32,16 +32,29 @@ class MeetService {
         return axios.put<MeetResponse>(`${API_URL}/schedule/update_meet/${id}`, { ...payload });
     };
 
-    joinMeet = (roomId: string, user_t?: string) => {
+    joinMeet = (roomId: string, user_t?: string, token?: string) => {
         if (user_t) {
             return axios.get<MeetResponse>(`${API_URL}/join/${roomId}?user_t=${user_t}`);
         } else {
-            return axios.get<MeetResponse>(`${API_URL}/join/${roomId}`);
+            return axios.get<MeetResponse>(`${API_URL}/join/${roomId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
         }
     };
 
-    upcomingSchedule = () => {
-        return axios.get<IMeet>(`${API_URL}/schedule/upcoming`);
+    upcomingSchedule = (token?: string) => {
+        if (token) {
+            return axios.get<IMeet>(`${API_URL}/schedule/upcoming`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        } else {
+            return axios.get<IMeet>(`${API_URL}/schedule/upcoming`);
+        }
+
     };
 
 }
