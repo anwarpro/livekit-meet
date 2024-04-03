@@ -22,7 +22,7 @@ const InstantMeet = () => {
   return (
     <div>
       <Box>
-      <Typography fontWeight="500" className='my-3' fontSize="18px">Create Instant Meet</Typography>
+      <Typography fontWeight="500" className='my-3' fontSize="18px">Instant Meet</Typography>
         <Button onClick={() => handleInstantMeet()} variant="contained" size='large'>
           Create Instant Meet
         </Button>
