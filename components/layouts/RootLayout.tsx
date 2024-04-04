@@ -71,7 +71,7 @@ const RootLayout = ({ children }: Props) => {
       } catch (error) {
         // sessionStorage.clear();
         // await deleteAllCookies();
-        // await checkCookie();
+        await checkCookie();
       }
     };
 
