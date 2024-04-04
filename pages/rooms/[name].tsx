@@ -232,9 +232,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
         >
           <VideoConference
             chatMessageFormatter={formatChatMessageLinks}
-            SettingsComponent={
-              process.env.NEXT_PUBLIC_SHOW_SETTINGS_MENU === 'true' ? SettingsMenu : undefined
-            }
+            SettingsComponent={SettingsMenu}
           />
           {/* <VideoConferenceProvider /> */}
           <DebugMode />
