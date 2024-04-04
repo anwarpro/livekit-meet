@@ -390,7 +390,7 @@ const ScheduleModal = (props: Iprops) => {
                       multiple
                       filterSelectedOptions
                       id="tags-filled"
-                      options={[{ email: 'israfil@gmail.com' }, { email: 'rasel@gmail.com' }].map(
+                      options={[{ email: 'israfil@programming-hero.com' }].map(
                         (option) => option.email,
                       )}
                       defaultValue={[]}
