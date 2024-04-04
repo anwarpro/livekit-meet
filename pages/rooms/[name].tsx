@@ -5,6 +5,10 @@ import {
   formatChatMessageLinks,
   useToken,
   LocalUserChoices,
+  ControlBar,
+  GridLayout,
+  useTracks,
+  ParticipantTile,
 } from '@livekit/components-react';
 import {
   DeviceUnsupportedError,
@@ -12,7 +16,9 @@ import {
   LogLevel,
   Room,
   RoomConnectOptions,
+  RoomEvent,
   RoomOptions,
+  Track,
   VideoCodec,
   VideoPresets,
   setLogLevel,
@@ -32,6 +38,7 @@ import { useSelector } from 'react-redux';
 import { clearRoom, setRoom } from '../../lib/Slicers/meetSlice';
 import { Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
+import VideoConferenceProvider from '../../lib/VideoConferenceProvider';
 
 const PreJoinNoSSR = dynamic(
   async () => {
@@ -209,6 +216,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   }, []);
 
   const { roomInfo } = useSelector((state: any) => state.room);
+  console.log('active');
 
   return (
     <Box sx={{ height: '100vh' }}>
@@ -228,6 +236,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
               process.env.NEXT_PUBLIC_SHOW_SETTINGS_MENU === 'true' ? SettingsMenu : undefined
             }
           />
+          {/* <VideoConferenceProvider /> */}
           <DebugMode />
         </LiveKitRoom>
       )}
