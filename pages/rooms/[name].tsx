@@ -219,7 +219,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   console.log('active');
 
   return (
-    <Box sx={{ height: '100vh' }}>
+    <Box sx={{ height: '100dvh' }}>
       {liveKitUrl && (
         <LiveKitRoom
           room={room}
