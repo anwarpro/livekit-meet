@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-
+import { useEffect, useState } from 'react';
 import authService from '../../service/auth/authService';
 import { setToken, setUserData } from '../../lib/Slicers/authSlice';
 import { useRouter } from 'next/router';
 
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { useSearchParams } from 'next/navigation';
 
 type Props = {
   children: string | JSX.Element | JSX.Element[];
@@ -14,6 +14,9 @@ const RootLayout = ({ children }: Props) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { userData } = useSelector((state: any) => state.auth);
+  const searchParams = useSearchParams();
+  const [guestToken, setGuestToken] = useState<string>();
+  console.log('🚀 ~ RootLayout ~ guestToken:', guestToken);
 
   const deleteAllCookies = async (): Promise<boolean> => {
     const cookies = document.cookie.split(';');
@@ -43,48 +46,60 @@ const RootLayout = ({ children }: Props) => {
   };
 
   useEffect(() => {
+    const tempGuestToken = searchParams.get('user_t');
+    if (tempGuestToken) {
+      setGuestToken(tempGuestToken);
+    }
+  }, [searchParams, guestToken]);
+
+
+  useEffect(() => {
     let mounted = true;
-    const savedToken = sessionStorage.getItem('jwt-token');
-    const checkCookie = async () => {
-      try {
-        await authService.verifyCookie().then((res) => {
-          if (!mounted) return;
-          if (res.success) {
-            getUserDetails(res.token);
-          } else {
-            navigateUser();
-          }
-        });
-      } catch (error) {
-        navigateUser();
-      }
-    };
-
-    const getUserDetails = async (token: string, hasOldToken?: boolean) => {
-      try {
-        const userData: any = await authService.getUser(token, hasOldToken);
-        if (userData?.user._id) {
-          sessionStorage.setItem('jwt-token', `${userData.token}`);
-          dispatch(setToken(userData.token));
-          dispatch(setUserData({ ...userData.user }));
+    console.log("guestToken", guestToken);
+    
+    if (guestToken === undefined) {
+      const savedToken = sessionStorage.getItem('jwt-token');
+      const checkCookie = async () => {
+        try {
+          await authService.verifyCookie().then((res) => {
+            if (!mounted) return;
+            if (res.success) {
+              getUserDetails(res.token);
+            } else {
+              navigateUser();
+            }
+          });
+        } catch (error) {
+          navigateUser();
         }
-      } catch (error) {
-        // sessionStorage.clear();
-        // await deleteAllCookies();
-        await checkCookie();
-      }
-    };
+      };
 
-    if (savedToken && savedToken !== null) {
-      getUserDetails(savedToken, true);
-    } else {
-      checkCookie();
+      const getUserDetails = async (token: string, hasOldToken?: boolean) => {
+        try {
+          const userData: any = await authService.getUser(token, hasOldToken);
+          if (userData?.user._id) {
+            sessionStorage.setItem('jwt-token', `${userData.token}`);
+            dispatch(setToken(userData.token));
+            dispatch(setUserData({ ...userData.user }));
+          }
+        } catch (error) {
+          // sessionStorage.clear();
+          // await deleteAllCookies();
+          await checkCookie();
+        }
+      };
+
+      if (savedToken && savedToken !== null) {
+        getUserDetails(savedToken, true);
+      } else {
+        checkCookie();
+      }
     }
 
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [dispatch, guestToken]);
 
   useEffect(() => {
     if (userData.role && router.pathname.includes('/dashboard') && userData.role !== 'admin') {
