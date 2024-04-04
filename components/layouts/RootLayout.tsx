@@ -15,8 +15,7 @@ const RootLayout = ({ children }: Props) => {
   const dispatch = useDispatch();
   const { userData } = useSelector((state: any) => state.auth);
   const searchParams = useSearchParams();
-  const [guestToken, setGuestToken] = useState<string>();
-  console.log('🚀 ~ RootLayout ~ guestToken:', guestToken);
+  const guestToken = searchParams.get('user_t');
 
   const deleteAllCookies = async (): Promise<boolean> => {
     const cookies = document.cookie.split(';');
@@ -46,59 +45,51 @@ const RootLayout = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    const tempGuestToken = searchParams.get('user_t');
-    if (tempGuestToken) {
-      setGuestToken(tempGuestToken);
-    }
-  }, [searchParams, guestToken]);
-
-
-  useEffect(() => {
-    let mounted = true;
-    console.log("guestToken", guestToken);
-    
-    if (guestToken === undefined) {
-      const savedToken = sessionStorage.getItem('jwt-token');
-      const checkCookie = async () => {
-        try {
-          await authService.verifyCookie().then((res) => {
-            if (!mounted) return;
-            if (res.success) {
-              getUserDetails(res.token);
-            } else {
-              navigateUser();
-            }
-          });
-        } catch (error) {
-          navigateUser();
-        }
-      };
-
-      const getUserDetails = async (token: string, hasOldToken?: boolean) => {
-        try {
-          const userData: any = await authService.getUser(token, hasOldToken);
-          if (userData?.user._id) {
-            sessionStorage.setItem('jwt-token', `${userData.token}`);
-            dispatch(setToken(userData.token));
-            dispatch(setUserData({ ...userData.user }));
+    const timeOutId = setTimeout(() => {
+      if (guestToken === null) {
+        let mounted = true;
+        const savedToken = sessionStorage.getItem('jwt-token');
+        const checkCookie = async () => {
+          try {
+            await authService.verifyCookie().then((res) => {
+              if (!mounted) return;
+              if (res.success) {
+                getUserDetails(res.token);
+              } else {
+                navigateUser();
+              }
+            });
+          } catch (error) {
+            navigateUser();
           }
-        } catch (error) {
-          // sessionStorage.clear();
-          // await deleteAllCookies();
-          await checkCookie();
+        };
+
+        const getUserDetails = async (token: string, hasOldToken?: boolean) => {
+          try {
+            const userData: any = await authService.getUser(token, hasOldToken);
+            if (userData?.user._id) {
+              sessionStorage.setItem('jwt-token', `${userData.token}`);
+              dispatch(setToken(userData.token));
+              dispatch(setUserData({ ...userData.user }));
+            }
+          } catch (error) {
+            // sessionStorage.clear();
+            // await deleteAllCookies();
+            await checkCookie();
+          }
+        };
+
+        if (savedToken && savedToken !== null) {
+          getUserDetails(savedToken, true);
+        } else {
+          checkCookie();
         }
-      };
-
-      if (savedToken && savedToken !== null) {
-        getUserDetails(savedToken, true);
-      } else {
-        checkCookie();
+        return () => {
+          mounted = false;
+        };
       }
-    }
-
-    return () => {
-      mounted = false;
-    };
+    }, 100);
+    return () => clearTimeout(timeOutId);
   }, [dispatch, guestToken]);
 
   useEffect(() => {
