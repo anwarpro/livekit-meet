@@ -11,3 +11,22 @@ body {
 .swal-footer {
   text-align: center;
 }
+
+@media screen and (max-width: 760px) {
+  .\lk-control-bar {
+    .\lk-button,
+    .\lk-disconnect-button {
+      border-radius: 50% !important;
+      height: 40px !important;
+      width: 40px !important;
+      padding: 0 !important;
+      // svg {
+      //   width: 100%;
+      //   height: auto;
+      // }
+    }
+    .\lk-button-group-menu {
+      display: none !important;
+    }
+  }
+}
