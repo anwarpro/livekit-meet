@@ -23,7 +23,6 @@ type Events = {
 };
 
 const ScheduleEvent = ({ event, fetchData }: any) => {
-  console.log('🚀 ~ ScheduleEvent ~ event:', event);
   const router = useRouter();
   const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
   const [successModal, setSuccessModal] = useState<{ edit: boolean }>({ edit: false });
