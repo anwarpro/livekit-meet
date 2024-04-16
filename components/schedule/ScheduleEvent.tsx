@@ -23,6 +23,7 @@ type Events = {
 };
 
 const ScheduleEvent = ({ event, fetchData }: any) => {
+  console.log('🚀 ~ ScheduleEvent ~ event:', event);
   const router = useRouter();
   const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
   const [successModal, setSuccessModal] = useState<{ edit: boolean }>({ edit: false });
@@ -92,7 +93,16 @@ const ScheduleEvent = ({ event, fetchData }: any) => {
           <div className="user mt-4">
             <div className="d-flex align-items-center">
               <div>
-                <Image src={placeholder} alt="user profile" width={40} height={40} />
+                <Image
+                  src={
+                    event?.hostProfile?.endsWith('profileImage.png')
+                      ? placeholder
+                      : event.hostProfile
+                  }
+                  alt="user profile"
+                  width={40}
+                  height={40}
+                />
               </div>
               <div className="ps-3">
                 <p className="m-0 name-text">{event?.hostName}</p>
