@@ -11,8 +11,11 @@ body {
 .swal-footer {
   text-align: center;
 }
-.\lk-prejoin{
+.\lk-prejoin {
   height: auto !important;
+}
+.\lk-control-bar {
+  z-index: 1400;
 }
 @media screen and (max-width: 760px) {
   .\lk-control-bar {
@@ -29,6 +32,11 @@ body {
     }
     .\lk-button-group-menu {
       display: none !important;
+    }
+    .participant-button {
+      span {
+        display: none;
+      }
     }
   }
 }
