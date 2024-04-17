@@ -66,7 +66,7 @@ const ScheduleModal = (props: Iprops) => {
       meetService
         .reScheduleMeeting(props.editable?._id as string, newData as any)
         .then((res) => {
-          console.log('res ==>', res);
+          // console.log('res ==>', res);
           setCloseModal({ status: false });
           props.setSuccessModal!({ edit: true });
           props.fetchData();
@@ -89,7 +89,7 @@ const ScheduleModal = (props: Iprops) => {
       meetService
         .addScheduleMeeting(newData)
         .then((res) => {
-          console.log('res ==>', res);
+          // console.log('res ==>', res);
           setCloseModal({ status: false });
           props.setSuccessModal!({ edit: true });
           props.fetchData();

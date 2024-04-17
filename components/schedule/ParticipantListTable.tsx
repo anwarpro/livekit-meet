@@ -80,7 +80,7 @@ const ParticipantListTable = (props: IProps) => {
           internalParticipantList: [deleteEmail],
         })
         .then((res: any) => {
-          console.log('res ==>', res.data?.data);
+          // console.log('res ==>', res.data?.data);
           props.fetchData();
           props.fetchMeetData();
         })
@@ -94,7 +94,7 @@ const ParticipantListTable = (props: IProps) => {
           externalParticipantList: [deleteEmail],
         })
         .then((res: any) => {
-          console.log('res ==>', res.data?.data);
+          // console.log('res ==>', res.data?.data);
           props.fetchData();
           props.fetchMeetData();
         })
@@ -111,7 +111,7 @@ const ParticipantListTable = (props: IProps) => {
           internalParticipantList: internalUsers,
         })
         .then((res: any) => {
-          console.log('res ==>', res.data?.data);
+          // console.log('res ==>', res.data?.data);
           props.fetchData();
           props.fetchMeetData();
           setInternalUsers([]);
@@ -126,7 +126,7 @@ const ParticipantListTable = (props: IProps) => {
           externalParticipantList: externalUsers,
         })
         .then((res: any) => {
-          console.log('res ==>', res.data?.data);
+          // console.log('res ==>', res.data?.data);
           props.fetchData();
           props.fetchMeetData();
           setExternalUsers([]);
