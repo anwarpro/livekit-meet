@@ -92,16 +92,18 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const Dashboard = ({ children }: Props) => {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const { userData } = useSelector((state: any) => state.auth);
   const [isClient, setIsClient] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
+    // @ts-ignore
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    // @ts-ignore
   };
 
   React.useEffect(() => {
