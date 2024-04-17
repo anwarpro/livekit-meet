@@ -75,14 +75,14 @@ const Home = () => {
               <div key={event._id} className="event mb-4">
                 <div className="p-4">
                   <p className="m-0">{event.title}</p>
-                  <div className="d-flex justify-content-between align-items-center pt-2">
+                  <div className="d-sm-flex justify-content-between align-items-center pt-2">
                     <p className="m-0 clock-text">
                       <Image src={clockIcon} width={24} height={24} alt="clock" />{' '}
                       {moment(event.startTime).format('MMMM D YYYY, hh:mm A')}
                     </p>
                     <button
                       onClick={() => handleJoinMeet(event?.meetId!)}
-                      className="btn btn-primary"
+                      className="btn btn-primary mt-sm-0 mt-3"
                     >
                       Join Now <Image src={playIcon} width={24} height={24} alt="" />
                     </button>

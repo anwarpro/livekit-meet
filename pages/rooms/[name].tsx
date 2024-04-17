@@ -3,22 +3,13 @@ import {
   LiveKitRoom,
   VideoConference,
   formatChatMessageLinks,
-  useToken,
   LocalUserChoices,
-  ControlBar,
-  GridLayout,
-  useTracks,
-  ParticipantTile,
 } from '@livekit/components-react';
 import {
-  DeviceUnsupportedError,
   ExternalE2EEKeyProvider,
-  LogLevel,
   Room,
   RoomConnectOptions,
-  RoomEvent,
   RoomOptions,
-  Track,
   VideoCodec,
   VideoPresets,
   setLogLevel,
@@ -38,7 +29,7 @@ import { useSelector } from 'react-redux';
 import { clearRoom, setRoom } from '../../lib/Slicers/meetSlice';
 import { Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import VideoConferenceProvider from '../../lib/VideoConferenceProvider';
+import ParticipantList from '../../lib/ParticipantList';
 
 const PreJoinNoSSR = dynamic(
   async () => {
@@ -147,12 +138,9 @@ type ActiveRoomProps = {
 const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   const router = useRouter();
   const { region, hq, codec } = router.query;
-
   const e2eePassphrase =
     typeof window !== 'undefined' && decodePassphrase(location.hash.substring(1));
-
   const liveKitUrl = useServerUrl(region as string | undefined);
-
   const worker =
     typeof window !== 'undefined' &&
     e2eePassphrase &&
@@ -196,27 +184,49 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     // @ts-ignore
     setLogLevel('debug', 'lk-e2ee');
   }, [userChoices, hq, codec]);
-
   const room = React.useMemo(() => new Room(roomOptions), []);
-  if (e2eeEnabled) {
-    keyProvider.setKey(decodePassphrase(e2eePassphrase));
-    room.setE2EEEnabled(true).catch((e) => {
-      if (e instanceof DeviceUnsupportedError) {
-        alert(
-          `You're trying to join an encrypted meeting, but your browser does not support it. Please update it to the latest version and try again.`,
-        );
-        console.error(e);
-      }
-    });
-  }
   const connectOptions = React.useMemo((): RoomConnectOptions => {
     return {
       autoSubscribe: true,
     };
   }, []);
-
   const { roomInfo } = useSelector((state: any) => state.room);
-  console.log('active');
+  const [open, setOpen] = React.useState<boolean>(false);
+  const toggleDrawer = () => {
+    setOpen((prevState) => !prevState);
+  };
+
+  React.useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        const participantButton = document.getElementsByClassName('participant-button')?.[0];
+        if (!participantButton && mutation.addedNodes.length) {
+          const targetElement = document.getElementsByClassName('lk-control-bar')?.[0];
+          if (targetElement) {
+            const button = document.createElement('button');
+            button.className = 'lk-button participant-button';
+            button.addEventListener('click', () => toggleDrawer());
+            button.innerHTML = `
+            <img height="25" src='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiNmZmYiIHdpZHRoPSIzMHB4IiBoZWlnaHQ9IjMwcHgiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0aXRsZT5pb25pY29ucy12NS1qPC90aXRsZT48Y2lyY2xlIGN4PSIxNTIiIGN5PSIxODQiIHI9IjcyIi8+PHBhdGggZD0iTTIzNCwyOTZjLTI4LjE2LTE0LjMtNTkuMjQtMjAtODItMjAtNDQuNTgsMC0xMzYsMjcuMzQtMTM2LDgydjQySDE2NlYzODMuOTNjMC0xOSw4LTM4LjA1LDIyLTUzLjkzQzE5OS4xNywzMTcuMzIsMjE0LjgxLDMwNS41NSwyMzQsMjk2WiIvPjxwYXRoIGQ9Ik0zNDAsMjg4Yy01Mi4wNywwLTE1NiwzMi4xNi0xNTYsOTZ2NDhINDk2VjM4NEM0OTYsMzIwLjE2LDM5Mi4wNywyODgsMzQwLDI4OFoiLz48Y2lyY2xlIGN4PSIzNDAiIGN5PSIxNjgiIHI9Ijg4Ii8+PC9zdmc+'/>
+            <span>Participant</span>
+              `;
+
+            targetElement.appendChild(button);
+            observer.disconnect();
+          }
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <Box sx={{ height: '100dvh' }}>
@@ -236,6 +246,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
           />
           {/* <VideoConferenceProvider /> */}
           <DebugMode />
+          <ParticipantList setOpen={setOpen} open={open} />
         </LiveKitRoom>
       )}
     </Box>
