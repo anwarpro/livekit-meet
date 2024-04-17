@@ -68,7 +68,7 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
 
   return (
     <div className="schedule-event">
-      <div className="schedule-card p-5 mb-5" style={{ border: 'none' }}>
+      <div className="schedule-card mb-5" style={{ border: 'none' }}>
         <p className="meet-link">Meeting Link</p>
         <div className="link-area d-flex justify-content-between align-items-center p-3">
           <p id="textToCopy" className="m-0">
@@ -83,14 +83,14 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
           <Image onClick={handleCopyClick} src={copyIcon} width={24} height={24} alt="copy" />
         </div>
         <div className="date-time d-flex justify-content-start align-items-center mt-3">
-          <div>
-            <Image src={calenderIcon} width={24} height={24} alt="copy" />
-            <span className="ps-2">{moment(eventInfo?.startTime).format('DD MMM, yy')}</span>
-          </div>
-          <div className="ps-5">
+          <div className="d-flex justify-content-between align-items-center">
             <Image src={clockIcon} width={24} height={24} alt="copy" className="me-2" />
             <span>{moment(eventInfo?.startTime).format('hh:mm A')}</span> - {''}
             <span>{moment(eventInfo?.endTime).format('hh:mm A')}</span>
+          </div>
+          <div className="d-flex justify-content-between align-items-center ps-5">
+            <Image src={calenderIcon} width={24} height={24} alt="copy" />
+            <span className="ps-2">{moment(eventInfo?.startTime).format('DD MMM, yy')}</span>
           </div>
         </div>
         {/* <div className="user mt-4">
@@ -117,17 +117,17 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
           <p>Students: {eventInfo?.internalParticipantList?.length}</p>
           <p>Guest: {eventInfo?.externalParticipantList?.length}</p>
         </div>
-        <div className="btn-area mt-2">
+        <div className="btn-area mt-2 d-lg-flex">
           <button
             onClick={() => handleOpenModal(eventInfo?._id)}
-            className="btn btn-primary reschedule"
+            className="btn btn-primary reschedule w-100"
           >
             <Image src={editIcon} width={24} height={24} alt="edit" />{' '}
             <span className="ms-2">Modify</span>
           </button>
           <button
             onClick={() => handleJoinMeet(eventInfo?.meetId!)}
-            className="btn btn-primary ms-3"
+            className="btn btn-primary ms-lg-3 mt-lg-0 mt-3 w-100"
           >
             Join Now <Image src={playIcon} width={24} height={24} alt="" />
           </button>

@@ -57,7 +57,7 @@ const ScheduleManagement = () => {
         </div>
       </div>
       <div className="row mt-5">
-        <div className="col-md-7">
+        <div className="col-lg-7">
           <p className="sub-title d-flex justify-content-start align-items-center mb-4">
             <Image src={infoIcon} width="24" height="24" alt="info" />{' '}
             <span className="ps-2">Upcoming Scheduled</span>
@@ -70,8 +70,8 @@ const ScheduleManagement = () => {
             selectedEvent={selectedEvent}
           />
         </div>
-        <div className="col-md-5">
-          <p className="sub-title d-flex justify-content-start align-items-center">
+        <div className="col-lg-5">
+          <p className="sub-title d-flex justify-content-start align-items-center mb-4">
             {' '}
             <Image src={infoIcon} width="24" height="24" alt="info" />{' '}
             <span className="ps-2">Joining Info</span>

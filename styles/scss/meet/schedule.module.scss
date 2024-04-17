@@ -65,8 +65,10 @@
     .schedule-card {
       border: 1px solid #10032426;
       border-radius: 12px;
+      padding: 24px;
+      background: #f8f7f8;
       .title {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 600;
         line-height: 21.78px;
         color: #100324cc;
@@ -81,12 +83,17 @@
           font-weight: 500;
           line-height: 19.36px;
           color: #100324b2;
+          line-break: anywhere;
         }
       }
       .link-area {
         border: 1px solid #10032426;
         border-radius: 12px;
         cursor: pointer;
+      }
+      .date-time {
+        border-bottom: 1px solid #1003240d;
+        padding-bottom: 17px;
       }
       .user {
         .name-text {
