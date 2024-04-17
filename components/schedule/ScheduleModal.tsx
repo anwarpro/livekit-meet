@@ -11,10 +11,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import moment from 'moment';
 import dayjs, { Dayjs } from 'dayjs';
-import { Autocomplete, Box, Chip, Stack, Switch, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, Chip, Stack, Switch, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { IMeet } from '../../types/meet';
 import swal from 'sweetalert';
+import ScheduleParticipantModal from './ScheduleParticipantModal';
 
 type Iprops = {
   openModal: { edit: boolean };
@@ -144,6 +145,8 @@ const ScheduleModal = (props: Iprops) => {
   const handleExternalSelect = (e: any, newValue: any) => {
     setExternalParticipantList(newValue);
   };
+
+  
 
   useEffect(() => {
     let defaultValues: any = {};
