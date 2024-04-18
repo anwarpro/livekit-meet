@@ -109,26 +109,7 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
                 <span className="ps-2">{moment(eventInfo?.startTime).format('DD MMM, yy')}</span>
               </div>
             </div>
-            {/* <div className="user mt-4">
-            <div className="d-flex align-items-center">
-              <div>
-                <Image
-                  src={
-                    event?.hostProfile?.endsWith('profileImage.png')
-                      ? placeholder
-                      : event.hostProfile
-                  }
-                  alt="user profile"
-                  width={40}
-                  height={40}
-                />
-              </div>
-              <div className="ps-3">
-                <p className="m-0 name-text">{event?.hostName}</p>
-                <p className="m-0 role-text">{event?.hostTeam}</p>
-              </div>
-            </div>
-          </div> */}
+            
             <div className="participants d-flex justify-content-between align-items-center mt-4">
               <p>Students: {eventInfo?.internalParticipantList?.length}</p>
               <p>Guest: {eventInfo?.externalParticipantList?.length}</p>
@@ -143,7 +124,7 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
               </button>
               <button
                 onClick={() => handleOpenParticipantModal(eventInfo._id)}
-                className="btn btn-primary reschedule w-100 mx-lg-3 my-lg-0 my-3"
+                className="btn btn-primary reschedule w-100 mx-lg-2 my-lg-0 my-3"
               >
                 Participants
               </button>
