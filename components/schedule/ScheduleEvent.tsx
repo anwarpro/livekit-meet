@@ -79,31 +79,37 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
   return (
     <div className="schedule-event">
       <div className="schedule-card mb-5" style={{ border: 'none' }}>
-        <p className="meet-link">Meeting Link</p>
-        <div className="link-area d-flex justify-content-between align-items-center p-3">
-          <p id="textToCopy" className="m-0">
-            {`${
-              process.env.NEXT_PUBLIC_ENVIRONMENT === 'development'
-                ? 'http://localhost:7859/'
-                : process.env.NEXT_PUBLIC_ENVIRONMENT === 'uat'
-                ? 'https://meet.jsdude.com/'
-                : 'https://meet.programming-hero.com/'
-            }rooms/${eventInfo?.meetId}`}
-          </p>
-          <Image onClick={handleCopyClick} src={copyIcon} width={24} height={24} alt="copy" />
-        </div>
-        <div className="date-time d-flex justify-content-start align-items-center mt-3">
-          <div className="d-flex justify-content-between align-items-center">
-            <Image src={clockIcon} width={24} height={24} alt="copy" className="me-2" />
-            <span>{moment(eventInfo?.startTime).format('hh:mm A')}</span> - {''}
-            <span>{moment(eventInfo?.endTime).format('hh:mm A')}</span>
+        {!eventInfo ? (
+          <div className="d-flex justify-content-center align-items-center">
+            <p>No Joining Events Available</p>
           </div>
-          <div className="d-flex justify-content-between align-items-center ps-5">
-            <Image src={calenderIcon} width={24} height={24} alt="copy" />
-            <span className="ps-2">{moment(eventInfo?.startTime).format('DD MMM, yy')}</span>
-          </div>
-        </div>
-        {/* <div className="user mt-4">
+        ) : (
+          <div>
+            <p className="meet-link">Meeting Link</p>
+            <div className="link-area d-flex justify-content-between align-items-center p-3">
+              <p id="textToCopy" className="m-0">
+                {`${
+                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'development'
+                    ? 'http://localhost:7859/'
+                    : process.env.NEXT_PUBLIC_ENVIRONMENT === 'uat'
+                    ? 'https://meet.jsdude.com/'
+                    : 'https://meet.programming-hero.com/'
+                }rooms/${eventInfo?.meetId}`}
+              </p>
+              <Image onClick={handleCopyClick} src={copyIcon} width={24} height={24} alt="copy" />
+            </div>
+            <div className="date-time d-flex justify-content-start align-items-center mt-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <Image src={clockIcon} width={24} height={24} alt="copy" className="me-2" />
+                <span>{moment(eventInfo?.startTime).format('hh:mm A')}</span> - {''}
+                <span>{moment(eventInfo?.endTime).format('hh:mm A')}</span>
+              </div>
+              <div className="d-flex justify-content-between align-items-center ps-5">
+                <Image src={calenderIcon} width={24} height={24} alt="copy" />
+                <span className="ps-2">{moment(eventInfo?.startTime).format('DD MMM, yy')}</span>
+              </div>
+            </div>
+            {/* <div className="user mt-4">
             <div className="d-flex align-items-center">
               <div>
                 <Image
@@ -123,31 +129,33 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
               </div>
             </div>
           </div> */}
-        <div className="participants d-flex justify-content-between align-items-center mt-4">
-          <p>Students: {eventInfo?.internalParticipantList?.length}</p>
-          <p>Guest: {eventInfo?.externalParticipantList?.length}</p>
-        </div>
-        <div className="btn-area mt-2 d-lg-flex">
-          <button
-            onClick={() => handleOpenModal(eventInfo?._id)}
-            className="btn btn-primary reschedule w-100"
-          >
-            <Image src={editIcon} width={24} height={24} alt="edit" />{' '}
-            <span className="ms-2">Modify</span>
-          </button>
-          <button
-            onClick={() => handleOpenParticipantModal(eventInfo._id)}
-            className="btn btn-primary reschedule w-100 mx-lg-3 my-lg-0 my-3"
-          >
-            Participants
-          </button>
-          <button
-            onClick={() => handleJoinMeet(eventInfo?.meetId!)}
-            className="btn btn-primary w-100"
-          >
-            Join Now <Image src={playIcon} width={24} height={24} alt="" />
-          </button>
-        </div>
+            <div className="participants d-flex justify-content-between align-items-center mt-4">
+              <p>Students: {eventInfo?.internalParticipantList?.length}</p>
+              <p>Guest: {eventInfo?.externalParticipantList?.length}</p>
+            </div>
+            <div className="btn-area mt-2 d-lg-flex">
+              <button
+                onClick={() => handleOpenModal(eventInfo?._id)}
+                className="btn btn-primary reschedule w-100"
+              >
+                <Image src={editIcon} width={24} height={24} alt="edit" />{' '}
+                <span className="ms-2">Modify</span>
+              </button>
+              <button
+                onClick={() => handleOpenParticipantModal(eventInfo._id)}
+                className="btn btn-primary reschedule w-100 mx-lg-3 my-lg-0 my-3"
+              >
+                Participants
+              </button>
+              <button
+                onClick={() => handleJoinMeet(eventInfo?.meetId!)}
+                className="btn btn-primary w-100"
+              >
+                Join Now <Image src={playIcon} width={24} height={24} alt="" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <ScheduleModal

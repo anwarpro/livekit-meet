@@ -24,6 +24,13 @@ const ScheduleMeet = ({ fetchData, openModal, event, setSelectedEvent, selectedE
       </div> */}
 
       <div className="schedule-event">
+        {event?.length === 0 ? (
+          <div className="schedule-card text-center">
+            <p className="m-0 py-2">No Upcoming Events</p>
+          </div>
+        ) : (
+          'best'
+        )}
         {event.map((event: any) => (
           <div
             key={event._id}
@@ -33,7 +40,7 @@ const ScheduleMeet = ({ fetchData, openModal, event, setSelectedEvent, selectedE
           >
             <p className="title">{event?.title}</p>
             <div className="d-flex justify-content-start align-items-center">
-              <div className="date-time" style={{border: "none"}}>
+              <div className="date-time" style={{ border: 'none' }}>
                 <Image src={clockIcon} width={24} height={24} alt="copy" className="me-2" />
                 <span>{moment(event.startTime).format('hh:mm A')}</span> - {''}
                 <span>{moment(event.endTime).format('hh:mm A')}</span>
