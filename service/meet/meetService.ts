@@ -60,6 +60,27 @@ class MeetService {
     previousSchedule = () => {
         return axios.get<IMeet>(`${API_URL}/schedule/previous`);
     };
+    scheduleGetById = (id:string) => {
+        return axios.get<IMeet>(`${API_URL}/schedule/single/${id}`);
+    };
+    removerInternalParticipant = (id:string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/remove_internal/${id}`,{ ...payload });
+    }
+    removerExternalParticipant = (id:string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/remove_external/${id}`,{ ...payload });
+    }
+    addInternalParticipant = (id:string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/add_internal/${id}`,{ ...payload });
+    }
+    addExternalParticipant = (id:string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/add_external/${id}`,{ ...payload });
+    }
+    getInternalParticipant = (id:string, search: string, limit: number, page: number) => {
+        return axios.get<IMeet>(`${API_URL}/schedule/get_internal/${id}?limit=${limit}&page=${page}&search=${search}`);
+    }
+    getexternalParticipant = (id:string, search: string, limit: number, page: number) => {
+        return axios.get<IMeet>(`${API_URL}/schedule/get_external/${id}?limit=${limit}&page=${page}&search=${search}`);
+    }
 
 }
 const meetService = new MeetService()

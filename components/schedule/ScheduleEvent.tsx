@@ -12,6 +12,7 @@ import { IMeet } from '../../types/meet';
 import { useRouter } from 'next/router';
 import SuccessPopUp from './SuccessPopUp';
 import { useSelector } from 'react-redux';
+import ScheduleParticipantModal from './ScheduleParticipantModal';
 
 type Events = {
   _id: number;
@@ -30,6 +31,9 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
   const { events } = useSelector((state: any) => state.events);
   const [editable, setEditable] = useState<IMeet>();
   const [copied, setCopied] = useState(false);
+  const [openParticipantModal, setOpenParticipantModal] = useState<{ edit: boolean }>({
+    edit: false,
+  });
   const handleCopyClick = () => {
     const textToCopy = document.getElementById('textToCopy')!.innerText;
     navigator.clipboard
@@ -43,10 +47,16 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
       .catch((err) => console.error('Failed to copy: ', err));
   };
 
-  const handleOpenModal = (id: string) => {
-    setOpenModal({ edit: true });
+  const handleOpenParticipantModal = (id: string) => {
     const eachEvent = events.find((event: any) => event._id === id);
     setEditable(eachEvent);
+    setOpenParticipantModal({ edit: true });
+  };
+
+  const handleOpenModal = (id: string) => {
+    const eachEvent = events.find((event: any) => event._id === id);
+    setEditable(eachEvent);
+    setOpenModal({ edit: true });
   };
 
   const handleJoinMeet = (meetId: string) => {
@@ -126,8 +136,14 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
             <span className="ms-2">Modify</span>
           </button>
           <button
+            onClick={() => handleOpenParticipantModal(eventInfo._id)}
+            className="btn btn-primary reschedule w-100 mx-lg-3 my-lg-0 my-3"
+          >
+            Participants
+          </button>
+          <button
             onClick={() => handleJoinMeet(eventInfo?.meetId!)}
-            className="btn btn-primary ms-lg-3 mt-lg-0 mt-3 w-100"
+            className="btn btn-primary w-100"
           >
             Join Now <Image src={playIcon} width={24} height={24} alt="" />
           </button>
@@ -140,6 +156,13 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
         editable={editable}
         setSuccessModal={setSuccessModal}
         reschedule
+      />
+      <ScheduleParticipantModal
+        openParticipantModal={openParticipantModal}
+        editable={editable!}
+        // fetchData={fetchData}
+        // setSuccessModal={setSuccessModal}
+        // reschedule
       />
       <SuccessPopUp openModal={successModal} reschedule />
     </div>
