@@ -2,16 +2,16 @@
 const path = require('path');
 
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'phero-web.nyc3.cdn.digitaloceanspaces.com',
-        port: '',
-        pathname: '/uat-images/public/**',
-      },
-    ],
-  },
+  // images: {
+  //   remotePatterns: [
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'phero-web.nyc3.cdn.digitaloceanspaces.com',
+  //       port: '',
+  //       pathname: '/uat-images/public/**',
+  //     },
+  //   ],
+  // },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
@@ -26,6 +26,9 @@ const nextConfig = {
       use: ['source-map-loader'],
     });
     return config;
+  },
+  images: {
+    domains: ['phero-web.nyc3.cdn.digitaloceanspaces.com'],
   },
 };
 
