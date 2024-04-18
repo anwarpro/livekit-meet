@@ -8,6 +8,15 @@
     margin: 0;
     padding-left: 10px;
   }
+  .create-schedule-btn {
+    border: 1px solid #100324cc;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 21.78px;
+    padding: 10px 15px;
+    background-color: #fff;
+  }
   .sub-title {
     font-size: 18px;
     font-weight: 500;
@@ -56,11 +65,17 @@
     .schedule-card {
       border: 1px solid #10032426;
       border-radius: 12px;
+      padding: 24px;
+      background: #f8f7f8;
       .title {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 600;
         line-height: 21.78px;
         color: #100324cc;
+        text-transform: capitalize;
+      }
+      .meet-link {
+        color: #100324b2;
       }
       .link-area {
         p {
@@ -68,12 +83,17 @@
           font-weight: 500;
           line-height: 19.36px;
           color: #100324b2;
+          line-break: anywhere;
         }
       }
       .link-area {
         border: 1px solid #10032426;
         border-radius: 12px;
         cursor: pointer;
+      }
+      .date-time {
+        border-bottom: 1px solid #1003240d;
+        padding-bottom: 17px;
       }
       .user {
         .name-text {
@@ -89,6 +109,13 @@
           color: #10032480;
         }
       }
+      .participants {
+        p {
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 19.36px;
+        }
+      }
       .btn-area {
         .btn-primary {
           padding: 12px 25px !important;
@@ -99,18 +126,38 @@
           background: linear-gradient(270deg, #006eff 0%, #2170d8 100%) !important;
         }
         .reschedule {
+          border: 1px solid #10032433 !important;
           font-size: 18px;
           font-weight: 500;
           line-height: 17px;
-          color: #006eff;
+          color: #100324b2;
           border: none;
-          padding: 17px 40px !important;
-
-          background: linear-gradient(
-            270deg,
-            rgba(0, 110, 255, 0.1) 0%,
-            rgba(33, 112, 216, 0.1) 100%
-          ) !important;
+          padding: 13px 40px !important;
+          background: #fff !important;
+        }
+      }
+    }
+    .active-event {
+      background: linear-gradient(
+        270deg,
+        rgba(0, 110, 255, 0.1) 0%,
+        rgba(33, 112, 216, 0.1) 100%
+      ) !important;
+      border: none !important;
+      .title {
+        background: linear-gradient(270deg, #006eff 0%, #2170d8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .date-time {
+        color: #10032499;
+      }
+      .user {
+        .name-text {
+          color: #10032480;
+        }
+        .role-text {
+          color: #10032480;
         }
       }
     }

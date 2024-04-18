@@ -26,7 +26,7 @@ const UserManagement = () => {
   const [role,setRole] = useState("admin");
   const [total, setTotal] = useState(0);
   const [userCountList,setUserCountList] = useState([]);
-  const [searchText, setSearchText] = useState("hello");
+  const [searchText, setSearchText] = useState("");
 
   const fetchData = () => {
     userService

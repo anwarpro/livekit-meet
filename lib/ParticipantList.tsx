@@ -16,7 +16,22 @@ type IProps = {
 export default function ParticipantList({ open, setOpen }: IProps) {
   const participants = useParticipants();
   const DrawerList = (
-    <Box sx={{ width: 280}} role="presentation">
+    <Box
+      sx={{
+        width: 280,
+        '& .participant-title': {
+          ml: 2,
+          textTransform: 'capitalize',
+          fontSize: '20px',
+          fontWeight: '600',
+          mt: 2,
+          borderBottom: '1px solid #1003240D',
+          pb: 2,
+        },
+      }}
+      role="presentation"
+    >
+      <p className="participant-title">total participants : {participants.length}</p>
       <List>
         {participants?.map((p, index) => (
           <ListItem key={p.identity} disablePadding>
