@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -15,7 +15,7 @@ type IProps = {
 };
 export default function ParticipantList({ open, setOpen }: IProps) {
   const participants = useParticipants();
-  console.log(participants);
+
   useEffect(() => {
     const targetElements = document.getElementsByClassName('lk-participant-tile');
     if (targetElements) {
@@ -24,8 +24,8 @@ export default function ParticipantList({ open, setOpen }: IProps) {
         const nameDiv = targetElement?.querySelector(
           '.lk-participant-metadata .lk-participant-metadata-item .lk-participant-name',
         );
-        const nameData = nameDiv?.getAttribute("data-lk-participant-name");
-        console.log("name", nameData);
+        const nameData = nameDiv?.getAttribute('data-lk-participant-name');
+        // console.log('name', nameData);
         if (nameData) {
           const name = JSON.parse(nameData)?.name;
           const email = JSON.parse(nameData)?.email;
@@ -37,7 +37,7 @@ export default function ParticipantList({ open, setOpen }: IProps) {
               participantSrc !== '' &&
               !participantSrc?.includes('profileImage')
             ) {
-              placeholderDiv.innerHTML = `<img src=${participantSrc} width="320" height="320"/>`;
+              placeholderDiv.innerHTML = `<img src=${participantSrc} width="150" height="150"/>`;
             }
             const nameDiv = targetElement?.querySelector(
               '.lk-participant-metadata .lk-participant-metadata-item .lk-participant-name',
@@ -53,6 +53,45 @@ export default function ParticipantList({ open, setOpen }: IProps) {
       }
     }
   }, [participants]);
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length) {
+          const chatDiv = document?.getElementsByClassName('lk-chat-messages')[0];
+          if (chatDiv) {
+            const nameDiv = document?.getElementsByClassName('lk-participant-name')[1];
+            if (nameDiv) {
+              const nameData = nameDiv.innerHTML;
+              if (nameData) {
+                let name;
+                try {
+                  // Try parsing nameData as JSON
+                  const parsedData = JSON.parse(nameData);
+                  name = parsedData.name;
+                } catch (error) {
+                  // If parsing fails, use nameData directly
+                  name = nameData;
+                }
+                nameDiv.innerHTML = name;
+                observer.disconnect();
+              }
+            }
+          }
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const DrawerList = (
     <Box
       sx={{
@@ -73,17 +112,19 @@ export default function ParticipantList({ open, setOpen }: IProps) {
       <List>
         {participants?.map((p, index) => {
           let name = p.name;
-          if(name?.startsWith("{")) {
+          if (name?.startsWith('{')) {
             name = JSON.parse(name)?.name;
           }
-          return (<ListItem key={p.identity} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary={name !== '' ? name : p.identity} />
-            </ListItemButton>
-          </ListItem>)
+          return (
+            <ListItem key={p.identity} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary={name !== '' ? name : p.identity} />
+              </ListItemButton>
+            </ListItem>
+          );
         })}
       </List>
     </Box>
