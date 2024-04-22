@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app';
-import type { ReactElement, ReactNode } from 'react';
+import { useEffect, type ReactElement, type ReactNode } from 'react';
 import type { NextPage } from 'next';
 import '@livekit/components-styles';
 import '@livekit/components-styles/prefabs';
@@ -9,6 +9,7 @@ import store from '../lib/store';
 import RootLayout from '../components/layouts/RootLayout';
 import '../styles/scss/main.scss';
 import Script from 'next/script';
+import { useRouter } from 'next/router';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -21,6 +22,17 @@ type AppPropsWithLayout = AppProps & {
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
+  const { pathname } = useRouter();
+
+  //custom theme color set
+  useEffect(() => {
+    const body = document.getElementsByTagName('BODY')[0];
+    if (body && pathname.includes('dashboard')) {
+      // @ts-ignore
+      body.style.background = '#F5F6FA';
+    }
+  }, [pathname]);
+  //end
 
   return getLayout(
     <Provider store={store}>

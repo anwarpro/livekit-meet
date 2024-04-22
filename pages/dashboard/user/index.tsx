@@ -23,33 +23,38 @@ const UserManagement = () => {
   const [contactList, setcontactList] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [role,setRole] = useState("admin");
+  const [role, setRole] = useState('admin');
   const [total, setTotal] = useState(0);
-  const [userCountList,setUserCountList] = useState([]);
-  const [searchText, setSearchText] = useState("");
+  const [userCountList, setUserCountList] = useState([]);
+  const [searchText, setSearchText] = useState('');
 
   const fetchData = () => {
     userService
-      .getAllUsers(searchText,page,limit,role)
+      .getAllUsers(searchText, page, limit, role)
       .then((res: any) => {
         setcontactList(res?.data?.users);
         setTotal(res?.data?.totalCount);
-        setUserCountList((res?.data?.countList)?.sort((a:any, b:any) => {
-          if (a._id < b._id) return -1;
-          if (a._id > b._id) return 1;
-          return 0;
-        }));
+        setUserCountList(
+          res?.data?.countList?.sort((a: any, b: any) => {
+            if (a._id < b._id) return -1;
+            if (a._id > b._id) return 1;
+            return 0;
+          }),
+        );
       })
       .catch((err) => console.log(err));
   };
-  useEffect(()=> {
+  useEffect(() => {
     fetchData();
-  },[role,limit,page,searchText])
+  }, [role, limit, page, searchText]);
 
   return (
     <Box
       sx={{
         width: '100%',
+        background: 'white',
+        borderRadius: '16px',
+        p: 4,
         typography: 'body1',
         '& .title h1': {
           fontFamily: 'Inter',
@@ -61,7 +66,7 @@ const UserManagement = () => {
         },
       }}
     >
-      <div className="title d-flex align-items-center mt-3 mb-4 ">
+      <div className="title d-flex align-items-center  mb-4 ">
         <Image src={userIcon} width="30" height="30" alt="user" />
         <h1>Meetify User List </h1>
       </div>
@@ -96,7 +101,7 @@ const UserManagement = () => {
             })}
           </TabList>
         </Box>
-        <TabPanel value={value}>
+        <TabPanel value={value} sx={{pl: 0}}>
           <UserListTable
             fields={fields}
             items={contactList}

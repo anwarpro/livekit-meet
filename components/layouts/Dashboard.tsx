@@ -49,6 +49,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
+  borderBottom: '1px solid #F5F6FA',
 }));
 
 interface AppBarProps extends MuiAppBarProps {
@@ -79,6 +80,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
+
     ...(open && {
       ...openedMixin(theme),
       '& .MuiDrawer-paper': openedMixin(theme),
@@ -123,6 +125,7 @@ const Dashboard = ({ children }: Props) => {
           backgroundColor: 'white',
           color: 'black',
         }}
+        elevation={0}
       >
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <IconButton
@@ -133,6 +136,9 @@ const Dashboard = ({ children }: Props) => {
             sx={{
               marginRight: 5,
               ...(open && { display: 'none' }),
+              '&:hover': {
+                background: 'none',
+              },
             }}
           >
             <MenuIcon />
@@ -176,6 +182,7 @@ const Dashboard = ({ children }: Props) => {
               </div>
               <div className="ms-3">
                 <Image
+                  className="rounded-circle"
                   src={
                     userData?.profileImage?.endsWith('profileImage.png')
                       ? placeholder
@@ -190,7 +197,7 @@ const Dashboard = ({ children }: Props) => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} sx={{ '& .MuiDrawer-paper': { borderWidth: 0 } }}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -198,7 +205,7 @@ const Dashboard = ({ children }: Props) => {
         </DrawerHeader>
         <SideNav />
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 5, mt: 5 }}>
+      <Box component="main" sx={{ flexGrow: 1, padding: "85px  24px"}}>
         {children}
       </Box>
     </Box>
