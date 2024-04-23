@@ -41,7 +41,7 @@ const ScheduleManagement = () => {
 
   return (
     <div className="schedule-meet-component">
-      <div className="d-flex justify-content-between align-items-center mt-3">
+      <div className="d-flex justify-content-between align-items-center border-bottom">
         <div className="title d-flex align-items-center">
           <Image src={userIcon} width="30" height="30" alt="user" />
           <h1>Schedule Management</h1>
@@ -57,7 +57,7 @@ const ScheduleManagement = () => {
         </div>
       </div>
       <div className="row mt-5">
-        <div className="col-xl-7">
+        <div className="col-xl-7 col-12">
           <p className="sub-title d-flex justify-content-start align-items-center mb-4">
             <Image src={infoIcon} width="24" height="24" alt="info" />{' '}
             <span className="ps-2">Upcoming Scheduled</span>
@@ -70,7 +70,7 @@ const ScheduleManagement = () => {
             selectedEvent={selectedEvent}
           />
         </div>
-        <div className="col-xl-5">
+        <div className="col-xl-5 d-xl-block d-none">
           <p className="sub-title d-flex justify-content-start align-items-center mb-4">
             {' '}
             <Image src={infoIcon} width="24" height="24" alt="info" />{' '}

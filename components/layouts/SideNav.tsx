@@ -46,6 +46,8 @@ const SideNav = () => {
       sx={{
         '& .active-item': {
           color: '#100324',
+          background: '#10032408',
+          borderRadius: '56px',
           '& .MuiTypography-root': {
             fontFamily: 'Inter',
             fontSize: '16px',
@@ -64,12 +66,23 @@ const SideNav = () => {
     >
       <List>
         {navItems.map((item, index) => (
-          <ListItem key={index} disablePadding>
+          <ListItem
+            key={index}
+            disablePadding
+            sx={{
+              padding: '5px 19px',
+            }}
+          >
             <ListItemButton
               href={item.href}
-              className={pathname === item.href ? 'active-item' : 'item'}
+              className={`${pathname === item.href ? 'active-item' : 'item'} `}
+              sx={{
+                '&:hover': {
+                  borderRadius: '56px',
+                },
+              }}
             >
-              <ListItemIcon>
+              <ListItemIcon sx={{ minWidth: 'unset', pr: 2 }}>
                 <Image src={item.icon} width={20} height={20} alt="navIcon" />
               </ListItemIcon>
               <ListItemText primary={item.title} />

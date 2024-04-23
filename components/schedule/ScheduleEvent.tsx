@@ -109,7 +109,7 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
                 <span className="ps-2">{moment(eventInfo?.startTime).format('DD MMM, yy')}</span>
               </div>
             </div>
-            
+
             <div className="participants d-flex justify-content-between align-items-center mt-4">
               <p>Students: {eventInfo?.internalParticipantList?.length}</p>
               <p>Guest: {eventInfo?.externalParticipantList?.length}</p>
@@ -138,22 +138,25 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
           </div>
         )}
       </div>
-
-      <ScheduleModal
-        openModal={openModal}
-        fetchData={fetchData}
-        editable={editable}
-        setSuccessModal={setSuccessModal}
-        reschedule
-      />
-      <ScheduleParticipantModal
-        openParticipantModal={openParticipantModal}
-        editable={editable!}
-        // fetchData={fetchData}
-        // setSuccessModal={setSuccessModal}
-        // reschedule
-      />
-      <SuccessPopUp openModal={successModal} reschedule />
+      {openModal.edit && (
+        <ScheduleModal
+          openModal={openModal}
+          fetchData={fetchData}
+          editable={editable}
+          setSuccessModal={setSuccessModal}
+          reschedule
+        />
+      )}
+      {openParticipantModal.edit && (
+        <ScheduleParticipantModal
+          openParticipantModal={openParticipantModal}
+          editable={editable!}
+          // fetchData={fetchData}
+          // setSuccessModal={setSuccessModal}
+          // reschedule
+        />
+      )}
+      {successModal.edit && <SuccessPopUp openModal={successModal} reschedule />}
     </div>
   );
 };
