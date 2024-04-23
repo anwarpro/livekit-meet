@@ -7,14 +7,30 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PersonIcon from '@mui/icons-material/Person';
-import { useParticipants } from '@livekit/components-react';
+import {
+  TrackToggle,
+  useDataChannel,
+  useParticipants,
+  useRoomContext,
+  useTracks,
+} from '@livekit/components-react';
+import { DataPublishOptions, RoomEvent, Track } from 'livekit-client';
+import { useSelector } from 'react-redux';
 
 type IProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
+  room: any;
 };
-export default function ParticipantList({ open, setOpen }: IProps) {
+export default function ParticipantList({ open, setOpen, room }: IProps) {
   const participants = useParticipants();
+  const { userData } = useSelector((state: any) => state.auth);
+  const [isHandRaised, setIsHandRaised] = useState<boolean | null>(
+    JSON.parse(localStorage.getItem('isHandRaised') || 'null') || null,
+  );
+  const [handRaisedInfo, setHandRaisedInfo] = useState<object>({});
+
+  console.log('🚀 ~ handRaisedInfo:', handRaisedInfo);
 
   useEffect(() => {
     const targetElements = document.getElementsByClassName('lk-participant-tile');
@@ -92,6 +108,60 @@ export default function ParticipantList({ open, setOpen }: IProps) {
     };
   }, []);
 
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  const handleHandRaised = () => {
+    if (isHandRaised) {
+      setIsHandRaised(false);
+      localStorage.setItem('isHandRaised', JSON.stringify(false));
+      setHandRaisedInfo({
+        id: userData?._id,
+        participant: userData?.email,
+        topic: 'hand_raised',
+        value: false,
+      });
+    } else {
+      setIsHandRaised(true);
+      localStorage.setItem('isHandRaised', JSON.stringify(true));
+      setHandRaisedInfo({
+        id: userData?._id,
+        participant: userData?.email,
+        topic: 'hand_raised',
+        value: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (room?.state === 'connected' && isHandRaised !== null) {
+      const data = encoder.encode(
+        JSON.stringify({
+          id: userData?._id,
+          topic: 'hand_raised',
+          value: isHandRaised,
+        }),
+      );
+      room.localParticipant.publishData(data, {
+        reliable: true,
+        destinationIdentities: participants?.map((par) => par.identity),
+        topic: 'hand_raised',
+      });
+    }
+  }, [isHandRaised, room]);
+
+  room.on(
+    RoomEvent.DataReceived,
+    (payload: Uint8Array, participant: any, kind: string, topic: string) => {
+      if (topic === 'hand_raised') {
+        const eachHandRaisedInfo = decoder.decode(payload);
+        let parsedHandRaisedInfo = JSON.parse(eachHandRaisedInfo);
+        parsedHandRaisedInfo.participant = participant.identity;
+        setHandRaisedInfo(parsedHandRaisedInfo);
+      }
+    },
+  );
+
   const DrawerList = (
     <Box
       sx={{
@@ -109,6 +179,7 @@ export default function ParticipantList({ open, setOpen }: IProps) {
       role="presentation"
     >
       <p className="participant-title">total participants : {participants.length}</p>
+      <button onClick={() => handleHandRaised()}>hand raised</button>
       <List>
         {participants?.map((p, index) => {
           let name = p.name;
@@ -122,6 +193,11 @@ export default function ParticipantList({ open, setOpen }: IProps) {
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary={name !== '' ? name : p.identity} />
+                {/* @ts-ignore  */}
+                {p.identity === handRaisedInfo?.participant && (
+                  //@ts-ignore
+                  <p>{handRaisedInfo.value ? '🤚' : ''}</p>
+                )}
               </ListItemButton>
             </ListItem>
           );

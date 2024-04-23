@@ -9,6 +9,7 @@ import {
   ExternalE2EEKeyProvider,
   Room,
   RoomConnectOptions,
+  RoomEvent,
   RoomOptions,
   VideoCodec,
   VideoPresets,
@@ -228,6 +229,8 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     };
   }, []);
 
+console.log("room =================================================================>", room);
+
   return (
     <Box sx={{ height: '100dvh' }}>
       {liveKitUrl && (
@@ -246,7 +249,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
           />
           {/* <VideoConferenceProvider /> */}
           <DebugMode />
-          <ParticipantList setOpen={setOpen} open={open} />
+          <ParticipantList setOpen={setOpen} open={open} room={room} />
         </LiveKitRoom>
       )}
     </Box>
