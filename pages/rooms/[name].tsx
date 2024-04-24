@@ -270,6 +270,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
             handRaisedInfo={handRaisedInfo}
             setHandRaisedInfo={setHandRaisedInfo}
             isHandRaised={isHandRaised}
+            setIsHandRaised={setIsHandRaised}
             roomName={roomName}
           />
           <ParticipantList setOpen={setOpen} open={open} handRaisedInfo={handRaisedInfo} />
