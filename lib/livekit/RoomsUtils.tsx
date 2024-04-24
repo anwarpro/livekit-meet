@@ -1,30 +1,81 @@
 import { useParticipants } from '@livekit/components-react';
 import { RoomEvent } from 'livekit-client';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import meetService from '../../service/meet/meetService';
 
-const RoomsUtils = ({ room, handRaisedInfo, setHandRaisedInfo, isHandRaised }: any) => {
-  console.log("🚀 ~ RoomsUtils ~ handRaisedInfo =====>:", handRaisedInfo)
+type IProps = {
+  room: any;
+  roomName: string;
+  handRaisedInfo: string[];
+  setHandRaisedInfo: Dispatch<SetStateAction<string[]>>;
+  isHandRaised: boolean;
+};
+
+const RoomsUtils = ({
+  room,
+  handRaisedInfo,
+  setHandRaisedInfo,
+  isHandRaised,
+  roomName,
+}: IProps) => {
+  console.log('🚀 ~ RoomsUtils ~ handRaisedInfo =====>:', handRaisedInfo);
   console.log('🚀 ~ RoomsUtils ~ isHandRaised ======>:', isHandRaised);
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   const participants = useParticipants();
   const { userData } = useSelector((state: any) => state.auth);
 
+  const fetchData = () => {
+    meetService
+      .getHandRaisedInfo(roomName)
+      .then((res: any) => {
+        setHandRaisedInfo(res?.data?.data);
+        // if (
+        //   room?.state === 'connected' &&
+        //   res?.data?.data?.includes(room?.localParticipant?.identity)
+        // ) {
+        //   setIsHandRaised(true);
+        // }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    console.log('room:', room?.state);
+    if (room?.state === 'connected' && roomName) {
+      fetchData();
+    }
+  }, [room?.state, roomName]);
+
   useEffect(() => {
     if (room?.state === 'connected' && isHandRaised !== null) {
-      const data = encoder.encode(
-        JSON.stringify({
-          id: userData?._id,
-          topic: 'hand_raised',
+      meetService
+        .handRaise({
+          meetId: roomName,
+          participantEmail: room?.localParticipant?.identity,
           value: isHandRaised,
-        }),
-      );
-      room.localParticipant.publishData(data, {
-        reliable: true,
-        destinationIdentities: participants?.map((par) => par.identity),
-        topic: 'hand_raised',
-      });
+        })
+        .then((res: any) => {
+          const data = encoder.encode(
+            JSON.stringify({
+              id: userData?._id,
+              topic: 'hand_raised',
+              value: isHandRaised,
+            }),
+          );
+          room.localParticipant.publishData(data, {
+            reliable: true,
+            destinationIdentities: participants?.map((par) => par.identity),
+            topic: 'hand_raised',
+          });
+          fetchData();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, [isHandRaised, room]);
 
@@ -34,11 +85,11 @@ const RoomsUtils = ({ room, handRaisedInfo, setHandRaisedInfo, isHandRaised }: a
       if (topic === 'hand_raised') {
         const eachHandRaisedInfo = decoder.decode(payload);
         let parsedHandRaisedInfo = JSON.parse(eachHandRaisedInfo);
-        parsedHandRaisedInfo.participant = participant.identity;
-        setHandRaisedInfo(parsedHandRaisedInfo);
+        fetchData();
       }
     },
   );
+
   return <></>;
 };
 

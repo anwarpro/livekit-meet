@@ -198,7 +198,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     setOpen((prevState) => !prevState);
   };
   const [isHandRaised, setIsHandRaised] = React.useState<boolean>(false);
-  const [handRaisedInfo, setHandRaisedInfo] = React.useState<object>({});
+  const [handRaisedInfo, setHandRaisedInfo] = React.useState<string[]>([]);
 
   const handleHandRaised = () => {
     setIsHandRaised((prevState) => !prevState);
@@ -270,6 +270,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
             handRaisedInfo={handRaisedInfo}
             setHandRaisedInfo={setHandRaisedInfo}
             isHandRaised={isHandRaised}
+            roomName={roomName}
           />
           <ParticipantList setOpen={setOpen} open={open} handRaisedInfo={handRaisedInfo} />
           <DebugMode />
