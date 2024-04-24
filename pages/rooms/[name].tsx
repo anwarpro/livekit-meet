@@ -23,14 +23,14 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 import { DebugMode } from '../../lib/Debug';
 import { decodePassphrase, useServerUrl } from '../../lib/client-utils';
-import { SettingsMenu } from '../../lib/SettingsMenu';
+import { SettingsMenu } from '../../lib/livekit/SettingsMenu';
 import meetService from '../../service/meet/meetService';
 import Footer from '../../components/layouts/Footer';
 import { useSelector } from 'react-redux';
 import { clearRoom, setRoom } from '../../lib/Slicers/meetSlice';
 import { Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import ParticipantList from '../../lib/ParticipantList';
+import ParticipantList from '../../lib/livekit/ParticipantList';
 
 const PreJoinNoSSR = dynamic(
   async () => {
