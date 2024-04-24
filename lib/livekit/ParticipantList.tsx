@@ -7,6 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PersonIcon from '@mui/icons-material/Person';
+import BackHandIcon from '@mui/icons-material/BackHand';
 import {
   TrackToggle,
   useDataChannel,
@@ -131,9 +132,8 @@ export default function ParticipantList({ open, setOpen, handRaisedInfo }: IProp
                 </ListItemIcon>
                 <ListItemText primary={name !== '' ? name : p.identity} />
                 {/* @ts-ignore */}
-                {p.identity === handRaisedInfo?.participant && (
-                  //@ts-ignore
-                  <p>{handRaisedInfo.value ? '🤚' : ''}</p>
+                {handRaisedInfo.includes(p.identity) && (
+                  <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange' }} />
                 )}
               </ListItemButton>
             </ListItem>
