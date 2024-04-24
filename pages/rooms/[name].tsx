@@ -249,7 +249,7 @@ console.log("room ==============================================================
           />
           {/* <VideoConferenceProvider /> */}
           <DebugMode />
-          <ParticipantList setOpen={setOpen} open={open} room={room} />
+          <ParticipantList setOpen={setOpen} open={open} room={room} roomName={roomName} />
         </LiveKitRoom>
       )}
     </Box>

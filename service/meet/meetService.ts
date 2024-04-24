@@ -81,6 +81,12 @@ class MeetService {
     getexternalParticipant = (id:string, search: string, limit: number, page: number) => {
         return axios.get<IMeet>(`${API_URL}/schedule/get_external/${id}?limit=${limit}&page=${page}&search=${search}`);
     }
+    getHandRaisedInfo = (id:string) => {
+        return axios.get<string[]>(`${API_URL}/hand/${id}`);
+    }
+    handRaise = (payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/hand`,{ ...payload });
+    }
 
 }
 const meetService = new MeetService()
