@@ -197,11 +197,20 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   const toggleDrawer = () => {
     setOpen((prevState) => !prevState);
   };
-  const [isHandRaised, setIsHandRaised] = React.useState<boolean>(false);
+  const [isHandRaised, setIsHandRaised] = React.useState<string>("null");
+  // "null" - not set yet 
+  // "true" - clicked to set true
+  // "false" - clicked to set false 
+  // "first" - not clicked, but hand raised already 
   const [handRaisedInfo, setHandRaisedInfo] = React.useState<string[]>([]);
 
   const handleHandRaised = () => {
-    setIsHandRaised((prevState) => !prevState);
+    console.log("here:", isHandRaised);
+    if(isHandRaised === "true" || isHandRaised === "first") {
+      setIsHandRaised("false");
+    } else {
+      setIsHandRaised("true");
+    }
   };
 
   React.useEffect(() => {

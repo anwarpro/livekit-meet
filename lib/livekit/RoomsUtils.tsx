@@ -9,8 +9,8 @@ type IProps = {
   roomName: string;
   handRaisedInfo: string[];
   setHandRaisedInfo: Dispatch<SetStateAction<string[]>>;
-  isHandRaised: boolean;
-  setIsHandRaised: Dispatch<SetStateAction<boolean>>;
+  isHandRaised: string;
+  setIsHandRaised: Dispatch<SetStateAction<string>>;
 };
 
 const RoomsUtils = ({
@@ -40,7 +40,7 @@ const RoomsUtils = ({
           room?.state === 'connected' &&
           res?.data?.data?.includes(room?.localParticipant?.identity)
         ) {
-          setIsHandRaised(true);
+          setIsHandRaised("first");
         }
       })
       .catch((err) => {
@@ -49,19 +49,21 @@ const RoomsUtils = ({
   };
 
   useEffect(() => {
-    if (room?.state === 'connected' && isHandRaised !== null) {
+    if (room?.state === 'connected' && isHandRaised !== "null" && isHandRaised !== "first") {
       meetService
         .handRaise({
           meetId: roomName,
           participantEmail: room?.localParticipant?.identity,
-          value: isHandRaised,
+          value: isHandRaised === "true" ? true : false,
         })
         .then((res: any) => {
           const data = encoder.encode(
             JSON.stringify({
+
+              
               email: userData?.email,
               topic: 'hand_raised',
-              value: isHandRaised,
+              value: isHandRaised === "true" ? true : false,
             }),
           );
           room.localParticipant.publishData(data, {
