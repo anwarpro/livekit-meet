@@ -106,10 +106,17 @@ const RoomsUtils = ({
             const filterData = uniqHandRaise.filter(
               (dt) => JSON.stringify(dt) !== JSON.stringify(data),
             );
-            console.log('🚀 ~ filterData:', filterData);
             filterData.push(parsedHandRaisedInfo);
             setUniqHandRaise(filterData);
+            if (parsedHandRaisedInfo.value) {
+              let audio = new Audio('/meet_message.mp3');
+              audio.play();
+            }
           } else {
+            if (parsedHandRaisedInfo.value) {
+              let audio = new Audio('/meet_message.mp3');
+              audio.play();
+            }
             setUniqHandRaise([...uniqHandRaise, parsedHandRaisedInfo]);
           }
         }
