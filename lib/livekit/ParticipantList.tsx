@@ -7,15 +7,24 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PersonIcon from '@mui/icons-material/Person';
-import { useParticipants } from '@livekit/components-react';
+import BackHandIcon from '@mui/icons-material/BackHand';
+import {
+  TrackToggle,
+  useDataChannel,
+  useParticipants,
+  useRoomContext,
+  useTracks,
+} from '@livekit/components-react';
+import { DataPublishOptions, RoomEvent, Track } from 'livekit-client';
+import { useSelector } from 'react-redux';
 
 type IProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
+  handRaisedInfo: {};
 };
-export default function ParticipantList({ open, setOpen }: IProps) {
+export default function ParticipantList({ open, setOpen, handRaisedInfo }: IProps) {
   const participants = useParticipants();
-
   useEffect(() => {
     const targetElements = document.getElementsByClassName('lk-participant-tile');
     if (targetElements) {
@@ -122,6 +131,10 @@ export default function ParticipantList({ open, setOpen }: IProps) {
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary={name !== '' ? name : p.identity} />
+                {/* @ts-ignore */}
+                {handRaisedInfo.includes(p.identity) && (
+                  <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange' }} />
+                )}
               </ListItemButton>
             </ListItem>
           );

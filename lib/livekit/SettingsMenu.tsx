@@ -7,7 +7,7 @@ import {
   MediaDeviceMenu,
   TrackToggle,
 } from '@livekit/components-react';
-import styles from '../styles/SettingsMenu.module.css';
+import styles from '../../styles/SettingsMenu.module.css';
 
 /**
  * @alpha
