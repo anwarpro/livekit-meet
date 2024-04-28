@@ -1,15 +1,9 @@
 'use client';
-import {
-  LiveKitRoom,
-  VideoConference,
-  formatChatMessageLinks,
-  LocalUserChoices,
-} from '@livekit/components-react';
+import { formatChatMessageLinks, LiveKitRoom, LocalUserChoices } from '@livekit/components-react';
 import {
   ExternalE2EEKeyProvider,
   Room,
   RoomConnectOptions,
-  RoomEvent,
   RoomOptions,
   VideoCodec,
   VideoPresets,
@@ -32,6 +26,8 @@ import { Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import ParticipantList from '../../lib/livekit/ParticipantList';
 import RoomsUtils from '../../lib/livekit/RoomsUtils';
+// import { LiveKitRoom } from '../../components/custom/LiveKit/LiveKitRoom';
+import { VideoConference } from '../../components/custom/LiveKit/prefabs/VideoConference';
 
 const PreJoinNoSSR = dynamic(
   async () => {
@@ -265,15 +261,17 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
             chatMessageFormatter={formatChatMessageLinks}
             SettingsComponent={SettingsMenu}
           />
-          <RoomsUtils
+
+          {/* <RoomsUtils
             room={room}
             handRaisedInfo={handRaisedInfo}
             setHandRaisedInfo={setHandRaisedInfo}
             isHandRaised={isHandRaised}
             setIsHandRaised={setIsHandRaised}
             roomName={roomName}
-          />
-          <ParticipantList setOpen={setOpen} open={open} handRaisedInfo={handRaisedInfo} />
+          /> */}
+          {/* <ParticipantList setOpen={setOpen} open={open} handRaisedInfo={handRaisedInfo} /> */}
+
           <DebugMode />
         </LiveKitRoom>
       )}

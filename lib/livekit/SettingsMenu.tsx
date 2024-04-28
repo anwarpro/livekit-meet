@@ -3,11 +3,13 @@ import * as React from 'react';
 import { LocalAudioTrack, Track } from 'livekit-client';
 import {
   useMaybeLayoutContext,
-  useLocalParticipant,
+  // useLocalParticipant,
   MediaDeviceMenu,
   TrackToggle,
+  useLocalParticipant,
 } from '@livekit/components-react';
 import styles from '../../styles/SettingsMenu.module.css';
+// import { useLocalParticipant } from '../../components/custom/LiveKit/hooks';
 
 /**
  * @alpha
