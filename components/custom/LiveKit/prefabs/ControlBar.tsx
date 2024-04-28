@@ -4,16 +4,26 @@ import { DisconnectButton } from '../controls/DisconnectButton';
 import { ChatIcon, GearIcon, LeaveIcon } from '../assets/icons';
 import { supportsScreenSharing } from '@livekit/components-core';
 import { mergeProps } from '../utils';
-import { ChatToggle, MediaDeviceMenu, TrackToggle, useLocalParticipantPermissions, useMaybeLayoutContext, usePersistentUserChoices } from '@livekit/components-react';
+import {
+  ChatToggle,
+  MediaDeviceMenu,
+  TrackToggle,
+  useLocalParticipantPermissions,
+  useMaybeLayoutContext,
+  usePersistentUserChoices,
+} from '@livekit/components-react';
 import { useMediaQuery } from '@mui/material';
 import { SettingsMenuToggle } from '../controls/SettingsMenuToggle';
 import { StartMediaButton } from '../controls/StartMediaButton';
+import { ParticipantToggle } from '../controls/ParticipantToggle';
+import ParticipantsIcon from '../assets/icons/participantsIcon';
 
 /** @public */
 export type ControlBarControls = {
   microphone?: boolean;
   camera?: boolean;
   chat?: boolean;
+  participant?: boolean;
   screenShare?: boolean;
   leave?: boolean;
   settings?: boolean;
@@ -61,6 +71,7 @@ export function ControlBar({
       setIsChatOpen(layoutContext?.widget.state?.showChat);
     }
   }, [layoutContext?.widget.state?.showChat]);
+
   const isTooLittleSpace = useMediaQuery(`(max-width: ${isChatOpen ? 1000 : 760}px)`);
 
   const defaultVariation = isTooLittleSpace ? 'minimal' : 'verbose';
@@ -73,6 +84,7 @@ export function ControlBar({
   if (!localPermissions) {
     visibleControls.camera = false;
     visibleControls.chat = false;
+    visibleControls.participant = false;
     visibleControls.microphone = false;
     visibleControls.screenShare = false;
   } else {
@@ -80,6 +92,7 @@ export function ControlBar({
     visibleControls.microphone ??= localPermissions.canPublish;
     visibleControls.screenShare ??= localPermissions.canPublish;
     visibleControls.chat ??= localPermissions.canPublishData && controls?.chat;
+    visibleControls.participant ??= localPermissions.canPublishData && controls?.participant;
   }
 
   const showIcon = React.useMemo(
@@ -171,12 +184,19 @@ export function ControlBar({
           {showText && 'Chat'}
         </ChatToggle>
       )}
+      {visibleControls.participant && (
+        <ParticipantToggle>
+          {showIcon && <ParticipantsIcon />}
+          {showText && 'Participant'}
+        </ParticipantToggle>
+      )}
       {visibleControls.settings && (
         <SettingsMenuToggle>
           {showIcon && <GearIcon />}
           {showText && 'Settings'}
         </SettingsMenuToggle>
       )}
+
       {visibleControls.leave && (
         <DisconnectButton>
           {showIcon && <LeaveIcon />}

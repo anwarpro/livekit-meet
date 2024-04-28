@@ -24,6 +24,9 @@ import { FocusLayout, GridLayout } from '../layout';
 import { ParticipantTile } from '../participant/ParticipantTile';
 import { ControlBar } from './ControlBar';
 import { Chat } from './Chat';
+import { Participant } from './Participant';
+import { useParticipantToggle } from '../hooks/useParticipantToggle';
+import { useSelector } from 'react-redux';
 
 /**
  * @public
@@ -65,6 +68,8 @@ export function VideoConference({
     showChat: false,
     unreadMessages: 0,
     showSettings: false,
+    // @ts-ignore
+    showParticipant: false,
   });
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
 
@@ -82,7 +87,6 @@ export function VideoConference({
   };
 
   const layoutContext = useCreateLayoutContext();
-
   const screenShareTracks = tracks
     .filter(isTrackReference)
     .filter((track) => track.publication.source === Track.Source.ScreenShare);
@@ -119,6 +123,7 @@ export function VideoConference({
   ]);
 
   useWarnAboutMissingStyles();
+  const { isParticipantModalOpen } = useSelector((state: any) => state.participant);
 
   return (
     <div className="lk-video-conference" {...props}>
@@ -145,10 +150,19 @@ export function VideoConference({
                 </FocusLayoutContainer>
               </div>
             )}
-            <ControlBar controls={{ chat: true, settings: !!SettingsComponent }} />
+            <ControlBar
+              controls={{ chat: true, settings: !!SettingsComponent, participant: true }}
+            />
           </div>
           <Chat
             style={{ display: widgetState.showChat ? 'grid' : 'none' }}
+            messageFormatter={chatMessageFormatter}
+            messageEncoder={chatMessageEncoder}
+            messageDecoder={chatMessageDecoder}
+          />
+          <Participant
+            // @ts-ignore
+            style={{ display: isParticipantModalOpen ? 'grid' : 'none' }}
             messageFormatter={chatMessageFormatter}
             messageEncoder={chatMessageEncoder}
             messageDecoder={chatMessageDecoder}
