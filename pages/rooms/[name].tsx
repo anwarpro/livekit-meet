@@ -31,7 +31,7 @@ import { VideoConference } from '../../components/custom/LiveKit/prefabs/VideoCo
 
 const PreJoinNoSSR = dynamic(
   async () => {
-    return (await import('@livekit/components-react')).PreJoin;
+    return (await import('../../components/custom/LiveKit/prefabs/PreJoin')).PreJoin;
   },
   { ssr: false },
 );
@@ -47,6 +47,7 @@ const Home: NextPage = () => {
   );
 
   function handlePreJoinSubmit(values: LocalUserChoices) {
+    console.log('🚀 ~ handlePreJoinSubmit ~ LocalUserChoices:', values);
     setPreJoinChoices(values);
   }
 
@@ -104,8 +105,8 @@ const Home: NextPage = () => {
               onError={(err) => console.log('error while setting up prejoin', err)}
               defaults={{
                 username: '',
-                videoEnabled: true,
-                audioEnabled: true,
+                videoEnabled: false,
+                audioEnabled: false,
               }}
               userLabel={user?.userData?.fullName}
               joinLabel="Join Meeting"

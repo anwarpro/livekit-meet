@@ -6,7 +6,6 @@ import { supportsScreenSharing } from '@livekit/components-core';
 import { mergeProps } from '../utils';
 import {
   ChatToggle,
-  MediaDeviceMenu,
   TrackToggle,
   useLocalParticipantPermissions,
   useMaybeLayoutContext,
@@ -16,7 +15,8 @@ import { useMediaQuery } from '@mui/material';
 import { SettingsMenuToggle } from '../controls/SettingsMenuToggle';
 import { StartMediaButton } from '../controls/StartMediaButton';
 import { ParticipantToggle } from '../controls/ParticipantToggle';
-import ParticipantsIcon from '../assets/icons/participantsIcon';
+import { MediaDeviceMenu } from './MediaDeviceMenu';
+import ParticipantsIcon from '../assets/icons/ParticipantsIcon';
 
 /** @public */
 export type ControlBarControls = {
