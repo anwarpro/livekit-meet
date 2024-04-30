@@ -48,7 +48,7 @@ export const ParticipantPlaceholder = /* @__PURE__ */ React.forwardRef<
         <SvgParticipantPlaceholder />
       ) : (
         // @ts-ignore 
-        <Image src={metadata} width={150} height={150} alt="participent img" />
+        <Image src={metadata} width={150} height={150} alt="" />
       )}
       {/* {props.children} */}
     </Box>
