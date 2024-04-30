@@ -31,6 +31,14 @@ class UserService {
     return axios.post<UserResponse>(`${API_URL}/add-manual-user`, { ...payload });
   };
 
+  getVerificationManualUserByEmail = (email: string) => {
+    return axios.get<UserResponse>(`${API_URL}/get-verification/${email}`);
+  };
+
+  verifyManualUser = (payload: any) => {
+    return axios.post<UserResponse>(`${API_URL}/verify-manual-user`, { ...payload });
+  };
+
 }
 const userService = new UserService();
 export default userService;
