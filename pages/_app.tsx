@@ -34,74 +34,79 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   }, [pathname]);
   //end
 
-  return getLayout(
-    <Provider store={store}>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Commissioner:wght@300;400;500;600;700&family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@100..900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
-      <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-        crossOrigin="anonymous"
-      ></link>
-      <Script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossOrigin="anonymous"
-      />
-      <DefaultSeo
-        title="Meetify Meet | Conference app hosted by Programming Hero"
-        titleTemplate="%s"
-        defaultTitle="Meetify Meet | Video calls and meetings for everyone"
-        description="Meetify meet provides secure, easy-to-use video calls and meetings
-        for everyone, on any device."
-        twitter={{
-          handle: 'Programming Hero',
-          site: 'Programming Hero',
-          cardType: 'summary_large_image',
-        }}
-        openGraph={{
-          url: 'https://meet.programming-hero.com',
-          images: [
+  if (pathname.includes('/verify')) {
+    return <Component {...pageProps} />;
+  } else {
+    return getLayout(
+      <Provider store={store}>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Commissioner:wght@300;400;500;600;700&family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@100..900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossOrigin="anonymous"
+        ></link>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossOrigin="anonymous"
+        />
+        <DefaultSeo
+          title="Meetify Meet | Conference app hosted by Programming Hero"
+          titleTemplate="%s"
+          defaultTitle="Meetify Meet | Video calls and meetings for everyone"
+          description="Meetify meet provides secure, easy-to-use video calls and meetings
+          for everyone, on any device."
+          twitter={{
+            handle: 'Programming Hero',
+            site: 'Programming Hero',
+            cardType: 'summary_large_image',
+          }}
+          openGraph={{
+            url: 'https://meet.programming-hero.com',
+            images: [
+              {
+                url: 'https://jsdude.com/home/thumbnail.png',
+                width: 2000,
+                height: 1000,
+                type: 'image/png',
+              },
+            ],
+            site_name: 'Meetify meet',
+          }}
+          additionalMetaTags={[
             {
-              url: 'https://jsdude.com/home/thumbnail.png',
-              width: 2000,
-              height: 1000,
-              type: 'image/png',
+              property: 'theme-color',
+              content: '#070707',
             },
-          ],
-          site_name: 'Meetify meet',
-        }}
-        additionalMetaTags={[
-          {
-            property: 'theme-color',
-            content: '#070707',
-          },
-        ]}
-        additionalLinkTags={[
-          {
-            rel: 'icon',
-            href: '/favicon.ico',
-          },
-          {
-            rel: 'apple-touch-icon',
-            href: '/images/livekit-apple-touch.png',
-            sizes: '180x180',
-          },
-          {
-            rel: 'mask-icon',
-            href: '/images/livekit-safari-pinned-tab.svg',
-            color: '#070707',
-          },
-        ]}
-      />
-      <RootLayout>
-        <Component {...pageProps} />
-      </RootLayout>
-    </Provider>,
-  );
+          ]}
+          additionalLinkTags={[
+            {
+              rel: 'icon',
+              href: '/favicon.ico',
+            },
+            {
+              rel: 'apple-touch-icon',
+              href: '/images/livekit-apple-touch.png',
+              sizes: '180x180',
+            },
+            {
+              rel: 'mask-icon',
+              href: '/images/livekit-safari-pinned-tab.svg',
+              color: '#070707',
+            },
+          ]}
+        />
+
+        <RootLayout>
+          <Component {...pageProps} />
+        </RootLayout>
+      </Provider>,
+    );
+  }
 }
