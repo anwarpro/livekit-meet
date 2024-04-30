@@ -6,11 +6,8 @@ import { isTrackReference, isTrackReferencePinned } from '@livekit/components-co
 import {
   AudioTrack,
   ConnectionQualityIndicator,
-  // FocusToggle,
   LockLockedIcon,
   ParticipantContext,
-  // ParticipantName,
-  // ParticipantPlaceholder,
   ScreenShareIcon,
   TrackMutedIndicator,
   TrackRefContext,
@@ -23,26 +20,9 @@ import {
   useMaybeTrackRefContext,
   useParticipantTile,
 } from '@livekit/components-react';
-// import { ConnectionQualityIndicator } from './ConnectionQualityIndicator';
 import { ParticipantName } from './ParticipantName';
 import { ParticipantPlaceholder } from './ParticipantPlaceholder';
-// import { TrackMutedIndicator } from './TrackMutedIndicator';
-// import {
-//   ParticipantContext,
-//   TrackRefContext,
-//   useEnsureTrackRef,
-//   useFeatureContext,
-//   useMaybeLayoutContext,
-//   useMaybeParticipantContext,
-//   useMaybeTrackRefContext,
-// } from '../context';
 import { FocusToggle } from '../controls/FocusToggle';
-// import { ParticipantPlaceholder } from '../assets/images';
-// import { LockLockedIcon, ScreenShareIcon } from '../assets/icons';
-// import { VideoTrack } from './VideoTrack';
-// import { AudioTrack } from './AudioTrack';
-// import { useParticipantTile } from '../hooks';
-// import { useIsEncrypted } from '../hooks/useIsEncrypted';
 
 /**
  * The `ParticipantContextIfNeeded` component only creates a `ParticipantContext`
@@ -152,6 +132,10 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     [trackReference, layoutContext],
   );
 
+  const handleFocusToggle = (e: any) => {
+    console.log('e =========>', e);
+  };
+
   return (
     <div ref={ref} style={{ position: 'relative' }} {...elementProps}>
       <TrackRefContextIfNeeded trackRef={trackReference}>
@@ -203,7 +187,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
               </div>
             </>
           )}
-          <FocusToggle trackRef={trackReference} />
+          <FocusToggle trackRef={trackReference} onClick={(e) => handleFocusToggle(e)} />
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div>

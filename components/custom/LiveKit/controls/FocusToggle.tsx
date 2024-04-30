@@ -1,9 +1,17 @@
 import * as React from 'react';
-// import { LayoutContext, useMaybeTrackRefContext } from '../context';
 import { FocusToggleIcon, UnfocusToggleIcon } from '../assets/icons';
 // import { useFocusToggle } from '../hooks';
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
-import { LayoutContext, useFocusToggle, useMaybeTrackRefContext } from '@livekit/components-react';
+import {
+  LayoutContext,
+  useFocusToggle,
+  // useFocusToggle,
+  // useMaybeRoomContext,
+  useMaybeTrackRefContext,
+  // useParticipants,
+} from '@livekit/components-react';
+// import { useSelector } from 'react-redux';
+// import { RoomEvent } from 'livekit-client';
 
 /** @public */
 export interface FocusToggleProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -26,11 +34,33 @@ export interface FocusToggleProps extends React.ButtonHTMLAttributes<HTMLButtonE
 export const FocusToggle = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, FocusToggleProps>(
   function FocusToggle({ trackRef, ...props }: FocusToggleProps, ref) {
     const trackRefFromContext = useMaybeTrackRefContext();
-
     const { mergedProps, inFocus } = useFocusToggle({
       trackRef: trackRef ?? trackRefFromContext,
       props,
     });
+
+    // const room = useMaybeRoomContext();
+    // const encoder = new TextEncoder();
+    // const decoder = new TextDecoder();
+    // const participants = useParticipants();
+    // const { userData } = useSelector((state: any) => state.auth);
+    // const data = encoder.encode(
+    //   JSON.stringify({
+    //     role: userData?.role,
+    //     email: userData?.email,
+    //     topic: 'pin_screen',
+    //     value: inFocus,
+    //   }),
+    // );
+    // React.useEffect(() => {
+    //   if (room?.state === 'connected') {
+    //     room.localParticipant.publishData(data, {
+    //       reliable: true,
+    //       destinationIdentities: participants?.map((par) => par.identity),
+    //       topic: 'pin_screen',
+    //     });
+    //   }
+    // }, [data, inFocus, participants, room]);
 
     return (
       <LayoutContext.Consumer>
