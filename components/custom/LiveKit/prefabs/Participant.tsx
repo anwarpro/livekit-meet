@@ -37,33 +37,31 @@ export function Participant({
   const participants = useParticipants();
   const { handRaised } = useSelector((state: any) => state.handRaise);
   return (
-    <div {...props} className="lk-chat">
+    <div {...props} className="lk-chat participant-modal">
       <div className="lk-chat-header">
         <p className="participant-title m-0">total participants : {participants.length}</p>
         <ParticipantToggle className="lk-close-button">
           <ChatCloseIcon />
         </ParticipantToggle>
       </div>
-      <div>
-        <List>
-          {participants?.map((p, index) => {
-            return (
-              <ListItem key={p.identity} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <PersonIcon sx={{ color: 'white' }} />
-                  </ListItemIcon>
-                  <ListItemText primary={p.name} />
-                  {/* @ts-ignore */}
-                  {handRaised?.includes(p.identity) && (
-                    <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange' }} />
-                  )}
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-      </div>
+      <List>
+        {participants?.map((p, index) => {
+          return (
+            <ListItem key={p.identity} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <PersonIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                <ListItemText primary={p.name} />
+                {/* @ts-ignore */}
+                {handRaised?.includes(p.identity) && (
+                  <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange' }} />
+                )}
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
     </div>
   );
 }

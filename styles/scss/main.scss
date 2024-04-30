@@ -34,7 +34,8 @@ body {
     .\lk-button-group-menu {
       display: none !important;
     }
-    .participant-button, .hand-raised {
+    .participant-button,
+    .hand-raised {
       span {
         display: none;
       }
@@ -44,5 +45,11 @@ body {
 .\lk-participant-placeholder {
   img {
     border-radius: 50%;
+  }
+}
+.participant-modal {
+  align-items: unset !important;
+  .participant-title{
+    text-transform: capitalize
   }
 }
