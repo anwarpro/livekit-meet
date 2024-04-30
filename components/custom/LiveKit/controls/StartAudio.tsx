@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useRoomContext } from '../context';
-import { useStartAudio } from '@livekit/components-react';
+import { useRoomContext, useStartAudio } from '@livekit/components-react';
 
 /** @public */
 export interface AllowAudioPlaybackProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

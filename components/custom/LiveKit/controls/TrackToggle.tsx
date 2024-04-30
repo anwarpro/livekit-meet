@@ -1,7 +1,7 @@
 import type { CaptureOptionsBySource, ToggleSource } from '@livekit/components-core';
 import * as React from 'react';
 import { getSourceIcon } from '../assets/icons/util';
-import { useTrackToggle } from '../hooks';
+import { useTrackToggle } from '@livekit/components-react';
 
 /** @public */
 export interface TrackToggleProps<T extends ToggleSource>
