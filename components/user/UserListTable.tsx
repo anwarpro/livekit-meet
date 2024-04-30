@@ -33,13 +33,15 @@ type IProps = {
   setLimit: Dispatch<SetStateAction<number>>;
   setSearchText: Dispatch<SetStateAction<string>>;
   fetchData: Dispatch<SetStateAction<void>>;
+  role: string;
+  handleAddTeamMember: Dispatch<SetStateAction<void>>;
 };
 
 const UserListTable = (props: IProps) => {
   const [openModal, setOpenModal] = useState<{ edit: boolean }>({ edit: false });
   const [editUser, setEditUser] = useState(null);
   const [successModal, setSuccessModal] = useState<{ edit: boolean }>({ edit: false });
-  const [debounceSearch, setDebounceSearch] = useState("");
+  const [debounceSearch, setDebounceSearch] = useState('');
   const handleSearch = (e: any) => {
     props?.setPage(1);
     setDebounceSearch(e.target.value);
@@ -57,12 +59,12 @@ const UserListTable = (props: IProps) => {
 
   const handleChangePage = (event: any, newPage: any) => {
     props?.setPage(newPage + 1);
-    setDebounceSearch("");
+    setDebounceSearch('');
   };
 
   const handleChangeRowsPerPage = (event: any) => {
     props?.setLimit(+event.target.value);
-    setDebounceSearch("");
+    setDebounceSearch('');
     props?.setPage(1);
     props?.setSearchText('');
   };
@@ -98,9 +100,10 @@ const UserListTable = (props: IProps) => {
       paddingLeft: '40px',
     },
   }));
+
   return (
     <div>
-      <div className="search mb-3">
+      <div className="search mb-3 d-flex align-items-center justify-content-between">
         <TextField
           id="input-with-icon-textfield"
           hiddenLabel
@@ -118,6 +121,11 @@ const UserListTable = (props: IProps) => {
           }}
           variant="outlined"
         />
+        {props.role === 'team_member' && (
+          <button onClick={() => props.handleAddTeamMember()} className="btn btn-light px-3 py-2">
+            Add Member
+          </button>
+        )}
       </div>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
