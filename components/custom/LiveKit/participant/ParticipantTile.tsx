@@ -19,10 +19,14 @@ import {
   useMaybeParticipantContext,
   useMaybeTrackRefContext,
   useParticipantTile,
+  useParticipants,
 } from '@livekit/components-react';
 import { ParticipantName } from './ParticipantName';
 import { ParticipantPlaceholder } from './ParticipantPlaceholder';
 import { FocusToggle } from '../controls/FocusToggle';
+import { useSelector } from 'react-redux';
+import meetService from '../../../../service/meet/meetService';
+import { useRouter } from 'next/router';
 
 /**
  * The `ParticipantContextIfNeeded` component only creates a `ParticipantContext`
@@ -71,6 +75,9 @@ export interface ParticipantTileProps extends React.HTMLAttributes<HTMLDivElemen
   /** The track reference to display. */
   trackRef?: TrackReferenceOrPlaceholder;
   disableSpeakingIndicator?: boolean;
+  room?: any;
+  pinEmail?: {email: string};
+  setPinEmail: React.Dispatch<React.SetStateAction<{email: string}>>;
 
   onParticipantClick?: (event: ParticipantClickEvent) => void;
 }
@@ -100,6 +107,9 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     children,
     onParticipantClick,
     disableSpeakingIndicator,
+    room,
+    pinEmail,
+    setPinEmail,
     ...htmlProps
   }: ParticipantTileProps,
   ref,
@@ -131,9 +141,58 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     },
     [trackReference, layoutContext],
   );
-
-  const handleFocusToggle = (e: any) => {
-    console.log('e =========>', e);
+  const user = useSelector((state: any) => state.auth);
+  const router = useRouter();
+  const { name: roomName } = router.query as { name: string };
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+  const participants = useParticipants();
+  const handleFocusToggle = (trackReference: TrackReferenceOrPlaceholder) => {
+    if (user?.userData?.role === 'admin') {
+      if (pinEmail !== undefined && pinEmail.email !== trackReference.participant.identity) {
+        setPinEmail({email: trackReference.participant.identity});
+        meetService
+          .updatePin(roomName, { pinEmail: trackReference.participant.identity })
+          .then((res) => {
+            const data = encoder.encode(
+              JSON.stringify({
+                email: trackReference.participant.identity,
+                topic: 'pin_updated',
+              }),
+            );
+            room.state === 'connected' &&
+              room.localParticipant.publishData(data, {
+                reliable: true,
+                destinationIdentities: participants?.map((par) => par.identity),
+                topic: 'pin_updated',
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      else{
+        meetService
+          .updatePin(roomName, { pinEmail: "no_email" })
+          .then((res) => {
+            const data = encoder.encode(
+              JSON.stringify({
+                email: {email: "no_email"},
+                topic: 'pin_updated',
+              }),
+            );
+            room.state === 'connected' &&
+              room.localParticipant.publishData(data, {
+                reliable: true,
+                destinationIdentities: participants?.map((par) => par.identity),
+                topic: 'pin_updated',
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
   };
 
   return (
@@ -187,7 +246,10 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
               </div>
             </>
           )}
-          <FocusToggle trackRef={trackReference} onClick={(e) => handleFocusToggle(e)} />
+          <FocusToggle
+            trackRef={trackReference}
+            onClick={(e) => handleFocusToggle(trackReference)}
+          />
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div>

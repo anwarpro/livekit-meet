@@ -257,6 +257,7 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
           <VideoConference
             chatMessageFormatter={formatChatMessageLinks}
             SettingsComponent={SettingsMenu}
+            room={room}
           />
 
           <RoomsUtils

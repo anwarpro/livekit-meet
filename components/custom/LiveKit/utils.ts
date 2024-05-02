@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { mergeProps as mergePropsReactAria } from './mergeProps';
-import { log } from '@livekit/components-core';
+import { log, PinState, TrackReferenceOrPlaceholder, WidgetState } from '@livekit/components-core';
 
 
 /** @internal */
@@ -89,4 +89,55 @@ export class Mutex {
 
     return willUnlock;
   }
+}
+/** @internal */
+export type PinAction =
+  | {
+      msg: 'set_pin';
+      trackReference: TrackReferenceOrPlaceholder;
+    }
+  | { msg: 'clear_pin' };
+
+/** @internal */
+export type PinContextType = {
+  dispatch?: React.Dispatch<PinAction>;
+  state?: PinState;
+};
+
+
+/** @internal */
+export type ChatContextAction =
+  | { msg: 'show_chat' }
+  | { msg: 'hide_chat' }
+  | { msg: 'toggle_chat' }
+  | { msg: 'unread_msg'; count: number }
+  | { msg: 'toggle_settings' };
+
+
+/** @internal */
+export type WidgetContextType = {
+  dispatch?: React.Dispatch<ChatContextAction>;
+  state?: WidgetState;
+};
+
+/** @public */
+export type LayoutContextType = {
+  pin: PinContextType;
+  widget: WidgetContextType;
+};
+
+export function useEnsureLayoutContext(layoutContext?: LayoutContextType) {
+  const layout = useMaybeLayoutContext();
+  layoutContext ??= layout;
+  if (!layoutContext) {
+    throw Error('Tried to access LayoutContext context outside a LayoutContextProvider provider.');
+  }
+  return layoutContext;
+}
+
+/** @public */
+export const LayoutContext = React.createContext<LayoutContextType | undefined>(undefined);
+
+export function useMaybeLayoutContext(): LayoutContextType | undefined {
+  return React.useContext(LayoutContext);
 }
