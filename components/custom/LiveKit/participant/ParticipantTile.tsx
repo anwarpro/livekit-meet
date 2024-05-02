@@ -172,25 +172,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
           });
       }
       else{
-        meetService
-          .updatePin(roomName, { pinEmail: "no_email" })
-          .then((res) => {
-            const data = encoder.encode(
-              JSON.stringify({
-                email: {email: "no_email"},
-                topic: 'pin_updated',
-              }),
-            );
-            room.state === 'connected' &&
-              room.localParticipant.publishData(data, {
-                reliable: true,
-                destinationIdentities: participants?.map((par) => par.identity),
-                topic: 'pin_updated',
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        // not working here
       }
     }
   };
