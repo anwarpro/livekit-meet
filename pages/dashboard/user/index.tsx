@@ -127,7 +127,7 @@ const UserManagement = () => {
         </TabPanel>
       </TabContext>
 
-      {openMemberModal && <TeamMemberModal openModal={openMemberModal} />}
+      {openMemberModal && <TeamMemberModal openModal={openMemberModal} fetchData={fetchData} />}
     </Box>
   );
 };

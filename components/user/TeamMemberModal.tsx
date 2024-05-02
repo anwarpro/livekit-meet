@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import CustomeModal from '../custom/CustomModal';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box } from '@mui/material';
 import userService from '../../service/user/userService';
+import swal from 'sweetalert';
 type Iprops = {
   openModal: { edit: boolean };
+  fetchData: Dispatch<SetStateAction<void>>;
 };
 type Inputs = {
   fullName: string;
@@ -20,22 +22,33 @@ const TeamMemberModal = (props: Iprops) => {
   const {
     register,
     handleSubmit,
-    control,
     reset,
-    watch,
     formState: { errors },
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log('data', data);
     data.role = 'team_member';
     data.profileImage =
       'https://phero-web.nyc3.cdn.digitaloceanspaces.com/uat-images/public/profileImage.png';
     userService
       .addManualUser(data)
-      .then((res) => console.log('res', res))
-      .catch((err) => console.log('err', err));
+      .then((res) => {
+        swal('success', 'Manual User Created Successfully', 'success');
+        setCloseModal({ status: false });
+        props.fetchData();
+      })
+      .catch((err) => {
+        if (err?.response?.data?.message) {
+          swal('User Already Exist', err?.response?.data.message, 'error');
+        } else {
+          swal('error', 'something went wrong', 'error');
+        }
+      });
   };
+
+  useEffect(() => {
+    reset();
+  }, [props.openModal]);
 
   return (
     <CustomeModal
