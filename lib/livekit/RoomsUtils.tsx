@@ -3,6 +3,8 @@ import { RoomEvent } from 'livekit-client';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import meetService from '../../service/meet/meetService';
+import { useDispatch } from 'react-redux';
+import { setHandRaised } from '../Slicers/handRaisedSlicer';
 
 type IProps = {
   room: any;
@@ -21,21 +23,20 @@ const RoomsUtils = ({
   setIsHandRaised,
   roomName,
 }: IProps) => {
-  console.log('🚀 ~ RoomsUtils ~ handRaisedInfo =====>:', handRaisedInfo);
-  console.log('🚀 ~ RoomsUtils ~ isHandRaised ======>:', isHandRaised);
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   const participants = useParticipants();
   const { userData } = useSelector((state: any) => state.auth);
 
   const [uniqHandRaise, setUniqHandRaise] = useState<object[]>([]);
-  console.log('🚀 ~ uniqHandRaiseSet:', uniqHandRaise);
+  const dispatch = useDispatch();
 
   const fetchData = () => {
     meetService
       .getHandRaisedInfo(roomName)
       .then((res: any) => {
         setHandRaisedInfo(res?.data?.data);
+        dispatch(setHandRaised(res?.data?.data));
         if (
           room?.state === 'connected' &&
           res?.data?.data?.includes(room?.localParticipant?.identity)
@@ -89,7 +90,6 @@ const RoomsUtils = ({
   room.on(
     RoomEvent.DataReceived,
     (payload: Uint8Array, participant: any, kind: string, topic: string) => {
-      console.log('🚀 ~ participant:', participant);
       if (topic === 'hand_raised') {
         const eachHandRaisedInfo = decoder.decode(payload);
         let parsedHandRaisedInfo = JSON.parse(eachHandRaisedInfo);
@@ -108,10 +108,17 @@ const RoomsUtils = ({
             const filterData = uniqHandRaise.filter(
               (dt) => JSON.stringify(dt) !== JSON.stringify(data),
             );
-            console.log('🚀 ~ filterData:', filterData);
             filterData.push(parsedHandRaisedInfo);
             setUniqHandRaise(filterData);
+            if (parsedHandRaisedInfo.value) {
+              let audio = new Audio('/meet_message.mp3');
+              audio.play();
+            }
           } else {
+            if (parsedHandRaisedInfo.value) {
+              let audio = new Audio('/meet_message.mp3');
+              audio.play();
+            }
             setUniqHandRaise([...uniqHandRaise, parsedHandRaisedInfo]);
           }
         }

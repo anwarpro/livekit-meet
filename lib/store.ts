@@ -6,12 +6,16 @@ import { persistReducer, persistStore } from "redux-persist";
 import authSlice from "./Slicers/authSlice";
 import meetSlice from './Slicers/meetSlice';
 import eventSlice from './Slicers/eventSlice';
+import participantSlice from './Slicers/toggleSlice';
+import handRaisedSlice from './Slicers/handRaisedSlicer';
 
 
 const reducers = combineReducers({
     auth: authSlice,
     room: meetSlice,
-    events: eventSlice
+    events: eventSlice,
+    participant: participantSlice,
+    handRaise: handRaisedSlice
 });
 
 const persistConfig = {

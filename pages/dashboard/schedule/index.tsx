@@ -9,6 +9,7 @@ import plusIcon from '../../../components/assets/icons/plus-dark.png';
 import infoIcon from '../../../components/assets/icons/info.png';
 import { setEventStore } from '../../../lib/Slicers/eventSlice';
 import { useDispatch } from 'react-redux';
+import toggleSlice from '../../../lib/Slicers/toggleSlice';
 
 const ScheduleManagement = () => {
   const [event, setEvent] = useState([]);
