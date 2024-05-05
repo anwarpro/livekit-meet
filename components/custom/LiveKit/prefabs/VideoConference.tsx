@@ -16,7 +16,7 @@ import {
   MessageFormatter,
   RoomAudioRenderer,
   useCreateLayoutContext,
-  usePinnedTracks,
+  useParticipants,
   useTracks,
 } from '@livekit/components-react';
 import { useWarnAboutMissingStyles } from '../hooks/useWarnAboutMissingStyles';
@@ -27,6 +27,9 @@ import { Chat } from './Chat';
 import { Participant } from './Participant';
 import { useParticipantToggle } from '../hooks/useParticipantToggle';
 import { useSelector } from 'react-redux';
+import {usePinnedTracks} from '../hooks/usePinnedTracks'
+import { useRouter } from 'next/router';
+import meetService from '../../../../service/meet/meetService';
 
 /**
  * @public
@@ -35,6 +38,7 @@ export interface VideoConferenceProps extends React.HTMLAttributes<HTMLDivElemen
   chatMessageFormatter?: MessageFormatter;
   chatMessageEncoder?: MessageEncoder;
   chatMessageDecoder?: MessageDecoder;
+  room: any;
   /** @alpha */
   SettingsComponent?: React.ComponentType;
 }
@@ -61,6 +65,7 @@ export function VideoConference({
   chatMessageFormatter,
   chatMessageDecoder,
   chatMessageEncoder,
+  room,
   SettingsComponent,
   ...props
 }: VideoConferenceProps) {
@@ -72,7 +77,6 @@ export function VideoConference({
     showParticipant: false,
   });
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
-
   const tracks = useTracks(
     [
       { source: Track.Source.Camera, withPlaceholder: true },
@@ -86,12 +90,43 @@ export function VideoConference({
     setWidgetState(state);
   };
 
+  // custom pin code
+  const router = useRouter();
+  const { name: roomName } = router.query as { name: string};
+  const [remotePinEmail, setRemotePinEmail] = React.useState("no_email");
+  const [selfPinEmail, setSelfPinEmail] = React.useState("no_self");
+  const decoder = new TextDecoder();
+  const fetchPinData = ()=> {
+    meetService.getPinInfo(roomName)
+    .then((res:any) => {
+      setRemotePinEmail(res.data?.data);
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+  room.on(
+    RoomEvent.DataReceived,
+    (payload: Uint8Array, participant: any, kind: string, topic: string) => {
+      if (topic === 'pin_updated') {
+        const email = JSON.parse(decoder.decode(payload));
+        if(email.email !== remotePinEmail) {
+          setRemotePinEmail(email.email);
+        }
+      }
+    },
+  );
+  React.useEffect(()=> {
+    if(roomName) {
+      fetchPinData();
+    }
+  }, [roomName])
+
   const layoutContext = useCreateLayoutContext();
   const screenShareTracks = tracks
     .filter(isTrackReference)
     .filter((track) => track.publication.source === Track.Source.ScreenShare);
 
-  const focusTrack = usePinnedTracks(layoutContext)?.[0];
+  const focusTrack = usePinnedTracks(layoutContext, tracks, remotePinEmail, selfPinEmail)?.[0];
   const carouselTracks = tracks.filter((track) => !isEqualTrackRef(track, focusTrack));
 
   React.useEffect(() => {
@@ -137,16 +172,16 @@ export function VideoConference({
             {!focusTrack ? (
               <div className="lk-grid-layout-wrapper">
                 <GridLayout tracks={tracks}>
-                  <ParticipantTile />
+                  <ParticipantTile room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail} />
                 </GridLayout>
               </div>
             ) : (
               <div className="lk-focus-layout-wrapper">
                 <FocusLayoutContainer>
                   <CarouselLayout tracks={carouselTracks}>
-                    <ParticipantTile />
+                    <ParticipantTile room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail}/>
                   </CarouselLayout>
-                  {focusTrack && <FocusLayout trackRef={focusTrack} />}
+                  {focusTrack && <FocusLayout trackRef={focusTrack} room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail} />}
                 </FocusLayoutContainer>
               </div>
             )}

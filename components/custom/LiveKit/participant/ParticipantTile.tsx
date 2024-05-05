@@ -19,10 +19,28 @@ import {
   useMaybeParticipantContext,
   useMaybeTrackRefContext,
   useParticipantTile,
+  useParticipants,
 } from '@livekit/components-react';
 import { ParticipantName } from './ParticipantName';
 import { ParticipantPlaceholder } from './ParticipantPlaceholder';
 import { FocusToggle } from '../controls/FocusToggle';
+import { useSelector } from 'react-redux';
+import meetService from '../../../../service/meet/meetService';
+import { useRouter } from 'next/router';
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  Menu,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material';
+import PushPinIcon from '@mui/icons-material/PushPin';
+import Image from 'next/image';
+import pinImage from "../assets/icons/pin.svg";
+import unPinImage from "../assets/icons/noun-pin.svg";
 
 /**
  * The `ParticipantContextIfNeeded` component only creates a `ParticipantContext`
@@ -71,7 +89,11 @@ export interface ParticipantTileProps extends React.HTMLAttributes<HTMLDivElemen
   /** The track reference to display. */
   trackRef?: TrackReferenceOrPlaceholder;
   disableSpeakingIndicator?: boolean;
-
+  room?: any;
+  remotePinEmail?: string;
+  setRemotePinEmail: React.Dispatch<React.SetStateAction<string>>;
+  selfPinEmail?: string;
+  setSelfPinEmail: React.Dispatch<React.SetStateAction<string>>;
   onParticipantClick?: (event: ParticipantClickEvent) => void;
 }
 
@@ -100,6 +122,11 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     children,
     onParticipantClick,
     disableSpeakingIndicator,
+    room,
+    remotePinEmail,
+    setRemotePinEmail,
+    selfPinEmail,
+    setSelfPinEmail,
     ...htmlProps
   }: ParticipantTileProps,
   ref,
@@ -131,9 +158,111 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     },
     [trackReference, layoutContext],
   );
-
-  const handleFocusToggle = (e: any) => {
-    console.log('e =========>', e);
+  const user = useSelector((state: any) => state.auth);
+  const router = useRouter();
+  const { name: roomName } = router.query as { name: string };
+  const encoder = new TextEncoder();
+  const participants = useParticipants();
+  const [pinType, setPinType] = React.useState('no_pin');
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const open = Boolean(anchorEl);
+  const handleFocusToggleRemote = (
+    trackReference: TrackReferenceOrPlaceholder,
+    additional?: string,
+  ) => {
+    if (user?.userData?.role === 'admin') {
+      if (
+        remotePinEmail !== undefined &&
+        remotePinEmail !== trackReference.participant.identity &&
+        additional !== 'self_clicked' &&
+        additional !== 'remove_clicked'
+      ) {
+        setRemotePinEmail(trackReference.participant.identity);
+        setSelfPinEmail('no_self');
+        meetService
+          .updatePin(roomName, { pinEmail: trackReference.participant.identity })
+          .then((res) => {
+            const data = encoder.encode(
+              JSON.stringify({
+                email: trackReference.participant.identity,
+                topic: 'pin_updated',
+              }),
+            );
+            room.state === 'connected' &&
+              room.localParticipant.publishData(data, {
+                reliable: true,
+                destinationIdentities: participants?.map((par) => par.identity),
+                topic: 'pin_updated',
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        setRemotePinEmail('no_email');
+        setSelfPinEmail('no_self');
+        meetService
+          .updatePin(roomName, { pinEmail: 'no_email' })
+          .then((res) => {
+            const data = encoder.encode(
+              JSON.stringify({
+                email: 'no_email',
+                topic: 'pin_updated',
+              }),
+            );
+            room.state === 'connected' &&
+              room.localParticipant.publishData(data, {
+                reliable: true,
+                destinationIdentities: participants?.map((par) => par.identity),
+                topic: 'pin_updated',
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
+  };
+  const handleFocusToggleSelf = (
+    trackReference: TrackReferenceOrPlaceholder,
+    additional?: string,
+  ) => {
+    if (
+      remotePinEmail === 'no_email' &&
+      selfPinEmail !== trackReference.participant.identity &&
+      additional !== 'remove_clicked'
+    ) {
+      setSelfPinEmail(trackReference.participant.identity);
+      setRemotePinEmail('no_email');
+    } else if (remotePinEmail !== 'no_email' && additional !== 'remove_clicked') {
+      if (user?.userData?.role === 'admin') {
+        handleFocusToggleRemote(trackReference, 'self_clicked');
+        setSelfPinEmail(trackReference.participant.identity);
+      }
+    } else {
+      setSelfPinEmail('no_self');
+      setRemotePinEmail('no_email');
+    }
+  };
+  const handleChange = (value: string) => {
+    // setPinType(e.target.value);
+    if (value === 'remote_pin') {
+      handleFocusToggleRemote(trackReference);
+    } else if (value === 'self_pin') {
+      handleFocusToggleSelf(trackReference);
+    } else {
+      if (remotePinEmail !== 'no_email') {
+        handleFocusToggleRemote(trackReference, 'remove_clicked');
+      } else if (selfPinEmail !== 'no_self') {
+        handleFocusToggleSelf(trackReference, 'remove_clicked');
+      }
+    }
   };
 
   return (
@@ -187,7 +316,76 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
               </div>
             </>
           )}
-          <FocusToggle trackRef={trackReference} onClick={(e) => handleFocusToggle(e)} />
+          {/* <FocusToggle
+            trackRef={trackReference}
+            onClick={(e) => handleFocusToggle(trackReference)}
+          /> */}
+          {(user?.userData?.role === 'admin' ||
+            remotePinEmail === trackReference.participant.identity ||
+            selfPinEmail === trackReference.participant.identity ||
+            remotePinEmail === 'no_email') && (
+            <FormControl sx={{ m: 1, marginLeft: 'auto' }} size="small">
+              { user?.userData?.role !== "admin" && remotePinEmail === "no_email"?
+              (<Button
+                id="basic-button"
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={()=> handleChange('self_pin')}
+              >
+                {
+                  (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity === selfPinEmail)?
+                  <Image src={unPinImage} height={37} width={37} alt='pin_image'/>:
+                  <Image src={pinImage} height={30} width={25} alt='pin_image'/>
+                }
+              </Button>)
+              :
+              (<Button
+                id="basic-button"
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+              >
+                {
+                  (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity === selfPinEmail)?
+                  <Image src={unPinImage} height={37} width={37} alt='pin_image'/>:
+                  <Image src={pinImage} height={30} width={25} alt='pin_image'/>
+                }
+                
+              </Button>)}
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                {remotePinEmail === 'no_email' || user?.userData?.role === 'admin' ? (
+                  <>
+                    {(trackReference.participant.identity === remotePinEmail ||
+                      trackReference.participant.identity === selfPinEmail) && (
+                        <MenuItem value="no_pin" onClick={() => handleChange('no_pin')}>
+                          Remove pin
+                        </MenuItem>
+                      )}
+                    <MenuItem value={'self_pin'} onClick={() => handleChange('self_pin')}>
+                      Pin for myself
+                    </MenuItem>
+                    {user?.userData?.role === 'admin' && (
+                      <MenuItem value={'remote_pin'} onClick={() => handleChange('remote_pin')}>
+                        Pin for everyone
+                      </MenuItem>
+                    )}
+                  </>
+                ) : (
+                  <Typography sx={{ marginX: '15px' }}>Admin has pinned this screen!</Typography>
+                )}
+              </Menu>
+            </FormControl>
+          )}
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div>

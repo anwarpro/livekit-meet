@@ -87,6 +87,12 @@ class MeetService {
     handRaise = (payload: any) => {
         return axios.put<IMeet>(`${API_URL}/hand`,{ ...payload });
     }
+    getPinInfo = (id:string) => {
+        return axios.get<string[]>(`${API_URL}/pin/${id}`);
+    }
+    updatePin = (id: string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/pin/${id}`,{ ...payload });
+    }
 
 }
 const meetService = new MeetService()

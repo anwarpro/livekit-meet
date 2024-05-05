@@ -24,14 +24,32 @@ export function FocusLayoutContainer(props: FocusLayoutContainerProps) {
 export interface FocusLayoutProps extends React.HTMLAttributes<HTMLElement> {
   /** The track to display in the focus layout. */
   trackRef?: TrackReferenceOrPlaceholder;
-
-  onParticipantClick?: (evt: ParticipantClickEvent) => void;
+  room: any;
+  remotePinEmail: string;
+  selfPinEmail: string;
+  setRemotePinEmail: React.Dispatch<React.SetStateAction<string>>;
+  setSelfPinEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
 /**
  * The `FocusLayout` component is just a light wrapper around the `ParticipantTile` to display a single participant.
  * @public
  */
-export function FocusLayout({ trackRef, ...htmlProps }: FocusLayoutProps) {
-  return <ParticipantTile trackRef={trackRef} {...htmlProps} />;
+export function FocusLayout({
+  trackRef,
+  room,
+  remotePinEmail,
+  setRemotePinEmail,
+  selfPinEmail,
+  setSelfPinEmail,
+  ...htmlProps
+}: FocusLayoutProps) {
+  return (
+    <ParticipantTile
+      room={room}
+      remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail}
+      trackRef={trackRef}
+      {...htmlProps}
+    />
+  );
 }
