@@ -38,7 +38,7 @@ export interface VideoConferenceProps extends React.HTMLAttributes<HTMLDivElemen
   chatMessageFormatter?: MessageFormatter;
   chatMessageEncoder?: MessageEncoder;
   chatMessageDecoder?: MessageDecoder;
-  room?: any;
+  room: any;
   /** @alpha */
   SettingsComponent?: React.ComponentType;
 }
@@ -89,15 +89,17 @@ export function VideoConference({
     log.debug('updating widget state', state);
     setWidgetState(state);
   };
+
+  // custom pin code
   const router = useRouter();
   const { name: roomName } = router.query as { name: string};
-  const [pinEmail, setPinEmail] = React.useState({email: "no_email"});
+  const [remotePinEmail, setRemotePinEmail] = React.useState("no_email");
+  const [selfPinEmail, setSelfPinEmail] = React.useState("no_self");
   const decoder = new TextDecoder();
   const fetchPinData = ()=> {
     meetService.getPinInfo(roomName)
     .then((res:any) => {
-      console.log("pin data fetched");
-      setPinEmail({email: res.data?.data});
+      setRemotePinEmail(res.data?.data);
     }).catch(err => {
       console.log(err);
     })
@@ -107,17 +109,18 @@ export function VideoConference({
     (payload: Uint8Array, participant: any, kind: string, topic: string) => {
       if (topic === 'pin_updated') {
         // fetchPinData();
-        console.log(topic);
-        const email = JSON.parse(decoder.decode(payload))?.email;
-        console.log(email, pinEmail);
-        if(email !== pinEmail.email) {
-          setPinEmail({email});
+        const email = JSON.parse(decoder.decode(payload));
+        // console.log(email);
+        if(email.email !== remotePinEmail) {
+          setRemotePinEmail(email.email);
         }
       }
     },
   );
   React.useEffect(()=> {
-    fetchPinData();
+    if(roomName) {
+      fetchPinData();
+    }
   }, [roomName])
 
   const layoutContext = useCreateLayoutContext();
@@ -125,7 +128,7 @@ export function VideoConference({
     .filter(isTrackReference)
     .filter((track) => track.publication.source === Track.Source.ScreenShare);
 
-  const focusTrack = usePinnedTracks(layoutContext, tracks, pinEmail.email)?.[0];
+  const focusTrack = usePinnedTracks(layoutContext, tracks, remotePinEmail, selfPinEmail)?.[0];
   const carouselTracks = tracks.filter((track) => !isEqualTrackRef(track, focusTrack));
 
   React.useEffect(() => {
@@ -171,16 +174,16 @@ export function VideoConference({
             {!focusTrack ? (
               <div className="lk-grid-layout-wrapper">
                 <GridLayout tracks={tracks}>
-                  <ParticipantTile room={room} pinEmail={pinEmail} setPinEmail={setPinEmail}/>
+                  <ParticipantTile room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail} />
                 </GridLayout>
               </div>
             ) : (
               <div className="lk-focus-layout-wrapper">
                 <FocusLayoutContainer>
                   <CarouselLayout tracks={carouselTracks}>
-                    <ParticipantTile room={room} pinEmail={pinEmail} setPinEmail={setPinEmail}/>
+                    <ParticipantTile room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail}/>
                   </CarouselLayout>
-                  {focusTrack && <FocusLayout trackRef={focusTrack} />}
+                  {focusTrack && <FocusLayout trackRef={focusTrack} room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail} />}
                 </FocusLayoutContainer>
               </div>
             )}
