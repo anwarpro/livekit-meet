@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { FocusToggleIcon, UnfocusToggleIcon } from '../assets/icons';
-// import { useFocusToggle } from '../hooks';
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import {
   LayoutContext,
-  useFocusToggle,
+  // useFocusToggle,
   // useFocusToggle,
   // useMaybeRoomContext,
   useMaybeTrackRefContext,
   // useParticipants,
 } from '@livekit/components-react';
+import { useFocusToggle } from '../hooks/useFocusToggle';
 // import { useSelector } from 'react-redux';
 // import { RoomEvent } from 'livekit-client';
 
@@ -38,29 +38,6 @@ export const FocusToggle = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, F
       trackRef: trackRef ?? trackRefFromContext,
       props,
     });
-
-    // const room = useMaybeRoomContext();
-    // const encoder = new TextEncoder();
-    // const decoder = new TextDecoder();
-    // const participants = useParticipants();
-    // const { userData } = useSelector((state: any) => state.auth);
-    // const data = encoder.encode(
-    //   JSON.stringify({
-    //     role: userData?.role,
-    //     email: userData?.email,
-    //     topic: 'pin_screen',
-    //     value: inFocus,
-    //   }),
-    // );
-    // React.useEffect(() => {
-    //   if (room?.state === 'connected') {
-    //     room.localParticipant.publishData(data, {
-    //       reliable: true,
-    //       destinationIdentities: participants?.map((par) => par.identity),
-    //       topic: 'pin_screen',
-    //     });
-    //   }
-    // }, [data, inFocus, participants, room]);
 
     return (
       <LayoutContext.Consumer>

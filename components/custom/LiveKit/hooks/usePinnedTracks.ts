@@ -13,16 +13,18 @@ import { useEnsureLayoutContext } from '../utils';
  * ```
  * @public
  */
-export function usePinnedTracks(layoutContext?: LayoutContextType, tracks?: TrackReferenceOrPlaceholder[], pinEmail?: string): TrackReferenceOrPlaceholder[] {
+export function usePinnedTracks(layoutContext?: LayoutContextType, tracks?: TrackReferenceOrPlaceholder[], pinEmail?: string, isRemotePin?: string): TrackReferenceOrPlaceholder[] {
+  console.log("🚀 ~ usePinnedTracks ~ pinEmail:", pinEmail)
   layoutContext = useEnsureLayoutContext(layoutContext);
   return React.useMemo(() => {
-    // if (layoutContext?.pin.state !== undefined && layoutContext.pin.state.length >= 1) {
-    //   return layoutContext.pin.state;
-    // }
-    if(tracks !== undefined && tracks?.length >= 1) {
+    if (isRemotePin === "self" && tracks !== undefined && tracks?.length >= 1 && pinEmail === "no_email") {
       const filterTrack = tracks.find(tr => tr.participant.identity === pinEmail);
-      if(filterTrack) return [filterTrack];
+      if (filterTrack) return [filterTrack];
+    }
+    else if (tracks !== undefined && tracks?.length >= 1) {
+      const filterTrack = tracks.find(tr => tr.participant.identity === pinEmail);
+      if (filterTrack) return [filterTrack];
     }
     return [];
-  }, [tracks, pinEmail]);
+  }, [isRemotePin, tracks, pinEmail]);
 }
