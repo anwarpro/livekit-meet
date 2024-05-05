@@ -243,7 +243,6 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
       setRemotePinEmail('no_email');
     }
   };
-  console.log(remotePinEmail, selfPinEmail);
   const handleChange = (value: string) => {
     console.log(value);
     if (value === 'remote_pin') {
@@ -316,6 +315,31 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
           /> */}
           
             <FormControl sx={{ m: 1, marginLeft: 'auto' }} size="small">
+              {
+                user?.userData?.role !== "admin" && remotePinEmail === "no_email" && 
+                <Button
+                  id="basic-button"
+                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={()=> {
+                    if(trackReference.participant.identity === selfPinEmail) {
+                      handlePinRemoveSelf();
+                    } else {
+                      handlePinSelf();
+                    }
+                  }}
+                >
+                  {
+                    (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity == selfPinEmail) ?
+                    <Image src={unPinImage} height={40} width={30} alt="pin_image" />
+                    :
+                    <Image src={pinImage} height={30} width={25} alt="unpin_image" />
+                  }
+                </Button>
+              }
+              {
+                (user?.userData?.role === "admin" || remotePinEmail !== "no_email") &&
                 <Button
                   id="basic-button"
                   aria-controls={open ? 'basic-menu' : undefined}
@@ -323,9 +347,14 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                   aria-expanded={open ? 'true' : undefined}
                   onClick={handleClick}
                 >
-                  <Image src={pinImage} height={30} width={25} alt="pin_image" />
+                  {
+                    (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity == selfPinEmail) ?
+                    <Image src={unPinImage} height={40} width={30} alt="pin_image" />
+                    :
+                    <Image src={pinImage} height={30} width={25} alt="unpin_image" />
+                  }
                 </Button>
-              
+              }
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
@@ -335,17 +364,32 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                   'aria-labelledby': 'basic-button',
                 }}
               >
-                  <>
-                    <MenuItem value="no_pin" onClick={() => handleChange('no_pin')}>
+                  {
+                    (user?.userData?.role === "admin" || remotePinEmail === "no_email") ?
+                    <>
+                    {
+                      ((trackReference.participant.identity===remotePinEmail && 
+                      user?.userData?.role === "admin") || (trackReference.participant.identity===selfPinEmail)) &&
+                      <MenuItem value="no_pin" onClick={() => handleChange('no_pin')}>
                         Remove pin
                       </MenuItem>
-                    <MenuItem value={'self_pin'} onClick={() => handleChange('self_pin')}>
+                    }
+                    {
+                      trackReference.participant.identity !== selfPinEmail &&
+                      <MenuItem value={'self_pin'} onClick={() => handleChange('self_pin')}>
                       Pin for myself
                     </MenuItem>
-                    <MenuItem value={'remote_pin'} onClick={() => handleChange('remote_pin')}>
+                    }
+                    {
+                      user?.userData?.role === "admin" && trackReference.participant.identity !== remotePinEmail && 
+                      <MenuItem value={'remote_pin'} onClick={() => handleChange('remote_pin')}>
                         Pin for everyone
                       </MenuItem>
+                    }
                   </>
+                  :
+                  <Typography sx={{marginX: "1rem"}}>Admin has pinned a screen!</Typography>
+                  }
               </Menu>
             </FormControl>
         </ParticipantContextIfNeeded>
