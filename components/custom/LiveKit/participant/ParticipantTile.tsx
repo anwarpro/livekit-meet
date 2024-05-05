@@ -38,6 +38,9 @@ import {
   Typography,
 } from '@mui/material';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import Image from 'next/image';
+import pinImage from "../assets/icons/pin.svg";
+import unPinImage from "../assets/icons/noun-pin.svg";
 
 /**
  * The `ParticipantContextIfNeeded` component only creates a `ParticipantContext`
@@ -322,15 +325,35 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
             selfPinEmail === trackReference.participant.identity ||
             remotePinEmail === 'no_email') && (
             <FormControl sx={{ m: 1, marginLeft: 'auto' }} size="small">
-              <Button
+              { user?.userData?.role !== "admin" && remotePinEmail === "no_email"?
+              (<Button
+                id="basic-button"
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={()=> handleChange('self_pin')}
+              >
+                {
+                  (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity === selfPinEmail)?
+                  <Image src={unPinImage} height={37} width={37} alt='pin_image'/>:
+                  <Image src={pinImage} height={30} width={25} alt='pin_image'/>
+                }
+              </Button>)
+              :
+              (<Button
                 id="basic-button"
                 aria-controls={open ? 'basic-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
               >
-                <PushPinIcon sx={{ color: 'white' }} />
-              </Button>
+                {
+                  (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity === selfPinEmail)?
+                  <Image src={unPinImage} height={37} width={37} alt='pin_image'/>:
+                  <Image src={pinImage} height={30} width={25} alt='pin_image'/>
+                }
+                
+              </Button>)}
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}

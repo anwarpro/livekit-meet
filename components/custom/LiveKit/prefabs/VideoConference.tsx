@@ -108,9 +108,7 @@ export function VideoConference({
     RoomEvent.DataReceived,
     (payload: Uint8Array, participant: any, kind: string, topic: string) => {
       if (topic === 'pin_updated') {
-        // fetchPinData();
         const email = JSON.parse(decoder.decode(payload));
-        // console.log(email);
         if(email.email !== remotePinEmail) {
           setRemotePinEmail(email.email);
         }

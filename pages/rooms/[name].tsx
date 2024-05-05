@@ -47,7 +47,6 @@ const Home: NextPage = () => {
   );
 
   function handlePreJoinSubmit(values: LocalUserChoices) {
-    console.log('🚀 ~ handlePreJoinSubmit ~ LocalUserChoices:', values);
     setPreJoinChoices(values);
   }
 
@@ -202,7 +201,6 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
   const [handRaisedInfo, setHandRaisedInfo] = React.useState<string[]>([]);
 
   const handleHandRaised = () => {
-    console.log("here:", isHandRaised);
     if(isHandRaised === "true" || isHandRaised === "first") {
       setIsHandRaised("false");
     } else {
