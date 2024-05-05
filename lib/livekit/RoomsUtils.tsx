@@ -11,8 +11,8 @@ type IProps = {
   roomName: string;
   handRaisedInfo: string[];
   setHandRaisedInfo: Dispatch<SetStateAction<string[]>>;
-  isHandRaised: string;
-  setIsHandRaised: Dispatch<SetStateAction<string>>;
+  isHandRaised: boolean;
+  setIsHandRaised: Dispatch<SetStateAction<boolean>>;
 };
 
 const RoomsUtils = ({
@@ -41,7 +41,7 @@ const RoomsUtils = ({
           room?.state === 'connected' &&
           res?.data?.data?.includes(room?.localParticipant?.identity)
         ) {
-          setIsHandRaised("first");
+          setIsHandRaised(true);
         }
       })
       .catch((err) => {
@@ -50,12 +50,13 @@ const RoomsUtils = ({
   };
 
   useEffect(() => {
-    if (room?.state === 'connected' && isHandRaised !== "null" && isHandRaised !== "first") {
+    if (room?.state === 'connected' && isHandRaised !== null) {
+      console.log(isHandRaised);
       meetService
         .handRaise({
           meetId: roomName,
           participantEmail: room?.localParticipant?.identity,
-          value: isHandRaised === "true" ? true : false,
+          value: isHandRaised,
         })
         .then((res: any) => {
           const data = encoder.encode(
@@ -64,7 +65,7 @@ const RoomsUtils = ({
               
               email: userData?.email,
               topic: 'hand_raised',
-              value: isHandRaised === "true" ? true : false,
+              value: isHandRaised,
             }),
           );
           room.localParticipant.publishData(data, {
@@ -110,15 +111,15 @@ const RoomsUtils = ({
             );
             filterData.push(parsedHandRaisedInfo);
             setUniqHandRaise(filterData);
-            if (parsedHandRaisedInfo.value) {
-              let audio = new Audio('/meet_message.mp3');
-              audio.play();
-            }
+            // if (parsedHandRaisedInfo.value) {
+            //   let audio = new Audio('/meet_message.mp3');
+            //   audio.play();
+            // }
           } else {
-            if (parsedHandRaisedInfo.value) {
-              let audio = new Audio('/meet_message.mp3');
-              audio.play();
-            }
+            // if (parsedHandRaisedInfo.value) {
+            //   let audio = new Audio('/meet_message.mp3');
+            //   audio.play();
+            // }
             setUniqHandRaise([...uniqHandRaise, parsedHandRaisedInfo]);
           }
         }

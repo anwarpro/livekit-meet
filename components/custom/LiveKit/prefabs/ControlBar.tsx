@@ -11,12 +11,14 @@ import {
   useMaybeLayoutContext,
   usePersistentUserChoices,
 } from '@livekit/components-react';
-import { useMediaQuery } from '@mui/material';
+import { Button, useMediaQuery } from '@mui/material';
 import { SettingsMenuToggle } from '../controls/SettingsMenuToggle';
 import { StartMediaButton } from '../controls/StartMediaButton';
 import { ParticipantToggle } from '../controls/ParticipantToggle';
 import { MediaDeviceMenu } from './MediaDeviceMenu';
 import ParticipantsIcon from '../assets/icons/ParticipantsIcon';
+import BackHandIcon from '@mui/icons-material/BackHand';
+import HandRaiseToggle from '../controls/HandRaiseToggle';
 
 /** @public */
 export type ControlBarControls = {
@@ -190,6 +192,7 @@ export function ControlBar({
           {showText && 'Participant'}
         </ParticipantToggle>
       )}
+        <HandRaiseToggle showIcon={showIcon} showText={showText}/>
       {visibleControls.settings && (
         <SettingsMenuToggle>
           {showIcon && <GearIcon />}
