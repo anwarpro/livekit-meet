@@ -100,6 +100,7 @@ export function VideoConference({
     meetService.getPinInfo(roomName)
     .then((res:any) => {
       setRemotePinEmail(res.data?.data);
+      setSelfPinEmail("no_self");
     }).catch(err => {
       console.log(err);
     })
@@ -111,6 +112,7 @@ export function VideoConference({
         const email = JSON.parse(decoder.decode(payload));
         if(email.email !== remotePinEmail) {
           setRemotePinEmail(email.email);
+          setSelfPinEmail("no_self");
         }
       }
     },
