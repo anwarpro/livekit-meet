@@ -7,6 +7,7 @@ import UserListTable from '../../../components/user/UserListTable';
 import Image from 'next/image';
 import userIcon from '../../../components/assets/icons/user-colored.png';
 import userService from '../../../service/user/userService';
+import TeamMemberModal from '../../../components/user/TeamMemberModal';
 
 const UserManagement = () => {
   const [value, setValue] = React.useState('1');
@@ -24,6 +25,7 @@ const UserManagement = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [role, setRole] = useState('admin');
+  console.log('🚀 ~ UserManagement ~ role:', role);
   const [total, setTotal] = useState(0);
   const [userCountList, setUserCountList] = useState([]);
   const [searchText, setSearchText] = useState('');
@@ -47,6 +49,11 @@ const UserManagement = () => {
   useEffect(() => {
     fetchData();
   }, [role, limit, page, searchText]);
+
+  const [openMemberModal, setOpenMemberModal] = useState<{ edit: boolean }>({ edit: false });
+  const handleAddTeamMember = () => {
+    setOpenMemberModal({ edit: true });
+  };
 
   return (
     <Box
@@ -101,7 +108,7 @@ const UserManagement = () => {
             })}
           </TabList>
         </Box>
-        <TabPanel value={value} sx={{pl: 0}}>
+        <TabPanel value={value} sx={{ pl: 0 }}>
           <UserListTable
             fields={fields}
             items={contactList}
@@ -113,10 +120,14 @@ const UserManagement = () => {
             setSearchText={setSearchText}
             searchText={searchText}
             fetchData={fetchData}
+            role={role}
+            handleAddTeamMember={handleAddTeamMember}
             // isLoading={isLoading}
           />
         </TabPanel>
       </TabContext>
+
+      {openMemberModal && <TeamMemberModal openModal={openMemberModal} fetchData={fetchData} />}
     </Box>
   );
 };
