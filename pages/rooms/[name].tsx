@@ -19,14 +19,10 @@ import { DebugMode } from '../../lib/Debug';
 import { decodePassphrase, useServerUrl } from '../../lib/client-utils';
 import { SettingsMenu } from '../../lib/livekit/SettingsMenu';
 import meetService from '../../service/meet/meetService';
-import Footer from '../../components/layouts/Footer';
 import { useSelector } from 'react-redux';
 import { clearRoom, setRoom } from '../../lib/Slicers/meetSlice';
 import { Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import ParticipantList from '../../lib/livekit/ParticipantList';
-import RoomsUtils from '../../lib/livekit/RoomsUtils';
-// import { LiveKitRoom } from '../../components/custom/LiveKit/LiveKitRoom';
 import { VideoConference } from '../../components/custom/LiveKit/prefabs/VideoConference';
 
 const PreJoinNoSSR = dynamic(
@@ -189,56 +185,6 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
     };
   }, []);
   const { roomInfo } = useSelector((state: any) => state.room);
-  const [open, setOpen] = React.useState<boolean>(false);
-  const toggleDrawer = () => {
-    setOpen((prevState) => !prevState);
-  };
-  const [isHandRaised, setIsHandRaised] = React.useState<string>("null");
-  // "null" - not set yet 
-  // "true" - clicked to set true
-  // "false" - clicked to set false 
-  // "first" - not clicked, but hand raised already 
-  const [handRaisedInfo, setHandRaisedInfo] = React.useState<string[]>([]);
-
-  const handleHandRaised = () => {
-    if(isHandRaised === "true" || isHandRaised === "first") {
-      setIsHandRaised("false");
-    } else {
-      setIsHandRaised("true");
-    }
-  };
-
-  React.useEffect(() => {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        const participantButton = document.getElementsByClassName('participant-button')?.[0];
-        const handRaisedButton = document.getElementsByClassName('hand-raised')?.[0];
-        if (!handRaisedButton && mutation.addedNodes.length) {
-          const targetElement = document.getElementsByClassName('lk-control-bar')?.[0];
-          if (targetElement) {
-            const newHandRaisedButton = document.createElement('button');
-            newHandRaisedButton.className = 'lk-button hand-raised';
-            newHandRaisedButton.addEventListener('click', () => handleHandRaised());
-            newHandRaisedButton.innerHTML = `
-            <img height="25" src='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiNmZmYiIHdpZHRoPSIzMHB4IiBoZWlnaHQ9IjMwcHgiIHZpZXdCb3g9IjAgMCA1NiA1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNIDI1LjEyODkgNTMuNTExNyBDIDMzLjM3ODkgNTMuNTExNyAzOS4xNjgwIDQ5LjAzNTIgNDIuMjg1MSA0MC4yNDYxIEwgNDYuNDEwMiAyOC42NDQ1IEMgNDcuNDQxNCAyNS43MTQ5IDQ2LjUwMzkgMjMuMzAwOCA0NC4wNjY0IDIyLjQxMDIgQyA0MS44ODY3IDIxLjYxMzMgMzkuNzMwNSAyMi41NTA4IDM4LjY5OTIgMjQuOTY0OSBMIDM3LjE3NTggMjguNzE0OSBDIDM3LjEyODkgMjguODA4NiAzNy4wNTg2IDI4Ljg3ODkgMzYuOTY0OSAyOC44Nzg5IEMgMzYuODQ3NiAyOC44Nzg5IDM2LjgwMDggMjguNzg1MiAzNi44MDA4IDI4LjY2ODAgTCAzNi44MDA4IDkuODcxMSBDIDM2LjgwMDggNy4xMjg5IDM1LjA4OTggNS40MTgwIDMyLjQ2NDkgNS40MTgwIEMgMzEuNTAzOSA1LjQxODAgMzAuNjM2NyA1Ljc0NjEgMjkuOTgwNSA2LjM1NTUgQyAyOS42NzU4IDMuOTY0OSAyOC4xMjg5IDIuNDg4MyAyNS44MDg2IDIuNDg4MyBDIDIzLjUzNTEgMi40ODgzIDIxLjk0MTQgNC4wMTE3IDIxLjU4OTggNi4zMDg2IEMgMjEuMDAzOSA1LjcyMjcgMjAuMTYwMiA1LjQxODAgMTkuMzE2NCA1LjQxODAgQyAxNi44Nzg5IDUuNDE4MCAxNS4yNjE3IDcuMTA1NSAxNS4yNjE3IDkuNzA3MSBMIDE1LjI2MTcgMTIuMzA4NiBDIDE0LjYyODkgMTEuNjUyNCAxMy42OTE0IDExLjMwMDggMTIuNjgzNiAxMS4zMDA4IEMgMTAuMjQ2MSAxMS4zMDA4IDguNTU4NiAxMy4xMDU1IDguNTU4NiAxNS43MzA1IEwgOC41NTg2IDM1Ljg2MzMgQyA4LjU1ODYgNDYuODMyMCAxNS4yMTQ5IDUzLjUxMTcgMjUuMTI4OSA1My41MTE3IFogTSAyNS4wMTE3IDUwLjI1MzkgQyAxNi43MTQ5IDUwLjI1MzkgMTEuNjUyNCA0NC45MzM2IDExLjY1MjQgMzUuNDg4MyBMIDExLjY1MjQgMTYuMDU4NiBDIDExLjY1MjQgMTUuMDc0MiAxMi4yODUxIDE0LjM3MTEgMTMuMjY5NSAxNC4zNzExIEMgMTQuMjMwNSAxNC4zNzExIDE0LjkzMzYgMTUuMDc0MiAxNC45MzM2IDE2LjA1ODYgTCAxNC45MzM2IDI4LjAzNTIgQyAxNC45MzM2IDI4LjkwMjQgMTUuNjM2NyAyOS40ODgzIDE2LjM4NjcgMjkuNDg4MyBDIDE3LjE4MzYgMjkuNDg4MyAxNy45MTAyIDI4LjkwMjQgMTcuOTEwMiAyOC4wMzUyIEwgMTcuOTEwMiAxMC4xMjg5IEMgMTcuOTEwMiA5LjEyMTEgMTguNTQzMCA4LjQ0MTQgMTkuNTAzOSA4LjQ0MTQgQyAyMC40ODgzIDguNDQxNCAyMS4xNjgwIDkuMTIxMSAyMS4xNjgwIDEwLjEyODkgTCAyMS4xNjgwIDI2LjgzOTggQyAyMS4xNjgwIDI3LjcwNzEgMjEuODcxMSAyOC4yOTMwIDIyLjY0NDUgMjguMjkzMCBDIDIzLjQ0MTQgMjguMjkzMCAyNC4xNjgwIDI3LjcwNzEgMjQuMTY4MCAyNi44Mzk4IEwgMjQuMTY4MCA3LjIyMjcgQyAyNC4xNjgwIDYuMjM4MyAyNC44MjQyIDUuNTExNyAyNS44MDg2IDUuNTExNyBDIDI2Ljc0NjEgNS41MTE3IDI3LjQyNTggNi4yMzgzIDI3LjQyNTggNy4yMjI3IEwgMjcuNDI1OCAyNi44Mzk4IEMgMjcuNDI1OCAyNy42NjAyIDI4LjA4MjAgMjguMjkzMCAyOC45MDI0IDI4LjI5MzAgQyAyOS42OTkyIDI4LjI5MzAgMzAuNDAyNCAyNy42NjAyIDMwLjQwMjQgMjYuODM5OCBMIDMwLjQwMjQgMTAuMTI4OSBDIDMwLjQwMjQgOS4xMjExIDMxLjA4MjAgOC40NDE0IDMyLjA0MzAgOC40NDE0IEMgMzMuMDI3MyA4LjQ0MTQgMzMuNjgzNiA5LjEyMTEgMzMuNjgzNiAxMC4xMjg5IEwgMzMuNjgzNiAzMy4xOTE0IEMgMzMuNjgzNiAzNC4yNjk1IDM0LjM2MzMgMzUuMDQzMCAzNS4zNDc2IDM1LjA0MzAgQyAzNi4xOTE0IDM1LjA0MzAgMzYuODk0NSAzNC42NjgwIDM3LjQzMzYgMzMuNDk2MSBMIDQwLjYyMTEgMjYuMzcxMSBDIDQxLjA0MzAgMjUuMzYzMyA0MS44ODY3IDI0Ljg0NzYgNDIuNzUzOSAyNS4xNzU4IEMgNDMuNjkxNCAyNS41NTA4IDQ0LjAxOTUgMjYuNDQxNCA0My41NzQyIDI3LjY2MDIgTCAzOS40MjU4IDM5LjIzODMgQyAzNi41NjY0IDQ3LjIzMDUgMzEuNTUwOCA1MC4yNTM5IDI1LjAxMTcgNTAuMjUzOSBaIi8+PC9zdmc+'/>
-            <span>hand raised</span>
-              `;
-            targetElement.appendChild(newHandRaisedButton);
-            observer.disconnect();
-          }
-        }
-      });
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   return (
     <Box sx={{ height: '100dvh' }}>
@@ -257,17 +203,6 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
             SettingsComponent={SettingsMenu}
             room={room}
           />
-
-          <RoomsUtils
-            room={room}
-            handRaisedInfo={handRaisedInfo}
-            setHandRaisedInfo={setHandRaisedInfo}
-            isHandRaised={isHandRaised}
-            setIsHandRaised={setIsHandRaised}
-            roomName={roomName}
-          />
-          {/* <ParticipantList setOpen={setOpen} open={open} handRaisedInfo={handRaisedInfo} /> */}
-
           <DebugMode />
         </LiveKitRoom>
       )}
