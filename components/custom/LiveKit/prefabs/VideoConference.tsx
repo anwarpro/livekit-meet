@@ -27,9 +27,10 @@ import { Chat } from './Chat';
 import { Participant } from './Participant';
 import { useParticipantToggle } from '../hooks/useParticipantToggle';
 import { useSelector } from 'react-redux';
-import {usePinnedTracks} from '../hooks/usePinnedTracks'
+import { usePinnedTracks } from '../hooks/usePinnedTracks';
 import { useRouter } from 'next/router';
 import meetService from '../../../../service/meet/meetService';
+import attendanceService from '../../../../service/attendance/attendanceService';
 
 /**
  * @public
@@ -92,36 +93,62 @@ export function VideoConference({
 
   // custom pin code
   const router = useRouter();
-  const { name: roomName } = router.query as { name: string};
-  const [remotePinEmail, setRemotePinEmail] = React.useState("no_email");
-  const [selfPinEmail, setSelfPinEmail] = React.useState("no_self");
+  const { name: roomName } = router.query as { name: string };
+  const [remotePinEmail, setRemotePinEmail] = React.useState('no_email');
+  const [selfPinEmail, setSelfPinEmail] = React.useState('no_self');
   const decoder = new TextDecoder();
-  const fetchPinData = ()=> {
-    meetService.getPinInfo(roomName)
-    .then((res:any) => {
-      setRemotePinEmail(res.data?.data);
-      setSelfPinEmail("no_self");
-    }).catch(err => {
-      console.log(err);
-    })
-  }
+  const fetchPinData = () => {
+    meetService
+      .getPinInfo(roomName)
+      .then((res: any) => {
+        setRemotePinEmail(res.data?.data);
+        setSelfPinEmail('no_self');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   room.on(
     RoomEvent.DataReceived,
     (payload: Uint8Array, participant: any, kind: string, topic: string) => {
       if (topic === 'pin_updated') {
         const email = JSON.parse(decoder.decode(payload));
-        if(email.email !== remotePinEmail) {
+        if (email.email !== remotePinEmail) {
           setRemotePinEmail(email.email);
-          setSelfPinEmail("no_self");
+          setSelfPinEmail('no_self');
         }
       }
     },
   );
-  React.useEffect(()=> {
-    if(roomName) {
+
+  React.useEffect(() => {
+    if (room?.state === 'connected') {
+      attendanceService
+        .trackParticipantActivity({
+          eventType: 'participant_joined',
+          identity: room?.localParticipant?.identity,
+          meetId: room?.roomInfo?.name,
+        })
+        .then((res) => console.log('res', res))
+        .catch((err) => console.log('err', err));
+    }
+    if (room?.state === 'disconnected') {
+      attendanceService
+        .trackParticipantActivity({
+          eventType: 'participant_left',
+          identity: room?.localParticipant?.identity,
+          meetId: room?.roomInfo?.name,
+        })
+        .then((res) => console.log('res', res))
+        .catch((err) => console.log('err', err));
+    }
+  }, [room.state]);
+
+  React.useEffect(() => {
+    if (roomName) {
       fetchPinData();
     }
-  }, [roomName])
+  }, [roomName]);
 
   const layoutContext = useCreateLayoutContext();
   const screenShareTracks = tracks
@@ -174,16 +201,37 @@ export function VideoConference({
             {!focusTrack ? (
               <div className="lk-grid-layout-wrapper">
                 <GridLayout tracks={tracks}>
-                  <ParticipantTile room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail} />
+                  <ParticipantTile
+                    room={room}
+                    remotePinEmail={remotePinEmail}
+                    setRemotePinEmail={setRemotePinEmail}
+                    selfPinEmail={selfPinEmail}
+                    setSelfPinEmail={setSelfPinEmail}
+                  />
                 </GridLayout>
               </div>
             ) : (
               <div className="lk-focus-layout-wrapper">
                 <FocusLayoutContainer>
                   <CarouselLayout tracks={carouselTracks}>
-                    <ParticipantTile room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail}/>
+                    <ParticipantTile
+                      room={room}
+                      remotePinEmail={remotePinEmail}
+                      setRemotePinEmail={setRemotePinEmail}
+                      selfPinEmail={selfPinEmail}
+                      setSelfPinEmail={setSelfPinEmail}
+                    />
                   </CarouselLayout>
-                  {focusTrack && <FocusLayout trackRef={focusTrack} room={room} remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail} />}
+                  {focusTrack && (
+                    <FocusLayout
+                      trackRef={focusTrack}
+                      room={room}
+                      remotePinEmail={remotePinEmail}
+                      setRemotePinEmail={setRemotePinEmail}
+                      selfPinEmail={selfPinEmail}
+                      setSelfPinEmail={setSelfPinEmail}
+                    />
+                  )}
                 </FocusLayoutContainer>
               </div>
             )}
