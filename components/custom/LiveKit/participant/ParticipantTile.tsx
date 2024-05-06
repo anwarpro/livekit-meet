@@ -363,6 +363,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 MenuListProps={{
                   'aria-labelledby': 'basic-button',
                 }}
+                sx={{zIndex: 1500}}
               >
                   {
                     (user?.userData?.role === "admin" || remotePinEmail === "no_email") ?
