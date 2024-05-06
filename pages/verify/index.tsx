@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import userService from '../../service/user/userService';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import swal from 'sweetalert';
+import SendIcon from '@mui/icons-material/Send';
 
 const Verify = () => {
   const navigation = useRouter();
@@ -35,6 +36,15 @@ const Verify = () => {
     return emailRegex.test(email);
   };
 
+  const alreadyHaveCode = (email: string) => {
+    const isValid = isValidEmail(email);
+    if (isValid) {
+      navigation.push(`/verify/${email}`);
+    } else {
+      setError(true);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -59,11 +69,25 @@ const Verify = () => {
           sx={{ mt: 2 }}
         />
         <Button
-          sx={{ mt: 2, padding: '12px 30px' }}
+          sx={{ mt: 2, padding: '12px 30px', width: { lg: '30%', md: '100%', xs: '100%' } }}
           onClick={() => handleVerify(email)}
           variant="outlined"
         >
           verify me
+        </Button>
+        <Button
+          sx={{
+            mt: 2,
+            padding: '12px 30px',
+            ml: { lg: 2 },
+            width: { lg: '50%', md: '100%', xs: '100%' },
+          }}
+          onClick={() => alreadyHaveCode(email)}
+          variant="outlined"
+          color="secondary"
+          endIcon={<SendIcon />}
+        >
+          Already have a code
         </Button>
       </Box>
     </Box>

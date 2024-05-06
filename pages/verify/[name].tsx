@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import userService from '../../service/user/userService';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import swal from 'sweetalert';
+import ReplyIcon from '@mui/icons-material/Reply';
 
 const VerifyCode: NextPage = () => {
   const router = useRouter();
@@ -68,11 +69,25 @@ const VerifyCode: NextPage = () => {
           sx={{ mt: 2 }}
         />
         <Button
-          sx={{ mt: 2, padding: '12px 30px' }}
+          sx={{ mt: 2, padding: '12px 30px', width: { xl: '25%', md: '40%', xs: '100%' } }}
           onClick={() => handleVerify(otp)}
           variant="outlined"
         >
           verify me
+        </Button>
+        <Button
+          sx={{
+            mt: 2,
+            padding: '12px 30px',
+            ml: { md: 2 },
+            width: { xl: '25%', md: '45%', xs: '100%' },
+          }}
+          onClick={() => router.push('/verify')}
+          variant="outlined"
+          color="secondary"
+          startIcon={<ReplyIcon />}
+        >
+          Get Code
         </Button>
       </Box>
     </Box>
