@@ -3,11 +3,12 @@ import { mergeProps } from '../utils';
 import { RoomEvent, Track, type LocalAudioTrack, type LocalVideoTrack } from 'livekit-client';
 import { useMaybeRoomContext, useMediaDeviceSelect } from '@livekit/components-react';
 import { BackgroundBlur, VirtualBackground } from '@livekit/track-processors';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 const vsEffectAction = [
   {
     id: 'BG1',
-    label: 'Visual Background',
+    label: 'Virtual Background',
   },
   {
     id: 'BE1',
@@ -147,22 +148,27 @@ export const MediaDeviceSelect = /* @__PURE__ */ React.forwardRef<
     blur: BackgroundBlur(10, { delegate: 'GPU' }),
     virtualBackground: VirtualBackground(getRandomImgPath()),
   };
+  const [isVsEffectLoadding, setIsVsEffectLoadding] = React.useState<boolean>(false);
 
   const handleToggleVsEffect = async (room: any, state: any, label: string) => {
     if (!room) return;
     if (label === 'BG1') {
+      setIsVsEffectLoadding(true);
       try {
         const camTrack = room.localParticipant.getTrackPublication(Track.Source.Camera)!
           .track as LocalVideoTrack;
         if (camTrack.getProcessor()?.name !== 'virtual-background') {
           await camTrack.setProcessor(state.virtualBackground);
           setIsActiveEffect({ id: label, status: true });
+          setIsVsEffectLoadding(false);
         } else {
           await camTrack.stopProcessor();
           setIsActiveEffect({ id: label, status: false });
+          setIsVsEffectLoadding(false);
         }
       } catch (e: any) {
         setIsActiveEffect({ id: label, status: false });
+        setIsVsEffectLoadding(false);
         // appendLog(`ERROR: ${e.message}`);
       } finally {
         // setButtonDisabled('toggle-blur-button', false);
@@ -171,18 +177,22 @@ export const MediaDeviceSelect = /* @__PURE__ */ React.forwardRef<
       }
     }
     if (label === 'BE1') {
+      setIsVsEffectLoadding(true);
       try {
         const camTrack = room.localParticipant.getTrackPublication(Track.Source.Camera)!
           .track as LocalVideoTrack;
         if (camTrack.getProcessor()?.name !== 'background-blur') {
           await camTrack.setProcessor(state.blur);
           setIsActiveEffect({ id: label, status: true });
+          setIsVsEffectLoadding(false);
         } else {
           await camTrack.stopProcessor();
           setIsActiveEffect({ id: label, status: false });
+          setIsVsEffectLoadding(false);
         }
       } catch (e: any) {
         setIsActiveEffect({ id: label, status: false });
+        setIsVsEffectLoadding(false);
         // appendLog(`ERROR: ${e.message}`);
       } finally {
         // setButtonDisabled('toggle-blur-button', false);
@@ -210,25 +220,34 @@ export const MediaDeviceSelect = /* @__PURE__ */ React.forwardRef<
           </button>
         </li>
       ))}
-      <li className="my-2 py-2 border-bottom">
-        <span className="ms-2">Apply Visual Effect</span>
-      </li>
-      {vsEffectAction.map((device, index) => (
-        <li
-          key={device.id}
-          id={device.id}
-          data-lk-active={device.id === isActiveEffect.id && isActiveEffect.status}
-          aria-selected={device.id === isActiveEffect.id && isActiveEffect.status}
-          role="option"
-        >
-          <button
-            className="lk-button"
-            onClick={() => handleToggleVsEffect(room, state, device.id)}
-          >
-            {device.label}
-          </button>
-        </li>
-      ))}
+      {kind === 'videoinput' && (
+        <>
+          <li className="my-2 py-2 border-bottom">
+            <span className="ms-2">Apply Visual Effect</span>
+          </li>
+          {vsEffectAction.map((device, index) => (
+            <li
+              key={device.id}
+              id={device.id}
+              data-lk-active={device.id === isActiveEffect.id && isActiveEffect.status}
+              aria-selected={device.id === isActiveEffect.id && isActiveEffect.status}
+              role="option"
+            >
+              <button
+                className="lk-button"
+                onClick={() => handleToggleVsEffect(room, state, device.id)}
+              >
+                {device.label}{' '}
+                {isActiveEffect.id === device.id && isVsEffectLoadding ? (
+                  <HourglassBottomIcon />
+                ) : (
+                  ''
+                )}
+              </button>
+            </li>
+          ))}
+        </>
+      )}
     </ul>
   );
 });
