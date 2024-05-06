@@ -24,6 +24,10 @@ class AttendanceService {
 
     };
 
+    getAttendance = (id: any) => {
+        return axios.get<IAttendance>(`${API_URL}?meetId=${id}`);
+    }
+
 
 }
 const attendanceService = new AttendanceService()
