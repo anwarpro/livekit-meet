@@ -44,7 +44,7 @@ export const ParticipantPlaceholder = /* @__PURE__ */ React.forwardRef<
 
   return (
     <Box sx={{ borderRadius: '50%' }} ref={ref}>
-      {metadata?.includes('profileImage') ? (
+      {(metadata?.includes('profileImage') || metadata === "") ? (
         <SvgParticipantPlaceholder />
       ) : (
         // @ts-ignore 
