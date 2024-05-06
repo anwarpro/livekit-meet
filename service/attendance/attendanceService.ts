@@ -1,13 +1,12 @@
 import axios from "axios";
 import { IAttendance } from "../../types/attendance";
-import { GET } from "../../utils/axios.config";
 
 const getAuthorization = () => {
     // Getting user token and set to session storage
     try {
         const sessionStorageToken = sessionStorage.getItem("jwt-token") || null;
         const token = sessionStorageToken && sessionStorageToken;
-        axios.defaults.headers.common = { Authorization: `${token}` };
+        axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
     } catch (error) { }
 
 };

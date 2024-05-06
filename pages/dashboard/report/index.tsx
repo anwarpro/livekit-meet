@@ -1,20 +1,26 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import DashboardLayout from '../../../components/layouts/DashboardLayout';
 import meetService from '../../../service/meet/meetService';
-import { FormControl, MenuItem, Select } from '@mui/material';
+import { Box, FormControl, MenuItem, Select } from '@mui/material';
 import AttendanceTable from '../../../components/reports/AttendanceTable';
 import attendanceService from '../../../service/attendance/attendanceService';
-
+const fields = [
+  { id: 'identity', label: 'Email' },
+  { id: 'participant_joined_count', label: 'Join Count' },
+  { id: 'participant_left_count', label: 'Left Count' },
+  { id: 'total_duration', label: 'Active time' },
+  { id: 'participant_first_joined_time', label: 'Joining time' },
+  { id: 'action', label: 'Action' },
+];
 const ReportManagement = () => {
-  const fields = [
-    { id: 'identity', label: 'Email' },
-
-    { id: 'action', label: 'Action' },
-  ];
   const [previousEvent, setPreviousEvent] = useState([]);
-  console.log('🚀 ~ ReportManagement ~ previousEvent:', previousEvent);
   const [meetId, setMeetId] = useState<string>('');
-  console.log('🚀 ~ ReportManagement ~ meetId:', meetId);
+  const [atttendance, setAttendance] = useState([]);
+
+  const handleChangeEvent = (e: any) => {
+    setMeetId(e.target.value);
+  };
+
   const fetchData = () => {
     meetService
       .previousSchedule()
@@ -28,45 +34,44 @@ const ReportManagement = () => {
   const fetchAttendanceData = () => {
     attendanceService
       .getAttendance(meetId)
-      .then((res: any) => console.log('res', res))
+      .then((res: any) => {
+        setAttendance(res?.data?.data);
+      })
       .catch((err: any) => console.log(err));
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-  
+
   useEffect(() => {
     if (meetId !== '') {
       fetchAttendanceData();
     }
   }, [meetId]);
 
-  const handleChangeEvent = (e: any) => {
-    setMeetId(e.target.value);
-  };
-
   return (
     <div className="schedule-meet-component ">
-      {/* <FormControl sx={{ width: '50%' }}> */}
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        size="small"
-        hiddenLabel
-        onChange={(e) => handleChangeEvent(e)}
-        sx={{ width: '50%', mb: 3 }}
-        value={meetId}
-      >
-        {previousEvent?.map((event: any) => (
-          <MenuItem key={event._id} value={event.meetId}>
-            {event.title}
-          </MenuItem>
-        ))}
-      </Select>
-      {/* </FormControl> */}
+      <Box>
+        <p>Please Select Event</p>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          size="small"
+          hiddenLabel
+          onChange={(e) => handleChangeEvent(e)}
+          sx={{ width: '30%', mb: 3 }}
+          value={meetId}
+        >
+          {previousEvent?.map((event: any) => (
+            <MenuItem key={event._id} value={event.meetId}>
+              {event.title}
+            </MenuItem>
+          ))}
+        </Select>
+      </Box>
 
-      <AttendanceTable fields={fields} items={previousEvent} fetchData={fetchData} />
+      <AttendanceTable fields={fields} items={atttendance} fetchData={fetchData} />
     </div>
   );
 };

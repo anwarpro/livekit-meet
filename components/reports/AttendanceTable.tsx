@@ -1,6 +1,16 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import Image from 'next/image';
 import React, { Dispatch, SetStateAction } from 'react';
+import {
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import moment from 'moment';
+
 type IProps = {
   fetchData: Dispatch<SetStateAction<void>>;
   fields: object[];
@@ -46,16 +56,18 @@ const AttendanceTable = (props: IProps) => {
                       {column.id === 'action' ? (
                         <TableCell className="pe-auto">
                           <div className="d-flex">
-                            {/* <Image
-                              onClick={() => handleEdit(row)}
-                              className="me-2"
-                              style={{ cursor: 'pointer' }}
-                              src={EditIcon}
-                              width={24}
-                              height={24}
-                              alt="edit"
-                            /> */}
+                            <IconButton
+                              // onClick={() => handleEdit(row)}
+                              aria-label="delete"
+                              color="info"
+                            >
+                              <InfoIcon />
+                            </IconButton>
                           </div>
+                        </TableCell>
+                      ) : column.id === 'participant_first_joined_time' ? (
+                        <TableCell className="pe-auto">
+                          {moment(value).format('hh:mm A, DD/mm/yy')}
                         </TableCell>
                       ) : (
                         <TableCell key={column.id} align={column.align}>
