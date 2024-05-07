@@ -314,10 +314,11 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
             onClick={(e) => handleFocusToggle(trackReference)}
           /> */}
           
-            <FormControl sx={{ m: 1, marginLeft: 'auto' }} size="small">
+            {/* <FormControl sx={{ m: 1, marginLeft: 'auto' }} size="small"> */}
               {
                 user?.userData?.role !== "admin" && remotePinEmail === "no_email" && 
                 <Button
+                  className='lk-button lk-focus-toggle-button'
                   id="basic-button"
                   aria-controls={open ? 'basic-menu' : undefined}
                   aria-haspopup="true"
@@ -341,6 +342,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
               {
                 (user?.userData?.role === "admin" || remotePinEmail !== "no_email") &&
                 <Button
+                  className='lk-button lk-focus-toggle-button'
                   id="basic-button"
                   aria-controls={open ? 'basic-menu' : undefined}
                   aria-haspopup="true"
@@ -392,7 +394,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                   <Typography sx={{marginX: "1rem"}}>Admin has pinned a screen!</Typography>
                   }
               </Menu>
-            </FormControl>
+            {/* </FormControl> */}
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div>
