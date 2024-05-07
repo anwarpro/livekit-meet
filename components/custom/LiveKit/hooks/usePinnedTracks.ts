@@ -17,10 +17,14 @@ export function usePinnedTracks(layoutContext?: LayoutContextType, tracks?: Trac
   layoutContext = useEnsureLayoutContext(layoutContext);
   return React.useMemo(() => {
     if (remotePinEmail === "no_email" && selfPinEmail !== "no_self" && tracks !== undefined && tracks?.length >= 1) {
+      const screenSharePinTrack = tracks.find(tr => tr.participant.identity === selfPinEmail && tr.source === "screen_share");
+      if(screenSharePinTrack) return [screenSharePinTrack];
       const filterTrack = tracks.find(tr => tr.participant.identity === selfPinEmail);
       if(filterTrack) return [filterTrack];
     }
     if(remotePinEmail !== "no_email" && tracks !== undefined && tracks?.length >= 1) {
+      const screenSharePinTrack = tracks.find(tr => tr.participant.identity === remotePinEmail && tr.source === "screen_share");
+      if(screenSharePinTrack) return [screenSharePinTrack];
       const filterTrack = tracks.find(tr => tr.participant.identity === remotePinEmail);
       if(filterTrack) return [filterTrack];
     }
