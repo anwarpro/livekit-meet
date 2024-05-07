@@ -8,8 +8,8 @@ import type { SVGProps } from 'react';
  */
 const SvgParticipantPlaceholder = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    width={320}
-    height={320}
+    width={150}
+    height={150}
     viewBox="0 0 320 320"
     preserveAspectRatio="xMidYMid meet"
     fill="none"
