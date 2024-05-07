@@ -26,6 +26,9 @@ class AttendanceService {
     getAttendance = (id: any) => {
         return axios.get<IAttendance>(`${API_URL}?meetId=${id}`);
     }
+    getAttendanceReport = () => {
+        return axios.get<IAttendance>(`${API_URL}/report`);
+    }
 
 
 }

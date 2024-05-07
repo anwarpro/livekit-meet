@@ -4,12 +4,23 @@ import meetService from '../../../service/meet/meetService';
 import { Box, FormControl, MenuItem, Select } from '@mui/material';
 import AttendanceTable from '../../../components/reports/AttendanceTable';
 import attendanceService from '../../../service/attendance/attendanceService';
+import EventsTable from '../../../components/reports/EventsTable';
 const fields = [
   { id: 'identity', label: 'Email' },
   { id: 'participant_joined_count', label: 'Join Count' },
   { id: 'participant_left_count', label: 'Left Count' },
   { id: 'total_duration', label: 'Active time' },
   { id: 'participant_first_joined_time', label: 'Joining time' },
+  { id: 'action', label: 'Action' },
+];
+const eventsFields = [
+  { id: 'title', label: 'Event Name' },
+  { id: 'hostName', label: 'Host Name' },
+  { id: 'startTime', label: 'Start Time' },
+  { id: 'endTime', label: 'End Time' },
+  { id: 'duration', label: 'Active Time' },
+  { id: 'totalInvite', label: 'Total Invitation' },
+  { id: 'uniqueAttendees', label: 'Join Participant' },
   { id: 'action', label: 'Action' },
 ];
 const ReportManagement = () => {
@@ -22,8 +33,8 @@ const ReportManagement = () => {
   };
 
   const fetchData = () => {
-    meetService
-      .previousSchedule()
+    attendanceService
+      .getAttendanceReport()
       .then((res: any) => {
         console.log(res.data);
         setPreviousEvent(res?.data?.data);
@@ -72,6 +83,7 @@ const ReportManagement = () => {
       </Box>
 
       <AttendanceTable fields={fields} items={atttendance} fetchData={fetchData} />
+      <EventsTable fields={eventsFields} items={previousEvent} fetchData={fetchData} />
     </div>
   );
 };
