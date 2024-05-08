@@ -187,7 +187,7 @@ export function VideoConference({
   ]);
 
   useWarnAboutMissingStyles();
-  const { isParticipantModalOpen } = useSelector((state: any) => state.participant);
+  const { isParticipantModalOpen, isChatOpen } = useSelector((state: any) => state.participant);
 
   return (
     <div className="lk-video-conference" {...props}>
@@ -240,17 +240,16 @@ export function VideoConference({
             />
           </div>
           <Chat
-            style={{ display: widgetState.showChat ? 'grid' : 'none' }}
+            style={{
+              display: isParticipantModalOpen ? 'none' : isChatOpen ? 'grid' : 'none',
+            }}
             messageFormatter={chatMessageFormatter}
             messageEncoder={chatMessageEncoder}
             messageDecoder={chatMessageDecoder}
           />
           <Participant
             // @ts-ignore
-            style={{ display: isParticipantModalOpen ? 'grid' : 'none' }}
-            messageFormatter={chatMessageFormatter}
-            messageEncoder={chatMessageEncoder}
-            messageDecoder={chatMessageDecoder}
+            style={{ display: isChatOpen ? 'none' : isParticipantModalOpen ? 'grid' : 'none' }}
           />
           {SettingsComponent && (
             <div
