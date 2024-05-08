@@ -25,7 +25,6 @@ const UserManagement = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [role, setRole] = useState('admin');
-  console.log('🚀 ~ UserManagement ~ role:', role);
   const [total, setTotal] = useState(0);
   const [userCountList, setUserCountList] = useState([]);
   const [searchText, setSearchText] = useState('');

@@ -23,11 +23,16 @@ class AttendanceService {
 
     };
 
-    getAttendance = (id: any) => {
-        return axios.get<IAttendance>(`${API_URL}?meetId=${id}`);
+    getAttendance = ({ meetId, identity, page, limit, search }: { meetId: string, identity?: string, page?: number, limit?: number, search?: string }) => {
+        if (identity) {
+            return axios.get<IAttendance>(`${API_URL}?meetId=${meetId}&identity=${identity}`);
+        } else {
+            return axios.get<IAttendance>(`${API_URL}?meetId=${meetId}&page=${page}&limit=${limit}&search=${search}`);
+        }
+
     }
-    getAttendanceReport = () => {
-        return axios.get<IAttendance>(`${API_URL}/report`);
+    getAttendanceReport = (page: number, limit: number, search: string) => {
+        return axios.get<IAttendance>(`${API_URL}/report?page=${page}&limit=${limit}&search=${search}`);
     }
 
 
