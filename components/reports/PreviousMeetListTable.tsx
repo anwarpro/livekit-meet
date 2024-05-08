@@ -13,8 +13,7 @@ import {
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import moment from 'moment';
-import AttendanceUserDetailsModal from './AttendanceUserDetailsModal';
-import attendanceService from '../../service/attendance/attendanceService';
+import { useRouter } from 'next/router';
 import { debounce } from 'lodash';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -22,7 +21,6 @@ type IProps = {
   fetchData: Dispatch<SetStateAction<void>>;
   fields: object[];
   items: object[];
-  meetId: string;
   total: number;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
@@ -32,22 +30,9 @@ type IProps = {
   setSearchText: Dispatch<SetStateAction<string>>;
 };
 
-const AttendanceTable = (props: IProps) => {
-  const [openModal, setIsOpenModal] = useState<{ edit: boolean }>({ edit: false });
-  const [attendanceDetails, setAttendanceDetails] = useState<{
-    identity: string;
-    attendanceInfo: string[];
-  }>({ identity: '', attendanceInfo: [] });
+const PreviousMeetListTable = (props: IProps) => {
+  const router = useRouter();
   const [debounceSearch, setDebounceSearch] = useState('');
-  const handleInfo = (identity: string) => {
-    setIsOpenModal({ edit: true });
-    attendanceService
-      .getAttendance({ meetId: props.meetId, identity })
-      .then((res: any) => {
-        setAttendanceDetails(res?.data);
-      })
-      .catch((err: any) => console.log(err));
-  };
   const getDuration = (value: any) => {
     const seconds = value / 1000;
     const hours = Math.floor(seconds / 3600);
@@ -94,6 +79,7 @@ const AttendanceTable = (props: IProps) => {
     props?.setPage(1);
     props?.setSearchText('');
   };
+
   return (
     <>
       <div className="search mb-3 d-flex align-items-center justify-content-between">
@@ -153,7 +139,7 @@ const AttendanceTable = (props: IProps) => {
                           <TableCell className="pe-auto">
                             <div className="d-flex">
                               <IconButton
-                                onClick={() => handleInfo(row.identity)}
+                                onClick={() => router.push(`/dashboard/report/${row._id}`)}
                                 aria-label="delete"
                                 color="info"
                               >
@@ -161,11 +147,15 @@ const AttendanceTable = (props: IProps) => {
                               </IconButton>
                             </div>
                           </TableCell>
-                        ) : column.id === 'participant_first_joined_time' ? (
+                        ) : column.id === 'startTime' ? (
                           <TableCell className="pe-auto">
                             {moment(value).format('hh:mm A')}
                           </TableCell>
-                        ) : column.id === 'participant_active_time' ? (
+                        ) : column.id === 'endTime' ? (
+                          <TableCell className="pe-auto">
+                            {moment(value).format('hh:mm A')}
+                          </TableCell>
+                        ) : column.id === 'duration' ? (
                           <TableCell className="pe-auto">{getDuration(value)}</TableCell>
                         ) : (
                           <TableCell key={column.id} align={column.align}>
@@ -198,12 +188,8 @@ const AttendanceTable = (props: IProps) => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
-      {openModal.edit && (
-        <AttendanceUserDetailsModal openModal={openModal} attendanceDetails={attendanceDetails} />
-      )}
     </>
   );
 };
 
-export default AttendanceTable;
+export default PreviousMeetListTable;
