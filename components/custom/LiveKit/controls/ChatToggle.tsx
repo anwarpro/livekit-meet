@@ -1,5 +1,5 @@
-import { useChatToggle } from '@livekit/components-react';
 import * as React from 'react';
+import { useChatToggle } from '../hooks/useChatToggle';
 
 /** @public */
 export interface ChatToggleProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
@@ -20,7 +20,6 @@ export interface ChatToggleProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 export const ChatToggle = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, ChatToggleProps>(
   function ChatToggle(props: ChatToggleProps, ref) {
     const { mergedProps } = useChatToggle({ props });
-
     return (
       <button ref={ref} {...mergedProps}>
         {props.children}

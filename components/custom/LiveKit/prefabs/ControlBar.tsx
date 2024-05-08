@@ -5,7 +5,7 @@ import { ChatIcon, GearIcon, LeaveIcon } from '../assets/icons';
 import { supportsScreenSharing } from '@livekit/components-core';
 import { mergeProps } from '../utils';
 import {
-  ChatToggle,
+  // ChatToggle,
   TrackToggle,
   useLocalParticipantPermissions,
   useMaybeLayoutContext,
@@ -19,6 +19,7 @@ import { MediaDeviceMenu } from './MediaDeviceMenu';
 import ParticipantsIcon from '../assets/icons/ParticipantsIcon';
 import BackHandIcon from '@mui/icons-material/BackHand';
 import HandRaiseToggle from '../controls/HandRaiseToggle';
+import { ChatToggle } from '../controls/ChatToggle';
 
 /** @public */
 export type ControlBarControls = {
