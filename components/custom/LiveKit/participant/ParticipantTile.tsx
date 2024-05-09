@@ -95,6 +95,7 @@ export interface ParticipantTileProps extends React.HTMLAttributes<HTMLDivElemen
   selfPinEmail?: string;
   setSelfPinEmail: React.Dispatch<React.SetStateAction<string>>;
   onParticipantClick?: (event: ParticipantClickEvent) => void;
+  layoutName: string;
 }
 
 /**
@@ -127,6 +128,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     setRemotePinEmail,
     selfPinEmail,
     setSelfPinEmail,
+    layoutName,
     ...htmlProps
   }: ParticipantTileProps,
   ref,
@@ -282,7 +284,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 )
               )}
               <div className="lk-participant-placeholder">
-                <ParticipantPlaceholder />
+                <ParticipantPlaceholder layoutName={layoutName} />
               </div>
               <div className="lk-participant-metadata">
                 <div className="lk-participant-metadata-item">

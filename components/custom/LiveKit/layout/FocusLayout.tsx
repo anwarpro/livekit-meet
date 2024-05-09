@@ -49,6 +49,7 @@ export function FocusLayout({
       room={room}
       remotePinEmail={remotePinEmail} setRemotePinEmail={setRemotePinEmail} selfPinEmail={selfPinEmail} setSelfPinEmail={setSelfPinEmail}
       trackRef={trackRef}
+      layoutName="focus"
       {...htmlProps}
     />
   );
