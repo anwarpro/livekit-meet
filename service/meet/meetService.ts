@@ -96,6 +96,12 @@ class MeetService {
     disconnectRoom = (id: string) => {
         return axios.delete<IMeet>(`${API_URL}/disconnect/${id}`);
     }
+    removeParticipant = (id: string, identity: string) => {
+        return axios.post<IMeet>(`${API_URL}/remove_participant/${id}/${identity}`);
+    }
+    muteParticipant = (id: string, identity: string) => {
+        return axios.post<IMeet>(`${API_URL}/mute_participant/${id}/${identity}`);
+    }
 
 }
 const meetService = new MeetService()
