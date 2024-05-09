@@ -93,6 +93,9 @@ class MeetService {
     updatePin = (id: string, payload: any) => {
         return axios.put<IMeet>(`${API_URL}/pin/${id}`,{ ...payload });
     }
+    disconnectRoom = (id: string) => {
+        return axios.delete<IMeet>(`${API_URL}/disconnect/${id}`);
+    }
 
 }
 const meetService = new MeetService()
