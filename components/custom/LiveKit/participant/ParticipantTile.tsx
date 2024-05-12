@@ -416,29 +416,36 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
             )}
           </Menu>
           {/* </FormControl> */}
-          <div className="lk-focus-custom-buttons">
-            <IconButton
-              className='me-3'
-              size="large"
-              disabled={
-                user?.userData?.email === trackReference.participant.identity ||
-                user?.userData?.role !== 'admin'
-              }
-              onClick={() => handleMuteParticipant(trackReference.participant.identity)}
-            >
-              <MicOffIcon style={{ fontSize: '1.3rem' }} />
-            </IconButton>
-            <IconButton
-              size="large"
-              disabled={
-                user?.userData?.email === trackReference.participant.identity ||
-                user?.userData?.role !== 'admin'
-              }
-              onClick={() => handleRemoveParticipant(trackReference.participant.identity)}
-            >
-              <RemoveCircleIcon style={{ fontSize: '1.3rem' }} />
-            </IconButton>
-          </div>
+
+          {user?.userData?.email === trackReference.participant.identity ||
+          user?.userData?.role !== 'admin' ? (
+            ''
+          ) : (
+            <div className="lk-focus-custom-buttons">
+              <IconButton
+                className="me-3"
+                size="large"
+                disabled={
+                  user?.userData?.email === trackReference.participant.identity ||
+                  user?.userData?.role !== 'admin'
+                }
+                onClick={() => handleMuteParticipant(trackReference.participant.identity)}
+              >
+                <MicOffIcon style={{ fontSize: '1.3rem' }} />
+              </IconButton>
+
+              <IconButton
+                size="large"
+                disabled={
+                  user?.userData?.email === trackReference.participant.identity ||
+                  user?.userData?.role !== 'admin'
+                }
+                onClick={() => handleRemoveParticipant(trackReference.participant.identity)}
+              >
+                <RemoveCircleIcon style={{ fontSize: '1.3rem' }} />
+              </IconButton>
+            </div>
+          )}
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div>
