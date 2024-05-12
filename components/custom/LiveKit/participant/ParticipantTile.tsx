@@ -23,25 +23,19 @@ import {
 } from '@livekit/components-react';
 import { ParticipantName } from './ParticipantName';
 import { ParticipantPlaceholder } from './ParticipantPlaceholder';
-import { FocusToggle } from '../controls/FocusToggle';
 import { useSelector } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
 import { useRouter } from 'next/router';
 import {
   Button,
-  FormControl,
   IconButton,
-  InputLabel,
   Menu,
   MenuItem,
-  Select,
-  SelectChangeEvent,
   Typography,
 } from '@mui/material';
-import PushPinIcon from '@mui/icons-material/PushPin';
 import Image from 'next/image';
-import pinImage from '../assets/icons/pin.svg';
-import unPinImage from '../assets/icons/noun-pin.svg';
+import pinImage from '../assets/icons/pin2.svg';
+import unPinImage from '../assets/icons/pin-off.svg';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import MicOffIcon from '@mui/icons-material/MicOff';
 
@@ -357,9 +351,9 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
             >
               {trackReference.participant.identity === remotePinEmail ||
               trackReference.participant.identity == selfPinEmail ? (
-                <Image src={unPinImage} height={40} width={30} alt="pin_image" />
+                <Image src={unPinImage} height={40} width={40} alt="pin_image" />
               ) : (
-                <Image src={pinImage} height={30} width={25} alt="unpin_image" />
+                <Image src={pinImage} height={40} width={40} alt="unpin_image" />
               )}
             </Button>
           )}
@@ -374,9 +368,9 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
             >
               {trackReference.participant.identity === remotePinEmail ||
               trackReference.participant.identity == selfPinEmail ? (
-                <Image src={unPinImage} height={40} width={30} alt="pin_image" />
+                <Image src={unPinImage} height={40} width={40} alt="pin_image" />
               ) : (
-                <Image src={pinImage} height={30} width={25} alt="unpin_image" />
+                <Image src={pinImage} height={40} width={40} alt="unpin_image" />
               )}
             </Button>
           )}

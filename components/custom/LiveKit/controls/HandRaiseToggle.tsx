@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
 import { setHandRaised } from '../../../../lib/Slicers/handRaisedSlicer';
 import { DataPacket_Kind, RemoteParticipant, RoomEvent } from 'livekit-client';
+import Image from 'next/image';
+import handRiseIcon from '../assets/icons/hand-rise.svg';
 
 const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: boolean }) => {
   const encoder = new TextEncoder();
@@ -121,7 +123,8 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
     );
   return (
     <button onClick={() => handleHandRaised()} className="lk-button lk-chat-toggle">
-      {showIcon && <BackHandIcon sx={{ fontSize: '1.3rem' }} />} {showText && 'Hand Raise'}
+      {showIcon && <Image src={handRiseIcon} height="22" width="22" alt="hand" />}
+      {showText && 'Hand Raise'}
     </button>
   );
 };

@@ -1,11 +1,10 @@
 import * as React from 'react';
-import type { ChatMessage, ChatOptions } from '@livekit/components-core';
+import type {ChatOptions } from '@livekit/components-core';
 import { ChatCloseIcon } from '../assets/icons';
 import { MessageFormatter, useParticipants } from '@livekit/components-react';
 
 import { ParticipantToggle } from '../controls/ParticipantToggle';
 import {
-  Box,
   IconButton,
   List,
   ListItem,
@@ -13,10 +12,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import { PersonPinCircleOutlined } from '@mui/icons-material';
 import PersonIcon from '@mui/icons-material/Person';
-import participantIcon from '../../../assets/icons/user-clone.svg';
-import BackHandIcon from '@mui/icons-material/BackHand';
+import handRiseIcon from '../assets/icons/hand-rise.svg';
 import { useSelector } from 'react-redux';
 import Image from 'next/image';
 import MicOffIcon from '@mui/icons-material/MicOff';
@@ -96,7 +93,7 @@ export function Participant({
                 <ListItemText primary={p.name} />
                 {/* @ts-ignore */}
                 {handRaised?.includes(p.identity) && (
-                  <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange' }} />
+                  <Image src={handRiseIcon} height="24" width="24" alt="" />
                 )}
               </ListItemButton>
             </ListItem>
