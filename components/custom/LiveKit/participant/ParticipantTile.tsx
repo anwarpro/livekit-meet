@@ -268,7 +268,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
   };
   const handleMuteParticipant = (identity: string) => {
     meetService
-      .muteParticipant(roomName, identity)
+      .muteParticipant(roomName, [identity])
       .then((res: any) => {
         console.log(res);
       })
@@ -420,8 +420,9 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 className="me-3"
                 size="large"
                 disabled={
-                  user?.userData?.email === trackReference.participant.identity ||
-                  user?.userData?.role !== 'admin'
+                  (user?.userData?.email === trackReference.participant.identity) ||
+                  (user?.userData?.role !== 'admin') ||
+                  (trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted)
                 }
                 onClick={() => handleMuteParticipant(trackReference.participant.identity)}
               >

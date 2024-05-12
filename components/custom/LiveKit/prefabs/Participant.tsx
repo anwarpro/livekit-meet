@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type {ChatOptions } from '@livekit/components-core';
 import { ChatCloseIcon } from '../assets/icons';
-import { MessageFormatter, useParticipants } from '@livekit/components-react';
+import { MessageFormatter, useMaybeRoomContext, useParticipants } from '@livekit/components-react';
 
 import { ParticipantToggle } from '../controls/ParticipantToggle';
 import {
@@ -46,6 +46,7 @@ export function Participant({
   const participants = useParticipants();
   const { handRaised } = useSelector((state: any) => state.handRaise);
   const { userData } = useSelector((state: any) => state.auth);
+  const room = useMaybeRoomContext();
 
   const handleMuteParticipant = () => {
     const filteredParticipant = (participants || [])
@@ -53,14 +54,14 @@ export function Participant({
       .filter((identity) => identity !== userData.email);
     console.log('🚀 ~ handleMuteParticipant ~ filterAdmin:', filteredParticipant);
 
-    // meetService
-    //   .muteParticipant(roomName, identity)
-    //   .then((res: any) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err: any) => {
-    //     console.log(err);
-    //   });
+    meetService
+      .muteParticipant(room?.name || "", filteredParticipant)
+      .then((res: any) => {
+        console.log(res);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
   };
   return (
     <div {...props} className="lk-chat participant-modal">
