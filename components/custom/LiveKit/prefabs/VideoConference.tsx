@@ -230,6 +230,7 @@ export function VideoConference({
                     setRemotePinEmail={setRemotePinEmail}
                     selfPinEmail={selfPinEmail}
                     setSelfPinEmail={setSelfPinEmail}
+                    layoutName="grid"
                   />
                 </GridLayout>
               </div>
@@ -243,6 +244,7 @@ export function VideoConference({
                       setRemotePinEmail={setRemotePinEmail}
                       selfPinEmail={selfPinEmail}
                       setSelfPinEmail={setSelfPinEmail}
+                      layoutName="carousel"
                     />
                   </CarouselLayout>
                   {focusTrack && (

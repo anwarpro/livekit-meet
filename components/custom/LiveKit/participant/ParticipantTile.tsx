@@ -23,24 +23,15 @@ import {
 } from '@livekit/components-react';
 import { ParticipantName } from './ParticipantName';
 import { ParticipantPlaceholder } from './ParticipantPlaceholder';
-import { FocusToggle } from '../controls/FocusToggle';
 import { useSelector } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
 import { useRouter } from 'next/router';
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  Menu,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from '@mui/material';
-import PushPinIcon from '@mui/icons-material/PushPin';
+import { Button, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import Image from 'next/image';
-import pinImage from '../assets/icons/pin.svg';
-import unPinImage from '../assets/icons/noun-pin.svg';
+import pinImage from '../assets/icons/pin2.svg';
+import unPinImage from '../assets/icons/pin-off.svg';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import MicOffIcon from '@mui/icons-material/MicOff';
 
 /**
  * The `ParticipantContextIfNeeded` component only creates a `ParticipantContext`
@@ -95,6 +86,7 @@ export interface ParticipantTileProps extends React.HTMLAttributes<HTMLDivElemen
   selfPinEmail?: string;
   setSelfPinEmail: React.Dispatch<React.SetStateAction<string>>;
   onParticipantClick?: (event: ParticipantClickEvent) => void;
+  layoutName: string;
 }
 
 /**
@@ -127,6 +119,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     setRemotePinEmail,
     selfPinEmail,
     setSelfPinEmail,
+    layoutName,
     ...htmlProps
   }: ParticipantTileProps,
   ref,
@@ -257,6 +250,26 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
       }
     }
   };
+  const handleRemoveParticipant = (identity: string) => {
+    meetService
+      .removeParticipant(roomName, identity)
+      .then((res: any) => {
+        console.log(res);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  };
+  const handleMuteParticipant = (identity: string) => {
+    meetService
+      .muteParticipant(roomName, [identity])
+      .then((res: any) => {
+        console.log(res);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div ref={ref} style={{ position: 'relative' }} {...elementProps}>
@@ -282,7 +295,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 )
               )}
               <div className="lk-participant-placeholder">
-                <ParticipantPlaceholder />
+                <ParticipantPlaceholder layoutName={layoutName} />
               </div>
               <div className="lk-participant-metadata">
                 <div className="lk-participant-metadata-item">
@@ -309,92 +322,113 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
               </div>
             </>
           )}
-          {/* <FocusToggle
-            trackRef={trackReference}
-            onClick={(e) => handleFocusToggle(trackReference)}
-          /> */}
-          
-            {/* <FormControl sx={{ m: 1, marginLeft: 'auto' }} size="small"> */}
-              {
-                user?.userData?.role !== "admin" && remotePinEmail === "no_email" && 
-                <Button
-                  className='lk-button lk-focus-toggle-button'
-                  id="basic-button"
-                  aria-controls={open ? 'basic-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={()=> {
-                    if(trackReference.participant.identity === selfPinEmail) {
-                      handlePinRemoveSelf();
-                    } else {
-                      handlePinSelf();
-                    }
-                  }}
-                >
-                  {
-                    (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity == selfPinEmail) ?
-                    <Image src={unPinImage} height={40} width={30} alt="pin_image" />
-                    :
-                    <Image src={pinImage} height={30} width={25} alt="unpin_image" />
-                  }
-                </Button>
-              }
-              {
-                (user?.userData?.role === "admin" || remotePinEmail !== "no_email") &&
-                <Button
-                  className='lk-button lk-focus-toggle-button'
-                  id="basic-button"
-                  aria-controls={open ? 'basic-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick}
-                >
-                  {
-                    (trackReference.participant.identity === remotePinEmail || trackReference.participant.identity == selfPinEmail) ?
-                    <Image src={unPinImage} height={40} width={30} alt="pin_image" />
-                    :
-                    <Image src={pinImage} height={30} width={25} alt="unpin_image" />
-                  }
-                </Button>
-              }
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  'aria-labelledby': 'basic-button',
-                }}
-                sx={{zIndex: 1500}}
-              >
-                  {
-                    (user?.userData?.role === "admin" || remotePinEmail === "no_email") ?
-                    <div>
-                    {
-                      ((trackReference.participant.identity===remotePinEmail && 
-                      user?.userData?.role === "admin") || (trackReference.participant.identity===selfPinEmail)) &&
-                      <MenuItem value="no_pin" onClick={() => handleChange('no_pin')}>
-                        Remove pin
-                      </MenuItem>
-                    }
-                    {
-                      trackReference.participant.identity !== selfPinEmail &&
-                      <MenuItem value={'self_pin'} onClick={() => handleChange('self_pin')}>
-                      Pin for myself
+
+          {user?.userData?.role !== 'admin' && remotePinEmail === 'no_email' && (
+            <Button
+              className="lk-button lk-focus-toggle-button"
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={() => {
+                if (trackReference.participant.identity === selfPinEmail) {
+                  handlePinRemoveSelf();
+                } else {
+                  handlePinSelf();
+                }
+              }}
+            >
+              {trackReference.participant.identity === remotePinEmail ||
+              trackReference.participant.identity == selfPinEmail ? (
+                <Image src={unPinImage} height={40} width={40} alt="pin_image" />
+              ) : (
+                <Image src={pinImage} height={40} width={40} alt="unpin_image" />
+              )}
+            </Button>
+          )}
+          {(user?.userData?.role === 'admin' || remotePinEmail !== 'no_email') && (
+            <Button
+              className="lk-button lk-focus-toggle-button"
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              {trackReference.participant.identity === remotePinEmail ||
+              trackReference.participant.identity == selfPinEmail ? (
+                <Image src={unPinImage} height={40} width={40} alt="pin_image" />
+              ) : (
+                <Image src={pinImage} height={40} width={40} alt="unpin_image" />
+              )}
+            </Button>
+          )}
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+            sx={{ zIndex: 1500 }}
+          >
+            {user?.userData?.role === 'admin' || remotePinEmail === 'no_email' ? (
+              <div>
+                {((trackReference.participant.identity === remotePinEmail &&
+                  user?.userData?.role === 'admin') ||
+                  trackReference.participant.identity === selfPinEmail) && (
+                  <MenuItem value="no_pin" onClick={() => handleChange('no_pin')}>
+                    Remove pin
+                  </MenuItem>
+                )}
+                {trackReference.participant.identity !== selfPinEmail && (
+                  <MenuItem value={'self_pin'} onClick={() => handleChange('self_pin')}>
+                    Pin for myself
+                  </MenuItem>
+                )}
+                {user?.userData?.role === 'admin' &&
+                  trackReference.participant.identity !== remotePinEmail && (
+                    <MenuItem value={'remote_pin'} onClick={() => handleChange('remote_pin')}>
+                      Pin for everyone
                     </MenuItem>
-                    }
-                    {
-                      user?.userData?.role === "admin" && trackReference.participant.identity !== remotePinEmail && 
-                      <MenuItem value={'remote_pin'} onClick={() => handleChange('remote_pin')}>
-                        Pin for everyone
-                      </MenuItem>
-                    }
-                  </div>
-                  :
-                  <Typography sx={{marginX: "1rem"}}>Admin has pinned a screen!</Typography>
-                  }
-              </Menu>
-            {/* </FormControl> */}
+                  )}
+              </div>
+            ) : (
+              <Typography sx={{ marginX: '1rem' }}>Admin has pinned a screen!</Typography>
+            )}
+          </Menu>
+
+          {user?.userData?.email === trackReference.participant.identity ||
+          user?.userData?.role !== 'admin' ? (
+            ''
+          ) : (
+            <div className="lk-focus-custom-buttons">
+              <IconButton
+                className="me-3"
+                size="large"
+                disabled={
+                  user?.userData?.email === trackReference.participant.identity ||
+                  user?.userData?.role !== 'admin' ||
+                  trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted
+                }
+                onClick={() => handleMuteParticipant(trackReference.participant.identity)}
+              >
+                <MicOffIcon style={{ fontSize: '1.3rem' }} />
+              </IconButton>
+
+              <IconButton
+                size="large"
+                disabled={
+                  user?.userData?.email === trackReference.participant.identity ||
+                  user?.userData?.role !== 'admin'
+                }
+                onClick={() => handleRemoveParticipant(trackReference.participant.identity)}
+              >
+                <RemoveCircleIcon style={{ fontSize: '1.3rem' }} />
+              </IconButton>
+            </div>
+          )}
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div>
