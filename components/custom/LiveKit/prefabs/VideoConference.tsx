@@ -33,6 +33,7 @@ import { usePinnedTracks } from '../hooks/usePinnedTracks';
 import { useRouter } from 'next/router';
 import meetService from '../../../../service/meet/meetService';
 import attendanceService from '../../../../service/attendance/attendanceService';
+import CustomToastAlert from '../../CustomToastAlert';
 
 /**
  * @public
@@ -98,6 +99,8 @@ export function VideoConference({
   const { name: roomName } = router.query as { name: string };
   const [remotePinEmail, setRemotePinEmail] = React.useState('no_email');
   const [selfPinEmail, setSelfPinEmail] = React.useState('no_self');
+  const [openToast, setOpenToast] = React.useState(false);
+  const [toastMessage, setToastMessage] = React.useState('');
   const decoder = new TextDecoder();
   const fetchPinData = () => {
     meetService
@@ -199,8 +202,32 @@ export function VideoConference({
             np?.joinedAt && localParticipant?.joinedAt && np?.joinedAt > localParticipant?.joinedAt,
         )
       ) {
+        const newParticipants = remoteParticipants.filter(
+          (np) =>
+            np?.joinedAt && localParticipant?.joinedAt && np?.joinedAt > localParticipant?.joinedAt,
+        );
+        setOpenToast(true);
+        if (newParticipants.length > 1) {
+          setToastMessage(
+            `${newParticipants[0].name} and ${newParticipants.length - 1} others joined`,
+          );
+        } else {
+          setToastMessage(`${newParticipants[0].name} joined`);
+        }
         let audio = new Audio('/meet_join.mp3');
         audio.play();
+      }
+    } else if(remoteParticipants.length < prevParticipants.length){
+      const leftParticipants = prevParticipants.filter(
+        (pp: any) => !remoteParticipants.some((rp) => rp.identity === pp?.identity),
+      );
+      setOpenToast(true);
+      if (leftParticipants?.length > 1) {
+        setToastMessage(
+          `${leftParticipants[0]?.name} and ${leftParticipants?.length - 1} others left`,
+        );
+      } else {
+        setToastMessage(`${leftParticipants[0]?.name} left`);
       }
     }
     setPrevParticipants(remoteParticipants);
@@ -284,6 +311,13 @@ export function VideoConference({
               <SettingsComponent />
             </div>
           )}
+          <CustomToastAlert
+            open={openToast}
+            setOpen={setOpenToast}
+            duration={2000}
+            status={'info'}
+            message={toastMessage}
+          />
         </LayoutContextProvider>
       )}
       <RoomAudioRenderer />
