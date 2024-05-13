@@ -16,7 +16,9 @@ import {
   MessageFormatter,
   RoomAudioRenderer,
   useCreateLayoutContext,
+  useLocalParticipant,
   useParticipants,
+  useRemoteParticipants,
   useTracks,
 } from '@livekit/components-react';
 import { useWarnAboutMissingStyles } from '../hooks/useWarnAboutMissingStyles';
@@ -188,6 +190,27 @@ export function VideoConference({
 
   useWarnAboutMissingStyles();
   const { isParticipantModalOpen, isChatOpen } = useSelector((state: any) => state.participant);
+  const [prevParticipants, setPrevParticipants] = React.useState<any>([]);
+  const checkPariticantJoined = () => {
+    if (remoteParticipants.length > prevParticipants.length) {
+      if (
+        remoteParticipants.some(
+          (np) =>
+            np?.joinedAt && localParticipant?.joinedAt && np?.joinedAt > localParticipant?.joinedAt,
+        )
+      ) {
+        let audio = new Audio('/meet_join.mp3');
+        audio.play();
+      }
+    }
+    setPrevParticipants(remoteParticipants);
+  };
+  const remoteParticipants = useRemoteParticipants();
+  const { localParticipant } = useLocalParticipant();
+
+  React.useEffect(() => {
+    checkPariticantJoined();
+  }, [remoteParticipants]);
 
   return (
     <div className="lk-video-conference" {...props}>

@@ -369,7 +369,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
               >
                   {
                     (user?.userData?.role === "admin" || remotePinEmail === "no_email") ?
-                    <>
+                    <div>
                     {
                       ((trackReference.participant.identity===remotePinEmail && 
                       user?.userData?.role === "admin") || (trackReference.participant.identity===selfPinEmail)) &&
@@ -389,7 +389,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                         Pin for everyone
                       </MenuItem>
                     }
-                  </>
+                  </div>
                   :
                   <Typography sx={{marginX: "1rem"}}>Admin has pinned a screen!</Typography>
                   }
