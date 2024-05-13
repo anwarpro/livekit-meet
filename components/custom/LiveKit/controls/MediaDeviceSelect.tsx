@@ -236,6 +236,7 @@ export const MediaDeviceSelect = /* @__PURE__ */ React.forwardRef<
               <button
                 className="lk-button"
                 onClick={() => handleToggleVsEffect(room, state, device.id)}
+                disabled={isVsEffectLoadding}
               >
                 {device.label}{' '}
                 {isActiveEffect.id === device.id && isVsEffectLoadding ? (

@@ -9,6 +9,7 @@ import { IMeet } from '../types/meet';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { useMaybeRoomContext } from '@livekit/components-react';
 
 const event = [
   {
@@ -23,6 +24,8 @@ const Home = () => {
   const dispatch = useDispatch();
   const [event, setEvent] = useState([]);
   const { token } = useSelector((state: any) => state.auth);
+  const room = useMaybeRoomContext();
+  console.log("home-", room);
 
   const fetchData = (token: string) => {
     meetService

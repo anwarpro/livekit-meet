@@ -51,7 +51,9 @@ export const ParticipantPlaceholder = /* @__PURE__ */ React.forwardRef<
   return (
     <Box sx={{ borderRadius: '50%' }} ref={ref}>
       {(metadata?.includes('profileImage') || metadata === "") ? (
-        <SvgParticipantPlaceholder />
+        layoutName==="carousel" ? <SvgParticipantPlaceholder width={100}
+        height={100}/> : <SvgParticipantPlaceholder width={150}
+        height={150}/>
       ) : (
         layoutName==="carousel" ? <Image src={metadata!} width={80} height={80} alt="" /> 
         :
