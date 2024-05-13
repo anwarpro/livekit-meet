@@ -46,6 +46,17 @@ export function Participant({
 }: ChatProps) {
   const participants = useParticipants();
   const { handRaised } = useSelector((state: any) => state.handRaise);
+
+  participants.sort((a: any, b: any) => {
+    if (handRaised && handRaised?.includes(a.identity) > handRaised?.includes(b.identity)) {
+      return -1;
+    } else if (handRaised && handRaised?.includes(a.identity) < handRaised?.includes(b.identity)) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
   const { userData } = useSelector((state: any) => state.auth);
   const room = useMaybeRoomContext();
   const [openSuccessToast, setIsOpenSuccessToast] = React.useState<boolean>(false);
@@ -65,6 +76,7 @@ export function Participant({
         setIsOpenErrorToast(true);
       });
   };
+
   return (
     <div {...props} className="lk-chat participant-modal">
       <div className="lk-chat-header d-flex justify-content-between align-items-center border-bottom border-dark border-2">
