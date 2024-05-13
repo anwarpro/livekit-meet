@@ -1,14 +1,24 @@
 import * as React from 'react';
-import type { ChatMessage, ChatOptions } from '@livekit/components-core';
+import type { ChatOptions } from '@livekit/components-core';
 import { ChatCloseIcon } from '../assets/icons';
-import { MessageFormatter, useParticipants } from '@livekit/components-react';
+import { MessageFormatter, useMaybeRoomContext, useParticipants } from '@livekit/components-react';
 
 import { ParticipantToggle } from '../controls/ParticipantToggle';
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { PersonPinCircleOutlined } from '@mui/icons-material';
+import {
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import BackHandIcon from '@mui/icons-material/BackHand';
+import handRiseIcon from '../assets/icons/hand-rise.svg';
 import { useSelector } from 'react-redux';
+import Image from 'next/image';
+import MicOffIcon from '@mui/icons-material/MicOff';
+import meetService from '../../../../service/meet/meetService';
+import CustomToastAlert from '../../CustomToastAlert';
 
 /** @public */
 export interface ChatProps extends React.HTMLAttributes<HTMLDivElement>, ChatOptions {
@@ -47,10 +57,42 @@ export function Participant({
     }
   });
 
+  const { userData } = useSelector((state: any) => state.auth);
+  const room = useMaybeRoomContext();
+  const [openSuccessToast, setIsOpenSuccessToast] = React.useState<boolean>(false);
+  const [openErrorToast, setIsOpenErrorToast] = React.useState<boolean>(false);
+
+  const handleMuteParticipant = () => {
+    const filteredParticipant = (participants || [])
+      .map((pr) => pr.identity)
+      .filter((identity) => identity !== userData.email);
+
+    meetService
+      .muteParticipant(room?.name || '', filteredParticipant)
+      .then((res: any) => {
+        setIsOpenSuccessToast(true);
+      })
+      .catch((err: any) => {
+        setIsOpenErrorToast(true);
+      });
+  };
+
   return (
     <div {...props} className="lk-chat participant-modal">
-      <div className="lk-chat-header">
-        <p className="participant-title m-0">total participants : {participants.length}</p>
+      <div className="lk-chat-header d-flex justify-content-between align-items-center border-bottom border-dark border-2">
+        <p className="participant-title m-0">Total Participants {participants.length}</p>
+        {userData?.role === 'admin' && (
+          <IconButton
+            className="lk-button"
+            sx={{ mr: 9 }}
+            size="large"
+            onClick={() => handleMuteParticipant()}
+            title="Mute all "
+          >
+            <MicOffIcon style={{ fontSize: '1.3rem', color: '#fff' }} />
+          </IconButton>
+        )}
+
         <ParticipantToggle className="lk-close-button">
           <ChatCloseIcon />
         </ParticipantToggle>
@@ -66,13 +108,31 @@ export function Participant({
                 <ListItemText primary={p.name} />
                 {/* @ts-ignore */}
                 {handRaised?.includes(p.identity) && (
-                  <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange' }} />
+                  <Image src={handRiseIcon} height="24" width="24" alt="" />
                 )}
               </ListItemButton>
             </ListItem>
           );
         })}
       </List>
+      {openSuccessToast && (
+        <CustomToastAlert
+          open={openSuccessToast}
+          setOpen={setIsOpenSuccessToast}
+          status="success"
+          message="All Participants Have Been Muted"
+          duration={1000}
+        />
+      )}
+      {openErrorToast && (
+        <CustomToastAlert
+          open={openErrorToast}
+          setOpen={setIsOpenErrorToast}
+          status="error"
+          message="Failed To Mute"
+          duration={1000}
+        />
+      )}
     </div>
   );
 }

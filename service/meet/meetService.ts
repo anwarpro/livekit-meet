@@ -93,6 +93,15 @@ class MeetService {
     updatePin = (id: string, payload: any) => {
         return axios.put<IMeet>(`${API_URL}/pin/${id}`,{ ...payload });
     }
+    disconnectRoom = (id: string) => {
+        return axios.delete<IMeet>(`${API_URL}/disconnect/${id}`);
+    }
+    removeParticipant = (id: string, identity: string) => {
+        return axios.post<IMeet>(`${API_URL}/remove_participant/${id}/${identity}`);
+    }
+    muteParticipant = (id: string, identityList: string[]) => {
+        return axios.post<IMeet>(`${API_URL}/mute_participant/${id}`, {identityList});
+    }
 
 }
 const meetService = new MeetService()

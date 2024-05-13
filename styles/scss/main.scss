@@ -51,7 +51,41 @@ body {
   background: unset !important;
   &:hover {
     background: rgb(44, 40, 40) !important;
-  }
+  } 
+}
+.lk-focus-custom-buttons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  background-color: rgb(71, 70, 70);
+  transition: opacity .2s ease-in-out;
+  border-radius: 30px;
+  width: 150px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lk-focus-custom-buttons:hover {
+  opacity: 1 !important;
+  transition: opacity .2s ease-in-out;
+}
+.lk-focus-custom-buttons button {
+  color: white !important;
+  cursor: pointer;
+  &:hover {
+    background: rgb(44, 40, 40) !important;
+  } 
+}
+.lk-participant-tile:hover .lk-focus-custom-buttons {
+  opacity: 0.7;
+  transition: opacity .2s ease-in-out;
+}
+.lk-focus-remove-button:hover {
+  opacity: 1;
 }
 .participant-modal {
   align-items: unset !important;

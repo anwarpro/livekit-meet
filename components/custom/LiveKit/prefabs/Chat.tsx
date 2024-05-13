@@ -9,6 +9,7 @@ import {
   useMaybeLayoutContext,
 } from '@livekit/components-react';
 import { cloneSingleChild } from '../utils';
+import { Input, TextField } from '@mui/material';
 
 /** @public */
 export interface ChatProps extends React.HTMLAttributes<HTMLDivElement>, ChatOptions {
@@ -121,18 +122,27 @@ export function Chat({
               );
             })}
       </ul>
-      <form className="lk-chat-form" onSubmit={handleSubmit}>
-        <input
+      <form className="d-flex justify-content-between align-items-center p-2" onSubmit={handleSubmit}>
+        <Input
+          sx={{
+            '& .MuiInputBase-input': {
+              color: '#fff',
+            },
+          }}
           className="lk-form-control lk-chat-form-input"
           disabled={isSending}
-          ref={inputRef}
+          inputRef={inputRef}
           type="text"
           placeholder="Enter a message..."
           onInput={(ev) => ev.stopPropagation()}
           onKeyDown={(ev) => ev.stopPropagation()}
           onKeyUp={(ev) => ev.stopPropagation()}
+          multiline
+          maxRows={4}
+          disableUnderline
         />
-        <button type="submit" className="lk-button lk-chat-form-button" disabled={isSending}>
+
+        <button type="submit" className="lk-button lk-chat-form-button ms-2" disabled={isSending}>
           Send
         </button>
       </form>

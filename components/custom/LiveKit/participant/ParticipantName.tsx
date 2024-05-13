@@ -5,7 +5,8 @@ import { mergeProps } from '../mergeProps';
 import { useObservableState } from '../hooks/useObservableState';
 import { useSelector } from 'react-redux';
 import BackHandIcon from '@mui/icons-material/BackHand';
-
+import handRiseIcon from '../assets/icons/hand-rise.svg';
+import Image from 'next/image';
 
 /** @public */
 export interface ParticipantNameProps
@@ -47,7 +48,8 @@ export const ParticipantName = /* @__PURE__ */ React.forwardRef<
     <span ref={ref} {...mergedProps}>
       {name !== '' ? name : identity}
       {handRaised?.includes(p.identity) && (
-        <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange', ml: 1 }} />
+        // <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange', ml: 1 }} />
+        <Image className='ms-2' src={handRiseIcon} height="24" width="24" alt="" />
       )}
       {props.children}
     </span>
