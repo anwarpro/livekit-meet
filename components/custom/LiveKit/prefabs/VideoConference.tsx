@@ -203,8 +203,7 @@ export function VideoConference({
         )
       ) {
         const newParticipants = remoteParticipants.filter(
-          (np) =>
-            np?.joinedAt && localParticipant?.joinedAt && np?.joinedAt > localParticipant?.joinedAt,
+          (pp: any) => !prevParticipants.some((rp: any) => rp?.identity === pp?.identity),
         );
         setOpenToast(true);
         if (newParticipants.length > 1) {
@@ -217,7 +216,7 @@ export function VideoConference({
         let audio = new Audio('/meet_join.mp3');
         audio.play();
       }
-    } else if(remoteParticipants.length < prevParticipants.length){
+    } else if (remoteParticipants.length < prevParticipants.length) {
       const leftParticipants = prevParticipants.filter(
         (pp: any) => !remoteParticipants.some((rp) => rp.identity === pp?.identity),
       );

@@ -24,8 +24,6 @@ const Home = () => {
   const dispatch = useDispatch();
   const [event, setEvent] = useState([]);
   const { token } = useSelector((state: any) => state.auth);
-  const room = useMaybeRoomContext();
-  console.log("home-", room);
 
   const fetchData = (token: string) => {
     meetService
