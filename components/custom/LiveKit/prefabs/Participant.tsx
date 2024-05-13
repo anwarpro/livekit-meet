@@ -36,6 +36,17 @@ export function Participant({
 }: ChatProps) {
   const participants = useParticipants();
   const { handRaised } = useSelector((state: any) => state.handRaise);
+
+  participants.sort((a: any, b: any) => {
+    if (handRaised && handRaised?.includes(a.identity) > handRaised?.includes(b.identity)) {
+      return -1;
+    } else if (handRaised && handRaised?.includes(a.identity) < handRaised?.includes(b.identity)) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
   return (
     <div {...props} className="lk-chat participant-modal">
       <div className="lk-chat-header">
