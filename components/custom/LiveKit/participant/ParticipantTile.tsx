@@ -26,13 +26,7 @@ import { ParticipantPlaceholder } from './ParticipantPlaceholder';
 import { useSelector } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
 import { useRouter } from 'next/router';
-import {
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  Typography,
-} from '@mui/material';
+import { Button, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import Image from 'next/image';
 import pinImage from '../assets/icons/pin2.svg';
 import unPinImage from '../assets/icons/pin-off.svg';
@@ -328,12 +322,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
               </div>
             </>
           )}
-          {/* <FocusToggle
-            trackRef={trackReference}
-            onClick={(e) => handleFocusToggle(trackReference)}
-          /> */}
 
-          {/* <FormControl sx={{ m: 1, marginLeft: 'auto' }} size="small"> */}
           {user?.userData?.role !== 'admin' && remotePinEmail === 'no_email' && (
             <Button
               className="lk-button lk-focus-toggle-button"
@@ -385,7 +374,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
             sx={{ zIndex: 1500 }}
           >
             {user?.userData?.role === 'admin' || remotePinEmail === 'no_email' ? (
-              <>
+              <div>
                 {((trackReference.participant.identity === remotePinEmail &&
                   user?.userData?.role === 'admin') ||
                   trackReference.participant.identity === selfPinEmail) && (
@@ -404,12 +393,11 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                       Pin for everyone
                     </MenuItem>
                   )}
-              </>
+              </div>
             ) : (
               <Typography sx={{ marginX: '1rem' }}>Admin has pinned a screen!</Typography>
             )}
           </Menu>
-          {/* </FormControl> */}
 
           {user?.userData?.email === trackReference.participant.identity ||
           user?.userData?.role !== 'admin' ? (
@@ -420,9 +408,9 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 className="me-3"
                 size="large"
                 disabled={
-                  (user?.userData?.email === trackReference.participant.identity) ||
-                  (user?.userData?.role !== 'admin') ||
-                  (trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted)
+                  user?.userData?.email === trackReference.participant.identity ||
+                  user?.userData?.role !== 'admin' ||
+                  trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted
                 }
                 onClick={() => handleMuteParticipant(trackReference.participant.identity)}
               >
