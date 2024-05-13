@@ -408,9 +408,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 className="me-3"
                 size="large"
                 disabled={
-                  user?.userData?.email === trackReference.participant.identity ||
-                  user?.userData?.role !== 'admin' ||
-                  trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted
+                  trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted===true ||  trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted === undefined ? true : false
                 }
                 onClick={() => handleMuteParticipant(trackReference.participant.identity)}
               >
