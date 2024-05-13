@@ -194,7 +194,7 @@ export function ControlBar({
         </ParticipantToggle>
       )}
         <HandRaiseToggle showIcon={showIcon} showText={showText}/>
-      {visibleControls.settings && (
+      {visibleControls.settings && showText && (
         <SettingsMenuToggle>
           {showIcon && <GearIcon />}
           {showText && 'Settings'}
