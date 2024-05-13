@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {ChatOptions } from '@livekit/components-core';
+import type { ChatOptions } from '@livekit/components-core';
 import { ChatCloseIcon } from '../assets/icons';
 import { MessageFormatter, useMaybeRoomContext, useParticipants } from '@livekit/components-react';
 
@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 import Image from 'next/image';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import meetService from '../../../../service/meet/meetService';
+import CustomToastAlert from '../../CustomToastAlert';
 
 /** @public */
 export interface ChatProps extends React.HTMLAttributes<HTMLDivElement>, ChatOptions {
@@ -47,20 +48,21 @@ export function Participant({
   const { handRaised } = useSelector((state: any) => state.handRaise);
   const { userData } = useSelector((state: any) => state.auth);
   const room = useMaybeRoomContext();
+  const [openSuccessToast, setIsOpenSuccessToast] = React.useState<boolean>(false);
+  const [openErrorToast, setIsOpenErrorToast] = React.useState<boolean>(false);
 
   const handleMuteParticipant = () => {
     const filteredParticipant = (participants || [])
       .map((pr) => pr.identity)
       .filter((identity) => identity !== userData.email);
-    console.log('🚀 ~ handleMuteParticipant ~ filterAdmin:', filteredParticipant);
 
     meetService
-      .muteParticipant(room?.name || "", filteredParticipant)
+      .muteParticipant(room?.name || '', filteredParticipant)
       .then((res: any) => {
-        console.log(res);
+        setIsOpenSuccessToast(true);
       })
       .catch((err: any) => {
-        console.log(err);
+        setIsOpenErrorToast(true);
       });
   };
   return (
@@ -101,6 +103,24 @@ export function Participant({
           );
         })}
       </List>
+      {openSuccessToast && (
+        <CustomToastAlert
+          open={openSuccessToast}
+          setOpen={setIsOpenSuccessToast}
+          status="success"
+          message="All Participants Have Been Muted"
+          duration={1000}
+        />
+      )}
+      {openErrorToast && (
+        <CustomToastAlert
+          open={openErrorToast}
+          setOpen={setIsOpenErrorToast}
+          status="error"
+          message="Failed To Mute"
+          duration={1000}
+        />
+      )}
     </div>
   );
 }
