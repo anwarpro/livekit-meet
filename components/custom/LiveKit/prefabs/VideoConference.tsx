@@ -316,6 +316,7 @@ export function VideoConference({
             duration={2000}
             status={'info'}
             message={toastMessage}
+            vertical="top"
           />
         </LayoutContextProvider>
       )}

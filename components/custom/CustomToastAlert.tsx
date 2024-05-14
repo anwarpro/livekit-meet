@@ -8,6 +8,7 @@ type IProps = {
   duration: number;
   status: any | string;
   message: string;
+  vertical: "top" | "bottom";
 };
 
 export default function CustomToastAlert(props: IProps) {
@@ -25,7 +26,7 @@ export default function CustomToastAlert(props: IProps) {
         open={props.open}
         autoHideDuration={props.duration}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        anchorOrigin={{ vertical: props.vertical, horizontal: 'left' }}
       >
         <Alert
           onClose={handleClose}
