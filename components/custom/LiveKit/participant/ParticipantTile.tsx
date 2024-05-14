@@ -237,7 +237,6 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     }
   };
   const handleChange = (value: string) => {
-    console.log(value);
     if (value === 'remote_pin') {
       handlePinRemote();
     } else if (value === 'self_pin') {
@@ -264,7 +263,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     meetService
       .muteParticipant(roomName, [identity])
       .then((res: any) => {
-        console.log(res);
+        console.log("Participant Muted");
       })
       .catch((err: any) => {
         console.log(err);

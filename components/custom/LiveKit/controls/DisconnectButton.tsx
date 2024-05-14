@@ -40,7 +40,7 @@ export const DisconnectButton = /* @__PURE__ */ React.forwardRef<
     // @ts-ignore
       .disconnectRoom(room?.roomInfo?.name)
       .then((res: any) => {
-        console.log(res?.data);
+        console.log("Room Disconnected");
       })
       .catch((err: any) => {
         console.log(err);

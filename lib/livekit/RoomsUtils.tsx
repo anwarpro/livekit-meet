@@ -51,7 +51,6 @@ const RoomsUtils = ({
 
   useEffect(() => {
     if (room?.state === 'connected' && isHandRaised !== null) {
-      console.log(isHandRaised);
       meetService
         .handRaise({
           meetId: roomName,
@@ -82,7 +81,6 @@ const RoomsUtils = ({
   }, [isHandRaised, room]);
 
   useEffect(() => {
-    console.log('room:', room?.state);
     if (room?.state === 'connected' && roomName) {
       fetchData();
     }

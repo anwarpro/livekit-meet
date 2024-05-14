@@ -41,7 +41,6 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
     if (!checkOthers) return;
 
     const filterData = data?.filter((np: any) => {
-      // console.log("hand time",findRemoteParticipantJoinedTime(np?.email), new Date(localParticipant.joinedAt!));
       return (
         np?.createdAt &&
         localParticipant?.joinedAt &&

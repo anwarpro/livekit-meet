@@ -24,7 +24,6 @@ const VideoConferenceProvider = () => {
   );
 
   const participants = useParticipants();
-  console.log('🚀 ~ VideoConferenceProvider ~ participants:', participants);
 
   return (
     <div style={{ height: '100vh' }}>

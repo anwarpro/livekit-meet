@@ -134,7 +134,7 @@ export function VideoConference({
           identity: room?.localParticipant?.identity,
           meetId: room?.roomInfo?.name,
         })
-        .then((res) => console.log('res', res))
+        .then((res) => console.log("Attendance Counted Joined"))
         .catch((err) => console.log('err', err));
     }
     if (room?.state === 'disconnected') {
@@ -144,7 +144,7 @@ export function VideoConference({
           identity: room?.localParticipant?.identity,
           meetId: room?.roomInfo?.name,
         })
-        .then((res) => console.log('res', res))
+        .then((res) => console.log('Attendance Counted Left'))
         .catch((err) => console.log('err', err));
     }
   }, [room.state]);

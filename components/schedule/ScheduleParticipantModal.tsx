@@ -149,7 +149,6 @@ const ScheduleParticipantModal = (props: Iprops) => {
   }, [props.openParticipantModal]);
   useEffect(() => {
     if (props.openParticipantModal.edit) {
-      console.log(searchText);
       fetchData();
     }
   }, [limit, page, searchText, value]);
