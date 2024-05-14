@@ -18,6 +18,12 @@ body {
 }
 
 @media screen and (max-width: 760px) {
+  .lk-chat {
+    height: 83vh !important;
+  }
+  .lk-grid-layout-wrapper, .lk-focus-layout-wrapper {
+    height: 85vh !important;
+  }
   .\lk-control-bar {
     .\lk-button,
     .\lk-disconnect-button {
@@ -88,7 +94,7 @@ body {
 }
 .lk-chat {
   align-items: unset !important;
-  height: 88vh !important;
+  height: 88vh;
   margin-top: 8px;
   border-radius: 10px;
   .participant-title {
@@ -97,7 +103,7 @@ body {
 }
 .lk-grid-layout-wrapper, .lk-focus-layout-wrapper {
   // display: flex !important;
-  height: 90vh !important;
+  height: 90vh;
   // width: 100vw !important;
 }
 // .lk-grid-layout, .lk-focus-layout {
