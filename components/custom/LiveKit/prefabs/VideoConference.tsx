@@ -194,12 +194,14 @@ export function VideoConference({
   useWarnAboutMissingStyles();
   const { isParticipantModalOpen, isChatOpen } = useSelector((state: any) => state.participant);
   const [prevParticipants, setPrevParticipants] = React.useState<any>([]);
+  const remoteParticipants = useRemoteParticipants();
+  const { localParticipant } = useLocalParticipant();
   const checkPariticantJoined = () => {
     if (remoteParticipants.length > prevParticipants.length) {
       if (
         remoteParticipants.some(
           (np) =>
-            np?.joinedAt && localParticipant?.joinedAt && np?.joinedAt > localParticipant?.joinedAt,
+            np?.joinedAt && localParticipant?.joinedAt && new Date(np?.joinedAt) > new Date(localParticipant?.joinedAt),
         )
       ) {
         const newParticipants = remoteParticipants.filter(
@@ -231,8 +233,6 @@ export function VideoConference({
     }
     setPrevParticipants(remoteParticipants);
   };
-  const remoteParticipants = useRemoteParticipants();
-  const { localParticipant } = useLocalParticipant();
 
   React.useEffect(() => {
     checkPariticantJoined();

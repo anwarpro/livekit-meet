@@ -48,9 +48,11 @@ export function Participant({
   const { handRaised } = useSelector((state: any) => state.handRaise);
 
   participants.sort((a: any, b: any) => {
-    if (handRaised && handRaised?.includes(a.identity) > handRaised?.includes(b.identity)) {
+    const aBool = handRaised?.some((hData:any)=> hData?.email === a.identity);
+    const bBool = handRaised?.some((hData:any)=> hData?.email === b.identity)
+    if (handRaised && aBool > bBool) {
       return -1;
-    } else if (handRaised && handRaised?.includes(a.identity) < handRaised?.includes(b.identity)) {
+    } else if (handRaised && aBool < bBool) {
       return 1;
     } else {
       return 0;
@@ -107,7 +109,7 @@ export function Participant({
                 </ListItemIcon>
                 <ListItemText primary={p.name} />
                 {/* @ts-ignore */}
-                {handRaised?.includes(p.identity) && (
+                {handRaised?.some((hData:any)=> hData?.email === p.identity) && (
                   <Image src={handRiseIcon} height="24" width="24" alt="" />
                 )}
               </ListItemButton>

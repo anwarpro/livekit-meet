@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BackHandIcon from '@mui/icons-material/BackHand';
-import { useMaybeRoomContext, useParticipants } from '@livekit/components-react';
+import { useLocalParticipant, useMaybeRoomContext, useParticipants, useRemoteParticipants } from '@livekit/components-react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
@@ -19,16 +19,39 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
   const room = useMaybeRoomContext();
   const [uniqHandRaise, setUniqHandRaise] = useState<object[]>([]);
   const dispatch = useDispatch();
+  const { localParticipant } = useLocalParticipant();
+  const remoteParticipants = useRemoteParticipants();
+  const [checkOthers, setCheckOthers] = useState(false);
 
-  const fetchData = () => {
+  // const findRemoteParticipantJoinedTime = (email: string)=> {
+  //   const filterRemoteParticipant = remoteParticipants.find((rp)=> rp.identity===email);
+  //   if(!filterRemoteParticipant) return new Date("11/11/1999");
+  //   console.log("hand remote",new Date(filterRemoteParticipant.joinedAt!));
+  //   return new Date(filterRemoteParticipant.joinedAt!);
+  // }
+
+  const checkHandRaise = (data:any)=> {
+    if(!checkOthers) return false;
+
+    const filterData = data?.filter(
+      (np:any) => {
+        // console.log("hand time",findRemoteParticipantJoinedTime(np?.email), new Date(localParticipant.joinedAt!));
+        return np?.createdAt && localParticipant?.joinedAt && (new Date(np?.createdAt) > new Date(localParticipant.joinedAt)) && np?.email !== localParticipant.identity
+      }
+    )
+    console.log("hand", filterData);
+  }
+  console.log("hand unique", uniqHandRaise);
+  const fetchData = (check: boolean) => {
     meetService
       .getHandRaisedInfo(room?.name!)
       .then((res: any) => {
         setHandRaisedInfo(res?.data?.data);
         dispatch(setHandRaised(res?.data?.data));
+        if(check) checkHandRaise(res?.data?.data);
         if (
           room?.state === 'connected' &&
-          res?.data?.data?.includes(room?.localParticipant?.identity)
+          res?.data?.data?.some((d:any) => d?.email === room?.localParticipant?.identity)
         ) {
           setIsHandRaised(true);
         }
@@ -59,7 +82,7 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
             destinationIdentities: participants?.map((par) => par.identity),
             topic: 'hand_raised',
           });
-          fetchData();
+          fetchData(false);
         })
         .catch((err) => {
           console.log(err);
@@ -69,9 +92,10 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
 
   useEffect(() => {
     if (room?.state === 'connected' && room.name) {
-      fetchData();
+      fetchData(true);
     }
   }, [room?.state, room?.name, uniqHandRaise]);
+
 
   const handleHandRaised = () => {
     setIsHandRaised((prevState) => !prevState);
@@ -94,6 +118,7 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
               (item) => JSON.stringify(item) !== JSON.stringify(parsedHandRaisedInfo),
             )
           ) {
+            setCheckOthers(true);
             const data: any = {
               email: participant?.identity,
               topic: 'hand_raised',
