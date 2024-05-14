@@ -134,7 +134,7 @@ export function VideoConference({
           identity: room?.localParticipant?.identity,
           meetId: room?.roomInfo?.name,
         })
-        .then((res) => console.log("Attendance Counted Joined"))
+        .then((res) => console.log('Attendance Counted Joined'))
         .catch((err) => console.log('err', err));
     }
     if (room?.state === 'disconnected') {
@@ -201,7 +201,9 @@ export function VideoConference({
       if (
         remoteParticipants.some(
           (np) =>
-            np?.joinedAt && localParticipant?.joinedAt && new Date(np?.joinedAt) > new Date(localParticipant?.joinedAt),
+            np?.joinedAt &&
+            localParticipant?.joinedAt &&
+            new Date(np?.joinedAt) > new Date(localParticipant?.joinedAt),
         )
       ) {
         const newParticipants = remoteParticipants.filter(
@@ -286,10 +288,14 @@ export function VideoConference({
                 </FocusLayoutContainer>
               </div>
             )}
-            <ControlBar
+          </div>
+          <Participant
+            // @ts-ignore
+            style={{ display: isChatOpen ? 'none' : isParticipantModalOpen ? 'grid' : 'none' }}
+          />
+          <ControlBar
               controls={{ chat: true, settings: !!SettingsComponent, participant: true }}
             />
-          </div>
           <Chat
             style={{
               display: isParticipantModalOpen ? 'none' : isChatOpen ? 'grid' : 'none',
@@ -298,10 +304,7 @@ export function VideoConference({
             messageEncoder={chatMessageEncoder}
             messageDecoder={chatMessageDecoder}
           />
-          <Participant
-            // @ts-ignore
-            style={{ display: isChatOpen ? 'none' : isParticipantModalOpen ? 'grid' : 'none' }}
-          />
+
           {SettingsComponent && (
             <div
               className="lk-settings-menu-modal"
@@ -313,7 +316,7 @@ export function VideoConference({
           <CustomToastAlert
             open={openToast}
             setOpen={setOpenToast}
-            duration={2000}
+            duration={1000}
             status={'info'}
             message={toastMessage}
             vertical="top"

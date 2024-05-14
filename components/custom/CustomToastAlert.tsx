@@ -9,6 +9,7 @@ type IProps = {
   status: any | string;
   message: string;
   vertical: "top" | "bottom";
+  customStyle?: any;
 };
 
 export default function CustomToastAlert(props: IProps) {
@@ -25,6 +26,7 @@ export default function CustomToastAlert(props: IProps) {
       <Snackbar
         open={props.open}
         autoHideDuration={props.duration}
+        style={{...props.customStyle}}
         onClose={handleClose}
         anchorOrigin={{ vertical: props.vertical, horizontal: 'left' }}
       >

@@ -179,7 +179,8 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
       <CustomToastAlert
         open={openToast}
         setOpen={setOpenToast}
-        duration={2000}
+        duration={1000}
+        customStyle={{marginBottom: "60px"}}
         status={'info'}
         message={toastMessage}
         vertical="bottom"
