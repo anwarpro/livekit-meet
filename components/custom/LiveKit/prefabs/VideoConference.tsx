@@ -134,7 +134,7 @@ export function VideoConference({
           identity: room?.localParticipant?.identity,
           meetId: room?.roomInfo?.name,
         })
-        .then((res) => console.log('res', res))
+        .then((res) => console.log("Attendance Counted Joined"))
         .catch((err) => console.log('err', err));
     }
     if (room?.state === 'disconnected') {
@@ -144,7 +144,7 @@ export function VideoConference({
           identity: room?.localParticipant?.identity,
           meetId: room?.roomInfo?.name,
         })
-        .then((res) => console.log('res', res))
+        .then((res) => console.log('Attendance Counted Left'))
         .catch((err) => console.log('err', err));
     }
   }, [room.state]);
@@ -194,12 +194,14 @@ export function VideoConference({
   useWarnAboutMissingStyles();
   const { isParticipantModalOpen, isChatOpen } = useSelector((state: any) => state.participant);
   const [prevParticipants, setPrevParticipants] = React.useState<any>([]);
+  const remoteParticipants = useRemoteParticipants();
+  const { localParticipant } = useLocalParticipant();
   const checkPariticantJoined = () => {
     if (remoteParticipants.length > prevParticipants.length) {
       if (
         remoteParticipants.some(
           (np) =>
-            np?.joinedAt && localParticipant?.joinedAt && np?.joinedAt > localParticipant?.joinedAt,
+            np?.joinedAt && localParticipant?.joinedAt && new Date(np?.joinedAt) > new Date(localParticipant?.joinedAt),
         )
       ) {
         const newParticipants = remoteParticipants.filter(
@@ -231,8 +233,6 @@ export function VideoConference({
     }
     setPrevParticipants(remoteParticipants);
   };
-  const remoteParticipants = useRemoteParticipants();
-  const { localParticipant } = useLocalParticipant();
 
   React.useEffect(() => {
     checkPariticantJoined();
@@ -316,6 +316,7 @@ export function VideoConference({
             duration={2000}
             status={'info'}
             message={toastMessage}
+            vertical="top"
           />
         </LayoutContextProvider>
       )}

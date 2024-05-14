@@ -45,11 +45,11 @@ export const ParticipantName = /* @__PURE__ */ React.forwardRef<
   }, [props, className, name]);
 
   return (
-    <span ref={ref} {...mergedProps}>
+    <span ref={ref} {...mergedProps} style={{height: "27px", display: "flex", alignItems: "center"}}>
       {name !== '' ? name : identity}
-      {handRaised?.includes(p.identity) && (
+      {handRaised?.some((hData:any)=> hData?.email === p.identity) && (
         // <BackHandIcon sx={{ fontSize: '1.3rem', color: 'orange', ml: 1 }} />
-        <Image className='ms-2' src={handRiseIcon} height="24" width="24" alt="" />
+        <Image className='ms-2 wave' src={handRiseIcon} height="27" width="27" alt="" />
       )}
       {props.children}
     </span>
