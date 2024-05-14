@@ -51,6 +51,15 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
     const newHandRaised = filterData?.filter(
       (pp: any) => !prevHandRaised.some((rp: any) => rp?.email === pp?.email),
     );
+    newHandRaised?.sort((a: any, b: any) => {
+      if (a?.createdAt > b?.createdAt) {
+        return -1;
+      } else if (a?.createdAt < b?.createdAt) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
     setPrevHandRaised(newHandRaised);
     if (newHandRaised?.length > 0) {
       setOpenToast(true);

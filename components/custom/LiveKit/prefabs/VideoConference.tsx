@@ -209,6 +209,15 @@ export function VideoConference({
         const newParticipants = remoteParticipants.filter(
           (pp: any) => !prevParticipants.some((rp: any) => rp?.identity === pp?.identity),
         );
+        newParticipants?.sort((a, b) => {
+          if (a.joinedAt && b.joinedAt && a.joinedAt > b.joinedAt) {
+            return -1;
+          } else if (a.joinedAt && b.joinedAt && a.joinedAt < b.joinedAt) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
         setOpenToast(true);
         if (newParticipants.length > 1) {
           setToastMessage(
