@@ -124,6 +124,7 @@ export function Participant({
           status="success"
           message="All Participants Have Been Muted"
           duration={1000}
+          vertical="top"
         />
       )}
       {openErrorToast && (
@@ -133,6 +134,7 @@ export function Participant({
           status="error"
           message="Failed To Mute"
           duration={1000}
+          vertical="top"
         />
       )}
     </div>
