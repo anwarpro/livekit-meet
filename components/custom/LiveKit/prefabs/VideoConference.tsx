@@ -325,7 +325,7 @@ export function VideoConference({
           <CustomToastAlert
             open={openToast}
             setOpen={setOpenToast}
-            duration={1000}
+            duration={2000}
             status={'info'}
             message={toastMessage}
             vertical="top"

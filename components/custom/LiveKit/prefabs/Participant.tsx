@@ -124,7 +124,7 @@ export function Participant({
           setOpen={setIsOpenSuccessToast}
           status="success"
           message="All Participants Have Been Muted"
-          duration={1000}
+          duration={2000}
           vertical="top"
         />
       )}
@@ -134,7 +134,7 @@ export function Participant({
           setOpen={setIsOpenErrorToast}
           status="error"
           message="Failed To Mute"
-          duration={1000}
+          duration={2000}
           vertical="top"
         />
       )}

@@ -168,14 +168,14 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
     );
   return (
     <>
-      <button style={{color: isHandRaised ? "#5AB2FF" : "white"}} onClick={() => handleHandRaised()} className="lk-button lk-chat-toggle">
-        {showIcon && <Image src={isHandRaised ? handRiseActiveIcon : handRiseIcon} height="22" width="22" alt="hand" />}
-        {showText && isHandRaised ? 'Hand Down' : 'Hand Raise'}
+      <button aria-pressed={isHandRaised ? "true" : "false"} onClick={() => handleHandRaised()} className="lk-button lk-chat-toggle">
+        {showIcon && <Image src={handRiseIcon} height="22" width="22" alt="hand" />}
+        {showText && 'Hand Raise'}
       </button>
       <CustomToastAlert
         open={openToast}
         setOpen={setOpenToast}
-        duration={1000}
+        duration={2000}
         customStyle={{marginBottom: "60px"}}
         status={'info'}
         message={toastMessage}
