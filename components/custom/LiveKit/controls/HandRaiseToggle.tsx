@@ -13,6 +13,7 @@ import { setHandRaised } from '../../../../lib/Slicers/handRaisedSlicer';
 import { DataPacket_Kind, RemoteParticipant, RoomEvent } from 'livekit-client';
 import Image from 'next/image';
 import handRiseIcon from '../assets/icons/hand-rise.svg';
+import handRiseActiveIcon from '../assets/icons/hand-rise-active.svg';
 import CustomToastAlert from '../../CustomToastAlert';
 
 const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: boolean }) => {
@@ -27,8 +28,6 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
   const dispatch = useDispatch();
   const { localParticipant } = useLocalParticipant();
   const remoteParticipants = useRemoteParticipants();
-  const [checkOthers, setCheckOthers] = useState(false);
-  const [prevHandRaised, setPrevHandRaised] = useState([]);
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
@@ -37,52 +36,49 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
     return filterRemoteParticipant?.name;
   };
 
-  const checkHandRaise = (data: any) => {
-    if (!checkOthers) return;
-
-    const filterData = data?.filter((np: any) => {
-      return (
-        np?.createdAt &&
-        localParticipant?.joinedAt &&
-        new Date(np?.createdAt) > new Date(localParticipant.joinedAt) &&
-        np?.email !== localParticipant.identity
-      );
-    });
-    const newHandRaised = filterData?.filter(
-      (pp: any) => !prevHandRaised.some((rp: any) => rp?.email === pp?.email),
-    );
-    newHandRaised?.sort((a: any, b: any) => {
-      if (a?.createdAt > b?.createdAt) {
-        return -1;
-      } else if (a?.createdAt < b?.createdAt) {
-        return 1;
-      } else {
-        return 0;
+  const [savedHandRaise, setSavedHandRaise] = useState<{email: string, createdAt: string, _id: string}[]>([]);
+  const checkHandRaise2 = (data: {email: string, createdAt: string, _id: string}[]) => {
+    const sortedData = [...data];
+    sortedData.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    const newData = [...savedHandRaise];
+    const justHandRaised:{email: string, createdAt: string, _id: string}[] = [];
+    sortedData.forEach((dt)=> {
+      const myJoinTime = new Date(localParticipant.joinedAt!);
+      if(dt.email !== localParticipant.identity && new Date(dt.createdAt) > myJoinTime && !savedHandRaise.some((sd)=> sd.email === dt.email) && remoteParticipants.some(rp=>rp.identity === dt.email)) {
+        newData.push(dt);
+        justHandRaised.push(dt);
       }
-    });
-    setPrevHandRaised(newHandRaised);
-    if (newHandRaised?.length > 0) {
+    })
+    if(justHandRaised.length > 0) {
       setOpenToast(true);
-      if (newHandRaised?.length > 1) {
+      if (justHandRaised?.length > 1) {
         setToastMessage(
-          `${findRemoteParticipantName(newHandRaised?.[0]?.email)} and ${
-            newHandRaised?.length - 1
+          `${findRemoteParticipantName(justHandRaised?.[0]?.email)} and ${
+            justHandRaised?.length - 1
           } others hand raised`,
         );
       } else {
-        setToastMessage(`${findRemoteParticipantName(newHandRaised?.[0].email)} hand raised`);
+        setToastMessage(`${findRemoteParticipantName(justHandRaised?.[0].email)} hand raised`);
       }
       let audio = new Audio('/meet_message.mp3');
       audio.play();
     }
-  };
-  const fetchData = (check: boolean) => {
+    const notInMySavedList = newData.filter(
+      (sd) => !sortedData.some((dt) => sd.email === dt.email)
+    );
+
+    const notInSaveButInRoom = notInMySavedList.filter((nd)=> remoteParticipants.some(rp => rp.identity === nd.email))
+    const newHandData = newData.filter(nd=> !(notInSaveButInRoom.some(sd=> nd.email === sd.email)))
+    setSavedHandRaise(newHandData);
+  }
+
+  const fetchData = () => {
     meetService
       .getHandRaisedInfo(room?.name!)
       .then((res: any) => {
         setHandRaisedInfo(res?.data?.data);
         dispatch(setHandRaised(res?.data?.data));
-        if (check) checkHandRaise(res?.data?.data);
+        checkHandRaise2(res?.data?.data);
         if (
           room?.state === 'connected' &&
           res?.data?.data?.some((d: any) => d?.email === room?.localParticipant?.identity)
@@ -116,7 +112,7 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
             destinationIdentities: participants?.map((par) => par.identity),
             topic: 'hand_raised',
           });
-          fetchData(false);
+          fetchData();
         })
         .catch((err) => {
           console.log(err);
@@ -126,7 +122,7 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
 
   useEffect(() => {
     if (room?.state === 'connected' && room.name) {
-      fetchData(true);
+      fetchData();
     }
   }, [room?.state, room?.name, uniqHandRaise]);
 
@@ -151,7 +147,6 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
               (item) => JSON.stringify(item) !== JSON.stringify(parsedHandRaisedInfo),
             )
           ) {
-            setCheckOthers(true);
             const data: any = {
               email: participant?.identity,
               topic: 'hand_raised',
@@ -164,15 +159,7 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
               );
               filterData.push(parsedHandRaisedInfo);
               setUniqHandRaise(filterData);
-              // if (parsedHandRaisedInfo.value) {
-              //   let audio = new Audio('/meet_message.mp3');
-              //   audio.play();
-              // }
             } else {
-              // if (parsedHandRaisedInfo.value) {
-              //   let audio = new Audio('/meet_message.mp3');
-              //   audio.play();
-              // }
               setUniqHandRaise([...uniqHandRaise, parsedHandRaisedInfo]);
             }
           }
@@ -181,9 +168,9 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
     );
   return (
     <>
-      <button onClick={() => handleHandRaised()} className="lk-button lk-chat-toggle">
-        {showIcon && <Image src={handRiseIcon} height="22" width="22" alt="hand" />}
-        {showText && 'Hand Raise'}
+      <button style={{color: isHandRaised ? "#5AB2FF" : "white"}} onClick={() => handleHandRaised()} className="lk-button lk-chat-toggle">
+        {showIcon && <Image src={isHandRaised ? handRiseActiveIcon : handRiseIcon} height="22" width="22" alt="hand" />}
+        {showText && isHandRaised ? 'Hand Down' : 'Hand Raise'}
       </button>
       <CustomToastAlert
         open={openToast}

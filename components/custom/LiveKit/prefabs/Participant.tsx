@@ -46,16 +46,17 @@ export function Participant({
 }: ChatProps) {
   const participants = useParticipants();
   const { handRaised } = useSelector((state: any) => state.handRaise);
-
   participants.sort((a: any, b: any) => {
     const aBool = handRaised?.some((hData:any)=> hData?.email === a.identity);
     const bBool = handRaised?.some((hData:any)=> hData?.email === b.identity)
+    const aData = handRaised?.find((hData:any)=> hData?.email === a.identity);
+    const bData = handRaised?.find((hData:any)=> hData?.email === b.identity);
     if (handRaised && aBool > bBool) {
       return -1;
     } else if (handRaised && aBool < bBool) {
       return 1;
     } else {
-      return 0;
+      return new Date(aData?.createdAt).getTime() - new Date(bData?.createdAt).getTime()
     }
   });
 
