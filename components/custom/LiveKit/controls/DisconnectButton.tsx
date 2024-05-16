@@ -3,6 +3,7 @@ import { Menu, MenuItem } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
+import CustomConfirmationModal from '../../CustomConfirmationModal';
 
 /** @public */
 export interface DisconnectButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -28,6 +29,9 @@ export const DisconnectButton = /* @__PURE__ */ React.forwardRef<
   const { buttonProps } = useDisconnectButton(props);
   const user = useSelector((state: any) => state.auth);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
+  const [modalMessage, setModalMessage] = React.useState("");
+  const [modalWork, setModalWork] = React.useState("");
   const room = useMaybeRoomContext();
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -41,9 +45,11 @@ export const DisconnectButton = /* @__PURE__ */ React.forwardRef<
       .disconnectRoom(room?.roomInfo?.name)
       .then((res: any) => {
         console.log("Room Disconnected");
+        setOpenConfirmModal(false);
       })
       .catch((err: any) => {
         console.log(err);
+        setOpenConfirmModal(false);
       });
   };
   const open = Boolean(anchorEl);
@@ -70,7 +76,12 @@ export const DisconnectButton = /* @__PURE__ */ React.forwardRef<
             >
               Leave only for you
             </MenuItem>
-            <MenuItem value={'disconnect'} onClick={() => handleDisconnect()}>
+            <MenuItem value={'disconnect'} onClick={() => {
+              setOpenConfirmModal(true);
+              setModalMessage("Are you sure you want to disconnect this room? This will remove all participants and end the meeting!");
+              setModalWork("Disconnect Room");
+              handleClose();
+            }}>
               End meeting and leave
             </MenuItem>
           </Menu>
@@ -80,6 +91,7 @@ export const DisconnectButton = /* @__PURE__ */ React.forwardRef<
           {props.children}
         </button>
       )}
+      <CustomConfirmationModal open={openConfirmModal} setOpen={setOpenConfirmModal} message={modalMessage} work={modalWork} confirmClicked={() => handleDisconnect()} />
     </>
   );
 });
