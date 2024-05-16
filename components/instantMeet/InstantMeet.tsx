@@ -4,6 +4,7 @@ import meetService from '../../service/meet/meetService';
 import { useRouter } from 'next/router';
 import { setRoom } from '../../lib/Slicers/meetSlice';
 import { useDispatch } from 'react-redux';
+import swal from 'sweetalert';
 
 const InstantMeet = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ const InstantMeet = () => {
         router.push(`/rooms/${res?.data?.data?.roomId}`);
       })
       .catch((err) => {
+        swal('Oops...', err?.response?.data.message, 'error');
         console.log('err', err);
       });
   };

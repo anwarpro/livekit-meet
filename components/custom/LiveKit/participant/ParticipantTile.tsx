@@ -32,6 +32,8 @@ import pinImage from '../assets/icons/pin2.svg';
 import unPinImage from '../assets/icons/pin-off.svg';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import MicOffIcon from '@mui/icons-material/MicOff';
+import swal from 'sweetalert';
+import CustomConfirmationModal from '../../CustomConfirmationModal';
 
 /**
  * The `ParticipantContextIfNeeded` component only creates a `ParticipantContext`
@@ -158,6 +160,9 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
   const participants = useParticipants();
   const [pinType, setPinType] = React.useState('no_pin');
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
+  const [modalMessage, setModalMessage] = React.useState("");
+  const [modalWork, setModalWork] = React.useState("");
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -253,23 +258,30 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
     meetService
       .removeParticipant(roomName, identity)
       .then((res: any) => {
-        console.log(res);
+        console.log(`${identity} removed from room`);
+        setOpenConfirmModal(false);
       })
       .catch((err: any) => {
         console.log(err);
+        setOpenConfirmModal(false);
       });
   };
-  const handleMuteParticipant = (identity: string) => {
+  const handleMuteParticipant = async (identity: string) => {
     meetService
       .muteParticipant(roomName, [identity])
       .then((res: any) => {
-        console.log("Participant Muted");
+        console.log(`${identity} Muted`);
+        setOpenConfirmModal(false);
       })
       .catch((err: any) => {
         console.log(err);
+        setOpenConfirmModal(false);
       });
   };
-
+  const confirmClicked = (work: string)=> {
+    if(work === "mute") handleMuteParticipant(trackReference.participant.identity);
+    if(work === "remove") handleRemoveParticipant(trackReference.participant.identity);
+  }
   return (
     <div ref={ref} style={{ position: 'relative' }} {...elementProps}>
       <TrackRefContextIfNeeded trackRef={trackReference}>
@@ -409,7 +421,11 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 disabled={
                   trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted===true ||  trackReference.participant.getTrackPublication(Track.Source.Microphone)?.isMuted === undefined ? true : false
                 }
-                onClick={() => handleMuteParticipant(trackReference.participant.identity)}
+                onClick={() => {
+                  setModalWork("mute");
+                  setOpenConfirmModal(true);
+                  setModalMessage(`Are you sure you want to mute ${trackReference.participant.name}`)
+                }}
               >
                 <MicOffIcon style={{ fontSize: '1.3rem' }} />
               </IconButton>
@@ -420,12 +436,17 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                   user?.userData?.email === trackReference.participant.identity ||
                   user?.userData?.role !== 'admin'
                 }
-                onClick={() => handleRemoveParticipant(trackReference.participant.identity)}
+                onClick={() => {
+                  setModalWork("remove");
+                  setOpenConfirmModal(true);
+                  setModalMessage(`Are you sure you want to remove ${trackReference.participant.name}`)
+                }}
               >
                 <RemoveCircleIcon style={{ fontSize: '1.3rem' }} />
               </IconButton>
             </div>
           )}
+          <CustomConfirmationModal open={openConfirmModal} setOpen={setOpenConfirmModal} message={modalMessage} work={modalWork} confirmClicked={confirmClicked} />
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div>

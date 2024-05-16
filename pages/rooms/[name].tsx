@@ -46,16 +46,21 @@ const Home: NextPage = () => {
     setPreJoinChoices(values);
   }
 
+  const [joinApiCalled, setJoinApiCalled] = React.useState(false);
+  const [joinApiError, setJoinApiError] = React.useState("");
   React.useEffect(() => {
-    if (roomName) {
+    if (roomName && !joinApiCalled) {
+      setJoinApiCalled(true);
       if (user_t) {
         meetService
           .joinMeet(roomName, user_t)
           .then((res: any) => {
             dispatch(setRoom(res?.data?.data));
+            setJoinApiError("");
           })
           .catch((err) => {
             dispatch(clearRoom());
+            setJoinApiError(err?.response?.data.message);
           });
       } else {
         if (user?.userData?._id) {
@@ -63,17 +68,13 @@ const Home: NextPage = () => {
             .joinMeet(roomName, '', user?.token)
             .then((res: any) => {
               dispatch(setRoom(res?.data?.data));
+              setJoinApiError("");
             })
             .catch((err) => {
               dispatch(clearRoom());
+              setJoinApiError(err?.response?.data.message);
             });
         }
-      }
-
-      const input: any = document.getElementById('username');
-      if (input) {
-        input.value = user?.userData?.fullName || 'Guest User';
-        input.disabled = true;
       }
     }
   }, [roomName, user]);
@@ -103,7 +104,8 @@ const Home: NextPage = () => {
                 videoEnabled: false,
                 audioEnabled: false,
               }}
-              userLabel={user?.userData?.fullName}
+              userLabel={""}
+              errorLabel={joinApiError}
               joinLabel="Join Meeting"
               onValidate={(values: LocalUserChoices) => {
                 if (roomInfo?.accessToken) {

@@ -149,14 +149,22 @@ const ScheduleModal = (props: Iprops) => {
   
 
   useEffect(() => {
-    let defaultValues: any = {};
-    defaultValues.eventDate = new Date();
-    defaultValues.startTime = new Date();
-    defaultValues.endTime = new Date();
-    reset({ ...defaultValues });
     if (props.editable) {
       // @ts-ignore
-      reset(props.editable);
+      let defaultValues: any = {};
+      defaultValues.eventDate = new Date(props.editable?.startTime!);
+      defaultValues.startTime = new Date(props.editable?.startTime!);
+      defaultValues.endTime = new Date(props.editable?.endTime!);
+      defaultValues.title = props.editable?.title;
+      reset({ ...defaultValues });
+    }
+    else 
+    {
+      let defaultValues: any = {};
+      defaultValues.eventDate = new Date();
+      defaultValues.startTime = new Date();
+      defaultValues.endTime = new Date();
+    reset({ ...defaultValues });
     }
   }, [props.editable, reset]);
 

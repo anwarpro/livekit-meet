@@ -178,11 +178,14 @@ const ParticipantListTable = (props: IProps) => {
               defaultValue={props.tabName === 'internal' ? internalUsers : externalUsers}
               freeSolo
               renderTags={(value: readonly string[], getTagProps) =>
-                value.map((option: string, index: number) => (
+                {
+                  value = props.tabName === 'internal' ? internalUsers : externalUsers;
+                return value.map((option: string, index: number) => (
                   <div key={index}>
                     <Chip variant="outlined" label={option} {...getTagProps({ index })} />
                   </div>
                 ))
+              }
               }
               onChange={(e, newValue) => handleSelect(e, newValue)}
               renderInput={(params) => (
