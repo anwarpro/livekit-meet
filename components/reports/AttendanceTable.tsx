@@ -10,13 +10,17 @@ import {
   TablePagination,
   TableRow,
   TextField,
+  Tooltip,
 } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import InfoIcon from '@mui/icons-material/Info';
 import moment from 'moment';
 import AttendanceUserDetailsModal from './AttendanceUserDetailsModal';
 import attendanceService from '../../service/attendance/attendanceService';
 import { debounce } from 'lodash';
 import SearchIcon from '@mui/icons-material/Search';
+import ScheduleParticipantModal from '../schedule/ScheduleParticipantModal';
+import { IMeet } from '../../types/meet';
 
 type IProps = {
   fetchData: Dispatch<SetStateAction<void>>;
@@ -152,6 +156,7 @@ const AttendanceTable = (props: IProps) => {
                         {column.id === 'action' ? (
                           <TableCell className="pe-auto">
                             <div className="d-flex">
+                              <Tooltip title="Show Participant Activity">
                               <IconButton
                                 onClick={() => handleInfo(row.identity)}
                                 aria-label="delete"
@@ -159,6 +164,7 @@ const AttendanceTable = (props: IProps) => {
                               >
                                 <InfoIcon />
                               </IconButton>
+                              </Tooltip>
                             </div>
                           </TableCell>
                         ) : column.id === 'participant_first_joined_time' ? (

@@ -147,15 +147,14 @@ const ScheduleEvent = ({ event, fetchData, selectedEvent }: any) => {
           reschedule
         />
       )}
-      {openParticipantModal.edit && (
-        <ScheduleParticipantModal
+      <ScheduleParticipantModal
           openParticipantModal={openParticipantModal}
           editable={editable!}
+          canAdd={true}
           // fetchData={fetchData}
           // setSuccessModal={setSuccessModal}
           // reschedule
         />
-      )}
       {successModal.edit && <SuccessPopUp openModal={successModal} reschedule />}
     </div>
   );

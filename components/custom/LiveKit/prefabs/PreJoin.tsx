@@ -21,6 +21,8 @@ import { defaultUserChoices } from '@livekit/components-core';
 import { TrackToggle, useMediaDevices, usePersistentUserChoices } from '@livekit/components-react';
 import { Mutex } from '../utils';
 import { MediaDeviceMenu } from './MediaDeviceMenu';
+import { useSelector } from 'react-redux';
+import { Alert } from '@mui/material';
 
 /**
  * Props for the PreJoin component.
@@ -43,6 +45,7 @@ export interface PreJoinProps
   micLabel?: string;
   camLabel?: string;
   userLabel?: string;
+  errorLabel?: string;
   /**
    * If true, user choices are persisted across sessions.
    * @defaultValue true
@@ -220,6 +223,7 @@ export function PreJoin({
   micLabel = 'Microphone',
   camLabel = 'Camera',
   userLabel = 'Username',
+  errorLabel = "Okay",
   persistUserChoices = true,
   ...htmlProps
 }: PreJoinProps) {
@@ -256,7 +260,11 @@ export function PreJoin({
   const [videoDeviceId, setVideoDeviceId] = React.useState<string>(
     initialUserChoices.videoDeviceId,
   );
-  const [username, setUsername] = React.useState(initialUserChoices.username);
+  const [username, setUsername] = React.useState("Username");
+  const user = useSelector((state: any) => state.auth);
+  React.useEffect(()=> {
+    setUsername(user?.userData?.fullName || "Guest User")
+  }, [user])
 
   // Save user choices to persistent storage.
   React.useEffect(() => {
@@ -403,18 +411,12 @@ export function PreJoin({
           </div>
         </div>
       </div>
-
+      {
+        errorLabel && <Alert severity="warning">{errorLabel}</Alert>
+      }
       <form className="lk-username-container">
-        <input
-          className="lk-form-control"
-          id="username"
-          name="username"
-          type="text"
-          defaultValue={username}
-          placeholder={userLabel}
-          onChange={(inputEl) => setUsername(inputEl.target.value)}
-          autoComplete="off"
-        />
+        <p className="lk-form-control text-white mb-0"
+          id="username" >{username || "No Name"}</p>
         <button
           className="lk-button lk-join-button"
           type="submit"

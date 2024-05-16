@@ -49,6 +49,7 @@ type IProps = {
   data: IMeet;
   tabName: string;
   isLoading: boolean;
+  canAdd?: boolean;
 };
 
 const ParticipantListTable = (props: IProps) => {
@@ -164,7 +165,8 @@ const ParticipantListTable = (props: IProps) => {
   return (
     <div style={{ maxHeight: '500px' }}>
       <div className="search mb-3">
-        <Grid container className="mb-3" justifyContent="center" alignItems="center">
+        {
+          props.canAdd && <Grid container className="mb-3" justifyContent="center" alignItems="center">
           {/* <label className="mb-2" htmlFor="externalParticipantList">
             Add New Email
           </label> */}
@@ -178,11 +180,14 @@ const ParticipantListTable = (props: IProps) => {
               defaultValue={props.tabName === 'internal' ? internalUsers : externalUsers}
               freeSolo
               renderTags={(value: readonly string[], getTagProps) =>
-                value.map((option: string, index: number) => (
+                {
+                  value = props.tabName === 'internal' ? internalUsers : externalUsers;
+                return value.map((option: string, index: number) => (
                   <div key={index}>
                     <Chip variant="outlined" label={option} {...getTagProps({ index })} />
                   </div>
                 ))
+              }
               }
               onChange={(e, newValue) => handleSelect(e, newValue)}
               renderInput={(params) => (
@@ -200,6 +205,7 @@ const ParticipantListTable = (props: IProps) => {
             </Button>
           </Grid>
         </Grid>
+        }
         <TextField
           id="input-with-icon-textfield"
           hiddenLabel
@@ -220,7 +226,7 @@ const ParticipantListTable = (props: IProps) => {
       </div>
 
       {props.isLoading ? (
-        <Skeleton variant="rounded" height={350} />
+        <Skeleton variant="rounded" height={props.canAdd ? 400 : 420} />
       ) : (
         <Box>
           <TableContainer sx={{ height: 350 }}>
@@ -260,10 +266,10 @@ const ParticipantListTable = (props: IProps) => {
                             {column.id === 'action' ? (
                               <TableCell className="pe-auto">
                                 <Tooltip title="Remove this user">
-                                  <IconButton>
+                                  <IconButton color="error" disabled={!props.canAdd}>
                                     <DeleteIcon
                                       onClick={() => handleClickDeleteDialogOpen(row)}
-                                      color="error"
+                                      
                                       style={{ cursor: 'pointer' }}
                                     />
                                   </IconButton>

@@ -125,3 +125,9 @@ body {
   border-top: unset;
   // background: #000000;
 }
+.lk-button[aria-pressed=true] {
+  background-color: #757474;
+}
+.lk-button[aria-pressed=true]:hover {
+  background-color: #5c5b5b;
+}
