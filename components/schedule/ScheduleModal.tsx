@@ -15,7 +15,6 @@ import { Autocomplete, Box, Button, Chip, Stack, Switch, TextField } from '@mui/
 import { DatePicker } from '@mui/x-date-pickers';
 import { IMeet } from '../../types/meet';
 import swal from 'sweetalert';
-import ScheduleParticipantModal from './ScheduleParticipantModal';
 
 type Iprops = {
   openModal: { edit: boolean };

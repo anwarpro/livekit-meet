@@ -45,7 +45,7 @@ const AttendanceReport = () => {
     <div className="schedule-meet-component ">
       <div className="title d-flex align-items-center pb-4">
         <Image src={userIcon} width="30" height="30" alt="user" />
-        <h1>Participant List</h1>
+        <h1>Joined Participants List</h1>
       </div>
       <AttendanceTable
         fields={fields}

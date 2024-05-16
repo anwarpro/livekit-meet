@@ -111,7 +111,6 @@ export const LiveKitRoom = /* @__PURE__ */ React.forwardRef<
   React.PropsWithChildren<LiveKitRoomProps>
 >(function LiveKitRoom(props: React.PropsWithChildren<LiveKitRoomProps>, ref) {
   const { room, htmlProps } = useLiveKitRoom(props);
-  console.log('🚀 ~ LiveKitRoom ~ props =====================>:', props);
   return (
     <div ref={ref} {...htmlProps}>
       {room && (

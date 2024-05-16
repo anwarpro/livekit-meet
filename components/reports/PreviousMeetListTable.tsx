@@ -10,12 +10,16 @@ import {
   TablePagination,
   TableRow,
   TextField,
+  Tooltip,
 } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import InfoIcon from '@mui/icons-material/Info';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { debounce } from 'lodash';
 import SearchIcon from '@mui/icons-material/Search';
+import { IMeet } from '../../types/meet';
+import ScheduleParticipantModal from '../schedule/ScheduleParticipantModal';
 
 type IProps = {
   fetchData: Dispatch<SetStateAction<void>>;
@@ -33,6 +37,10 @@ type IProps = {
 const PreviousMeetListTable = (props: IProps) => {
   const router = useRouter();
   const [debounceSearch, setDebounceSearch] = useState('');
+  const [openParticipantModal, setOpenParticipantModal] = useState<{ edit: boolean }>({
+    edit: false,
+  });
+  const [editable, setEditable] = useState<IMeet>();
   const getDuration = (value: any) => {
     const seconds = value / 1000;
     const hours = Math.floor(seconds / 3600);
@@ -138,13 +146,27 @@ const PreviousMeetListTable = (props: IProps) => {
                         {column.id === 'action' ? (
                           <TableCell className="pe-auto">
                             <div className="d-flex">
-                              <IconButton
-                                onClick={() => router.push(`/dashboard/report/${row._id}`)}
-                                aria-label="delete"
-                                color="info"
-                              >
-                                <InfoIcon />
-                              </IconButton>
+                              <Tooltip title="Show Joined Participants List">
+                                <IconButton
+                                  onClick={() => router.push(`/dashboard/report/${row._id}`)}
+                                  aria-label="delete"
+                                  color="info"
+                                >
+                                  <InfoIcon />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Show Invited Participants List">
+                                <IconButton
+                                  onClick={() => {
+                                    setOpenParticipantModal({ edit: true });
+                                    setEditable(row);
+                                  }}
+                                  aria-label="delete"
+                                  color="info"
+                                >
+                                  <AccountCircleIcon />
+                                </IconButton>
+                              </Tooltip>
                             </div>
                           </TableCell>
                         ) : column.id === 'startTime' ? (
@@ -187,6 +209,14 @@ const PreviousMeetListTable = (props: IProps) => {
         page={props?.page - 1}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+      <ScheduleParticipantModal
+        openParticipantModal={openParticipantModal}
+        editable={editable!}
+        canAdd={false}
+        // fetchData={fetchData}
+        // setSuccessModal={setSuccessModal}
+        // reschedule
       />
     </>
   );

@@ -35,6 +35,7 @@ type Iprops = {
   setSuccessModal?: Dispatch<SetStateAction<{ edit: boolean }>>;
   fetchData?: Dispatch<SetStateAction<void>>;
   editable: IMeet;
+  canAdd?: boolean;
 };
 
 interface TabPanelProps {
@@ -197,7 +198,7 @@ const ScheduleParticipantModal = (props: Iprops) => {
         >
           <div className="heading d-flex align-items-center">
             <Image src={userIcon} width="30" height="30" alt="user" />
-            <p className="m-0 ps-2">Update Participants</p>
+            <p className="m-0 ps-2">{props.canAdd ? "Update Participants" : "Invited Participants List"}</p>
           </div>
 
           <Box className="mt-4">
@@ -205,6 +206,7 @@ const ScheduleParticipantModal = (props: Iprops) => {
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                   <Tab
+                  sx={{width: "50%"}}
                     label={
                       <div className="d-flex align-items-center">
                         {'Internal Participants'}
@@ -222,6 +224,7 @@ const ScheduleParticipantModal = (props: Iprops) => {
                     {...a11yProps(0)}
                   />
                   <Tab
+                  sx={{width: "50%"}}
                     label={
                       <div className="d-flex align-items-center">
                         {'External Participants'}
@@ -256,6 +259,7 @@ const ScheduleParticipantModal = (props: Iprops) => {
                   tabName="internal"
                   data={meetData}
                   isLoading={isLoading}
+                  canAdd={props.canAdd}
                 />
               </CustomTabPanel>
               <CustomTabPanel value={value} index={1}>
@@ -274,6 +278,7 @@ const ScheduleParticipantModal = (props: Iprops) => {
                   data={meetData}
                   tabName="external"
                   isLoading={isLoading}
+                  canAdd={props.canAdd}
                 />
               </CustomTabPanel>
             </Box>
