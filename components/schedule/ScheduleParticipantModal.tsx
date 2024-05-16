@@ -115,9 +115,8 @@ const ScheduleParticipantModal = (props: Iprops) => {
       meetService
         .getInternalParticipant(props.editable?._id as string, searchText, limit, page)
         .then((res: any) => {
-          // console.log('res ==>', res.data?.data);
-          setInternalParticipantList(res?.data?.data[0]?.emails);
-          setInternalTotal(res?.data?.data[0]?.total);
+          setInternalParticipantList(res?.data?.data);
+          setInternalTotal(res?.data?.total);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -129,9 +128,8 @@ const ScheduleParticipantModal = (props: Iprops) => {
       meetService
         .getexternalParticipant(props.editable?._id as string, searchText, limit, page)
         .then((res: any) => {
-          // console.log('res ==>', res.data?.data);
-          setExternalParticipantList(res?.data?.data[0]?.emails);
-          setExternalTotal(res?.data?.data[0]?.total);
+          setExternalParticipantList(res?.data?.data);
+          setExternalTotal(res?.data?.total);
           setIsLoading(false);
         })
         .catch((err) => {
