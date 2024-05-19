@@ -424,7 +424,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 onClick={() => {
                   setModalWork("mute");
                   setOpenConfirmModal(true);
-                  setModalMessage(`Are you sure you want to mute ${trackReference.participant.name}`)
+                  setModalMessage(`Are you sure you want to mute ${trackReference.participant.name}?`)
                 }}
               >
                 <MicOffIcon style={{ fontSize: '1.3rem' }} />
@@ -439,7 +439,7 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
                 onClick={() => {
                   setModalWork("remove");
                   setOpenConfirmModal(true);
-                  setModalMessage(`Are you sure you want to remove ${trackReference.participant.name}`)
+                  setModalMessage(`Are you sure you want to remove ${trackReference.participant.name}?`)
                 }}
               >
                 <RemoveCircleIcon style={{ fontSize: '1.3rem' }} />

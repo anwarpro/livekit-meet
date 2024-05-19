@@ -17,11 +17,30 @@ body {
   height: auto !important;
 }
 
+@media screen and (max-width: 400px) {
+  .lk-device-menu {
+    left: -230px !important;
+    top: -330px !important;
+  }
+}
 @media screen and (max-width: 760px) {
   .lk-chat {
     height: 80vh !important;
   }
-  .lk-grid-layout-wrapper, .lk-focus-layout-wrapper {
+  .lk-device-menu {
+    width: 250px;
+    font-size: 12px;
+    left: -80px;
+    top: -330px;
+  }
+  // .lk-device-menu ul {
+  //   left: 0;
+  // }
+  .lk-device-menu li button {
+    text-wrap: wrap;
+  }
+  .lk-grid-layout-wrapper,
+  .lk-focus-layout-wrapper {
     height: 82vh !important;
   }
   .\lk-control-bar {
@@ -56,7 +75,7 @@ body {
   background: unset !important;
   &:hover {
     background: rgb(44, 40, 40) !important;
-  } 
+  }
 }
 .lk-focus-custom-buttons {
   position: absolute;
@@ -65,7 +84,7 @@ body {
   transform: translate(-50%, -50%);
   opacity: 0;
   background-color: rgb(71, 70, 70);
-  transition: opacity .2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
   border-radius: 30px;
   width: 150px;
   height: 50px;
@@ -76,18 +95,18 @@ body {
 
 .lk-focus-custom-buttons:hover {
   opacity: 1 !important;
-  transition: opacity .2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
 }
 .lk-focus-custom-buttons button {
   color: white !important;
   cursor: pointer;
   &:hover {
     background: rgb(44, 40, 40) !important;
-  } 
+  }
 }
 .lk-participant-tile:hover .lk-focus-custom-buttons {
   opacity: 0.7;
-  transition: opacity .2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
 }
 .lk-focus-remove-button:hover {
   opacity: 1;
@@ -101,7 +120,8 @@ body {
     text-transform: capitalize;
   }
 }
-.lk-grid-layout-wrapper, .lk-focus-layout-wrapper {
+.lk-grid-layout-wrapper,
+.lk-focus-layout-wrapper {
   // display: flex !important;
   height: 90vh;
   // width: 100vw !important;
@@ -125,9 +145,9 @@ body {
   border-top: unset;
   // background: #000000;
 }
-.lk-button[aria-pressed=true] {
+.lk-button[aria-pressed='true'] {
   background-color: #757474;
 }
-.lk-button[aria-pressed=true]:hover {
+.lk-button[aria-pressed='true']:hover {
   background-color: #5c5b5b;
 }
