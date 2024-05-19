@@ -17,27 +17,9 @@ body {
   height: auto !important;
 }
 
-@media screen and (max-width: 400px) {
-  .lk-device-menu {
-    left: -230px !important;
-    top: -330px !important;
-  }
-}
 @media screen and (max-width: 760px) {
   .lk-chat {
     height: 80vh !important;
-  }
-  .lk-device-menu {
-    width: 250px;
-    font-size: 12px;
-    left: -80px;
-    top: -330px;
-  }
-  // .lk-device-menu ul {
-  //   left: 0;
-  // }
-  .lk-device-menu li button {
-    text-wrap: wrap;
   }
   .lk-grid-layout-wrapper,
   .lk-focus-layout-wrapper {
@@ -150,4 +132,15 @@ body {
 }
 .lk-button[aria-pressed='true']:hover {
   background-color: #5c5b5b;
+}
+
+@media screen and (max-width: 600px) {
+  .pre-join-track-button {
+    .lk-button {
+      border-radius: 8px !important;
+    }
+    .lk-button-group-menu {
+      display: none !important;
+    }
+  }
 }

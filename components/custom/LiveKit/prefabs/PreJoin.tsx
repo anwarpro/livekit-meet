@@ -374,7 +374,7 @@ export function PreJoin({
         )}
       </div>
       <div className="lk-button-group-container">
-        <div className="lk-button-group audio">
+        <div className="lk-button-group audio pre-join-track-button">
           <TrackToggle
             initialState={audioEnabled}
             source={Track.Source.Microphone}
@@ -392,7 +392,7 @@ export function PreJoin({
             />
           </div>
         </div>
-        <div className="lk-button-group video">
+        <div className="lk-button-group video pre-join-track-button">
           <TrackToggle
             initialState={videoEnabled}
             source={Track.Source.Camera}
