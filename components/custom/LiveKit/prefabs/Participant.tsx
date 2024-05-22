@@ -1,10 +1,10 @@
 import * as React from 'react';
-import type { ChatOptions } from '@livekit/components-core';
-import { ChatCloseIcon } from '../assets/icons';
-import { MessageFormatter, useMaybeRoomContext, useParticipants } from '@livekit/components-react';
+import { ChatCloseIcon, MicDisabledIcon } from '../assets/icons';
+import { useMaybeRoomContext, useParticipants } from '@livekit/components-react';
 
 import { ParticipantToggle } from '../controls/ParticipantToggle';
 import {
+  Button,
   IconButton,
   List,
   ListItem,
@@ -19,44 +19,27 @@ import Image from 'next/image';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import meetService from '../../../../service/meet/meetService';
 import CustomToastAlert from '../../CustomToastAlert';
+import SettingsVoiceIcon from '@mui/icons-material/SettingsVoice';
+import { useRouter } from 'next/router';
+import { Track } from 'livekit-client';
+import { getSourceIcon } from '../assets/icons/util';
 
-/** @public */
-export interface ChatProps extends React.HTMLAttributes<HTMLDivElement>, ChatOptions {
-  messageFormatter?: MessageFormatter;
-}
-
-/**
- * The Chat component adds a basis chat functionality to the LiveKit room. The messages are distributed to all participants
- * in the room. Only users who are in the room at the time of dispatch will receive the message.
- *
- * @example
- * ```tsx
- * <LiveKitRoom>
- *   <Chat />
- * </LiveKitRoom>
- * ```
- * @public
- */
-export function Participant({
-  messageFormatter,
-  messageDecoder,
-  messageEncoder,
-  channelTopic,
-  ...props
-}: ChatProps) {
+export function Participant({ ...props }) {
+  const Router = useRouter();
+  const { name: roomName } = Router.query as { name: string };
   const participants = useParticipants();
   const { handRaised } = useSelector((state: any) => state.handRaise);
   participants.sort((a: any, b: any) => {
-    const aBool = handRaised?.some((hData:any)=> hData?.email === a.identity);
-    const bBool = handRaised?.some((hData:any)=> hData?.email === b.identity)
-    const aData = handRaised?.find((hData:any)=> hData?.email === a.identity);
-    const bData = handRaised?.find((hData:any)=> hData?.email === b.identity);
+    const aBool = handRaised?.some((hData: any) => hData?.email === a.identity);
+    const bBool = handRaised?.some((hData: any) => hData?.email === b.identity);
+    const aData = handRaised?.find((hData: any) => hData?.email === a.identity);
+    const bData = handRaised?.find((hData: any) => hData?.email === b.identity);
     if (handRaised && aBool > bBool) {
       return -1;
     } else if (handRaised && aBool < bBool) {
       return 1;
     } else {
-      return new Date(aData?.createdAt).getTime() - new Date(bData?.createdAt).getTime()
+      return new Date(aData?.createdAt).getTime() - new Date(bData?.createdAt).getTime();
     }
   });
 
@@ -64,8 +47,12 @@ export function Participant({
   const room = useMaybeRoomContext();
   const [openSuccessToast, setIsOpenSuccessToast] = React.useState<boolean>(false);
   const [openErrorToast, setIsOpenErrorToast] = React.useState<boolean>(false);
+  const [singleParticipantMute, setSingleParticipantMute] = React.useState<{
+    identity: string;
+  }>();
 
   const handleMuteParticipant = () => {
+    setSingleParticipantMute({ identity: '' });
     const filteredParticipant = (participants || [])
       .map((pr) => pr.identity)
       .filter((identity) => identity !== userData.email);
@@ -77,6 +64,18 @@ export function Participant({
       })
       .catch((err: any) => {
         setIsOpenErrorToast(true);
+      });
+  };
+
+  const handleMuteSpacificParticipant = (p: any) => {
+    meetService
+      .muteParticipant(roomName, [p.identity])
+      .then((res: any) => {
+        setSingleParticipantMute({ identity: p.identity });
+        setIsOpenSuccessToast(true);
+      })
+      .catch((err: any) => {
+        console.log('single participant mute', err);
       });
   };
 
@@ -103,17 +102,23 @@ export function Participant({
       <List>
         {participants?.map((p, index) => {
           return (
-            <ListItem key={p.identity} disablePadding>
-              <ListItemButton>
+            <ListItem key={p.identity}>
+              {/* <ListItemButton> */}
                 <ListItemIcon>
                   <PersonIcon sx={{ color: 'white' }} />
                 </ListItemIcon>
                 <ListItemText primary={p.name} />
                 {/* @ts-ignore */}
-                {handRaised?.some((hData:any)=> hData?.email === p.identity) && (
+                {handRaised?.some((hData: any) => hData?.email === p.identity) && (
                   <Image src={handRiseIcon} height="24" width="24" alt="" />
                 )}
-              </ListItemButton>
+                {p.isSpeaking && (
+                  <IconButton sx={{ ml: 1, color: 'white' }} size="small">
+                    <SettingsVoiceIcon onClick={() => handleMuteSpacificParticipant(p)} />
+                  </IconButton>
+                )}
+                {/* {Track.Source.Microphone && JSON.parse(localStorage.getItem('track')!) ? <MicDisabledIcon /> : ''} */}
+              {/* </ListItemButton> */}
             </ListItem>
           );
         })}
@@ -123,7 +128,11 @@ export function Participant({
           open={openSuccessToast}
           setOpen={setIsOpenSuccessToast}
           status="success"
-          message="All Participants Have Been Muted"
+          message={
+            singleParticipantMute?.identity
+              ? `${singleParticipantMute.identity} is muted`
+              : 'All Participants Have Been Muted'
+          }
           duration={2000}
           vertical="top"
         />
