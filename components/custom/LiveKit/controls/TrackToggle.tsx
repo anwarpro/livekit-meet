@@ -37,22 +37,17 @@ export const TrackToggle = /* @__PURE__ */ React.forwardRef(function TrackToggle
   const { buttonProps, enabled } = useTrackToggle(props);
   const { control: hostControl } = useSelector((state: any) => state.hostControl);
 
-  console.log(
-    '🚀 ~ buttonProps:',
-    String(buttonProps?.['data-lk-source'] === 'camera') && hostControl?.camera,
-  );
-
   return (
     <button
       ref={ref}
       {...buttonProps}
       disabled={
         // @ts-ignore
-        (String(buttonProps?.['data-lk-source'] === 'microphone') && hostControl?.microphone) ||
+        (buttonProps?.['data-lk-source'] === 'microphone' && hostControl?.microphone) ||
         // @ts-ignore
-        (String(buttonProps?.['data-lk-source'] === 'camera') && hostControl?.camera) ||
+        (buttonProps?.['data-lk-source'] === 'camera' && hostControl?.camera) ||
         // @ts-ignore
-        (String(buttonProps?.['data-lk-source'] === 'screen_share') && hostControl?.screenShare)
+        (buttonProps?.['data-lk-source'] === 'screen_share' && hostControl?.screenShare)
       }
     >
       {(showIcon ?? true) && getSourceIcon(props.source, enabled)}

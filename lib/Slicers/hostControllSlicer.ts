@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     control: {
-        microphone: true,
+        microphone: false,
         camera: false,
         screenShare: true,
         chat: true,
