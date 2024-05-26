@@ -15,6 +15,7 @@ import Image from 'next/image';
 import handRiseIcon from '../assets/icons/hand-rise.svg';
 import handRiseActiveIcon from '../assets/icons/hand-rise-active.svg';
 import CustomToastAlert from '../../CustomToastAlert';
+import { CustomTooltripWithArrow } from '../../CustomTooltripWithArrow';
 
 const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: boolean }) => {
   const encoder = new TextEncoder();
@@ -30,26 +31,34 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
   const remoteParticipants = useRemoteParticipants();
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const { control: hostControl } = useSelector((state: any) => state.hostControl);
 
   const findRemoteParticipantName = (email: string) => {
     const filterRemoteParticipant = remoteParticipants.find((rp) => rp.identity === email);
     return filterRemoteParticipant?.name;
   };
 
-  const [savedHandRaise, setSavedHandRaise] = useState<{email: string, createdAt: string, _id: string}[]>([]);
-  const checkHandRaise2 = (data: {email: string, createdAt: string, _id: string}[]) => {
+  const [savedHandRaise, setSavedHandRaise] = useState<
+    { email: string; createdAt: string; _id: string }[]
+  >([]);
+  const checkHandRaise2 = (data: { email: string; createdAt: string; _id: string }[]) => {
     const sortedData = [...data];
-    sortedData.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    sortedData.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     const newData = [...savedHandRaise];
-    const justHandRaised:{email: string, createdAt: string, _id: string}[] = [];
-    sortedData.forEach((dt)=> {
+    const justHandRaised: { email: string; createdAt: string; _id: string }[] = [];
+    sortedData.forEach((dt) => {
       const myJoinTime = new Date(localParticipant.joinedAt!);
-      if(dt.email !== localParticipant.identity && new Date(dt.createdAt) > myJoinTime && !savedHandRaise.some((sd)=> sd.email === dt.email) && remoteParticipants.some(rp=>rp.identity === dt.email)) {
+      if (
+        dt.email !== localParticipant.identity &&
+        new Date(dt.createdAt) > myJoinTime &&
+        !savedHandRaise.some((sd) => sd.email === dt.email) &&
+        remoteParticipants.some((rp) => rp.identity === dt.email)
+      ) {
         newData.push(dt);
         justHandRaised.push(dt);
       }
-    })
-    if(justHandRaised.length > 0) {
+    });
+    if (justHandRaised.length > 0) {
       setOpenToast(true);
       if (justHandRaised?.length > 1) {
         setToastMessage(
@@ -64,13 +73,17 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
       audio.play();
     }
     const notInMySavedList = newData.filter(
-      (sd) => !sortedData.some((dt) => sd.email === dt.email)
+      (sd) => !sortedData.some((dt) => sd.email === dt.email),
     );
 
-    const notInSaveButInRoom = notInMySavedList.filter((nd)=> remoteParticipants.some(rp => rp.identity === nd.email))
-    const newHandData = newData.filter(nd=> !(notInSaveButInRoom.some(sd=> nd.email === sd.email)))
+    const notInSaveButInRoom = notInMySavedList.filter((nd) =>
+      remoteParticipants.some((rp) => rp.identity === nd.email),
+    );
+    const newHandData = newData.filter(
+      (nd) => !notInSaveButInRoom.some((sd) => nd.email === sd.email),
+    );
     setSavedHandRaise(newHandData);
-  }
+  };
 
   const fetchData = () => {
     meetService
@@ -167,21 +180,31 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
       },
     );
   return (
-    <>
-      <button aria-pressed={isHandRaised ? "true" : "false"} onClick={() => handleHandRaised()} className="lk-button lk-chat-toggle">
-        {showIcon && <Image src={handRiseIcon} height="22" width="22" alt="hand" />}
-        {showText && 'Hand Raise'}
-      </button>
-      <CustomToastAlert
-        open={openToast}
-        setOpen={setOpenToast}
-        duration={2000}
-        customStyle={{marginBottom: "60px"}}
-        status={'info'}
-        message={toastMessage}
-        vertical="bottom"
-      />
-    </>
+    <CustomTooltripWithArrow
+      title="You're not allowed to hand raise"
+      className={`${hostControl?.handRaise ? 'd-block' : 'd-none'}`}
+    >
+      <div>
+        <button
+          aria-pressed={isHandRaised ? 'true' : 'false'}
+          onClick={() => handleHandRaised()}
+          className="lk-button lk-chat-toggle"
+          disabled={hostControl?.handRaise}
+        >
+          {showIcon && <Image src={handRiseIcon} height="22" width="22" alt="hand" />}
+          {showText && 'Hand Raise'}
+        </button>
+        <CustomToastAlert
+          open={openToast}
+          setOpen={setOpenToast}
+          duration={2000}
+          customStyle={{ marginBottom: '60px' }}
+          status={'info'}
+          message={toastMessage}
+          vertical="bottom"
+        />
+      </div>
+    </CustomTooltripWithArrow>
   );
 };
 

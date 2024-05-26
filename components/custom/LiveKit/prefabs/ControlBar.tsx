@@ -6,12 +6,19 @@ import { supportsScreenSharing } from '@livekit/components-core';
 import { mergeProps } from '../utils';
 import {
   // ChatToggle,
-  TrackToggle,
+  // TrackToggle,
   useLocalParticipantPermissions,
   useMaybeLayoutContext,
   usePersistentUserChoices,
 } from '@livekit/components-react';
-import { Button, useMediaQuery } from '@mui/material';
+import {
+  Button,
+  Tooltip,
+  TooltipProps,
+  styled,
+  tooltipClasses,
+  useMediaQuery,
+} from '@mui/material';
 import { SettingsMenuToggle } from '../controls/SettingsMenuToggle';
 import { StartMediaButton } from '../controls/StartMediaButton';
 import { ParticipantToggle } from '../controls/ParticipantToggle';
@@ -20,6 +27,9 @@ import ParticipantsIcon from '../assets/icons/ParticipantsIcon';
 import BackHandIcon from '@mui/icons-material/BackHand';
 import HandRaiseToggle from '../controls/HandRaiseToggle';
 import { ChatToggle } from '../controls/ChatToggle';
+import { TrackToggle } from '../controls/TrackToggle';
+import { useSelector } from 'react-redux';
+import { CustomTooltripWithArrow } from '../../CustomTooltripWithArrow';
 
 /** @public */
 export type ControlBarControls = {
@@ -138,18 +148,24 @@ export function ControlBar({
       isUserInitiated ? saveVideoInputEnabled(enabled) : null,
     [saveVideoInputEnabled],
   );
-
+  const { control: hostControl } = useSelector((state: any) => state.hostControl);
+  console.log('🚀 ~ control:', hostControl);
   return (
     <div {...htmlProps}>
       {visibleControls.microphone && (
         <div className="lk-button-group">
-          <TrackToggle
-            source={Track.Source.Microphone}
-            showIcon={showIcon}
-            onChange={microphoneOnChange}
+          <CustomTooltripWithArrow
+            title="You're not allowed to turn on your microphone"
+            className={`${hostControl?.microphone ? 'd-block' : 'd-none'}`}
           >
-            {showText && 'Microphone'}
-          </TrackToggle>
+            <TrackToggle
+              source={Track.Source.Microphone}
+              showIcon={showIcon}
+              onChange={microphoneOnChange}
+            >
+              {showText && 'Microphone'}
+            </TrackToggle>
+          </CustomTooltripWithArrow>
           <div className="lk-button-group-menu">
             <MediaDeviceMenu
               kind="audioinput"
@@ -160,9 +176,14 @@ export function ControlBar({
       )}
       {visibleControls.camera && (
         <div className="lk-button-group">
-          <TrackToggle source={Track.Source.Camera} showIcon={showIcon} onChange={cameraOnChange}>
-            {showText && 'Camera'}
-          </TrackToggle>
+          <CustomTooltripWithArrow
+            title="You're not allowed to turn on your camera"
+            className={`${hostControl?.camera ? 'd-block' : 'd-none'}`}
+          >
+            <TrackToggle source={Track.Source.Camera} showIcon={showIcon} onChange={cameraOnChange}>
+              {showText && 'Camera'}
+            </TrackToggle>
+          </CustomTooltripWithArrow>
           <div className="lk-button-group-menu">
             <MediaDeviceMenu
               kind="videoinput"
@@ -172,14 +193,19 @@ export function ControlBar({
         </div>
       )}
       {visibleControls.screenShare && browserSupportsScreenSharing && (
-        <TrackToggle
-          source={Track.Source.ScreenShare}
-          captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
-          showIcon={showIcon}
-          onChange={onScreenShareChange}
+        <CustomTooltripWithArrow
+          title="You're not allowed to share your screen"
+          className={`${hostControl?.screenShare ? 'd-block' : 'd-none'}`}
         >
-          {showText && (isScreenShareEnabled ? 'Stop screen share' : 'Share screen')}
-        </TrackToggle>
+          <TrackToggle
+            source={Track.Source.ScreenShare}
+            captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
+            showIcon={showIcon}
+            onChange={onScreenShareChange}
+          >
+            {showText && (isScreenShareEnabled ? 'Stop screen share' : 'Share screen')}
+          </TrackToggle>
+        </CustomTooltripWithArrow>
       )}
       {visibleControls.chat && (
         <ChatToggle>
@@ -193,14 +219,13 @@ export function ControlBar({
           {showText && 'Participant'}
         </ParticipantToggle>
       )}
-        <HandRaiseToggle showIcon={showIcon} showText={showText}/>
+      <HandRaiseToggle showIcon={showIcon} showText={showText} />
       {visibleControls.settings && showText && (
         <SettingsMenuToggle>
           {showIcon && <GearIcon />}
           {showText && 'Settings'}
         </SettingsMenuToggle>
       )}
-
       {visibleControls.leave && (
         <DisconnectButton>
           {showIcon && <LeaveIcon />}
