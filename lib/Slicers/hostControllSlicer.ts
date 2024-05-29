@@ -4,9 +4,9 @@ const initialState = {
     control: {
         microphone: false,
         camera: false,
-        screenShare: true,
-        chat: true,
-        handRaise: true
+        screenShare: false,
+        chat: false,
+        handRaise: false
     }
 };
 

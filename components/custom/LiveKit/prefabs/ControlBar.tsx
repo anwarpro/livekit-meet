@@ -1,35 +1,27 @@
-import { Track } from 'livekit-client';
 import * as React from 'react';
+import { Track } from 'livekit-client';
 import { DisconnectButton } from '../controls/DisconnectButton';
 import { ChatIcon, GearIcon, LeaveIcon } from '../assets/icons';
 import { supportsScreenSharing } from '@livekit/components-core';
 import { mergeProps } from '../utils';
 import {
-  // ChatToggle,
-  // TrackToggle,
   useLocalParticipantPermissions,
   useMaybeLayoutContext,
   usePersistentUserChoices,
 } from '@livekit/components-react';
-import {
-  Button,
-  Tooltip,
-  TooltipProps,
-  styled,
-  tooltipClasses,
-  useMediaQuery,
-} from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import { SettingsMenuToggle } from '../controls/SettingsMenuToggle';
 import { StartMediaButton } from '../controls/StartMediaButton';
 import { ParticipantToggle } from '../controls/ParticipantToggle';
 import { MediaDeviceMenu } from './MediaDeviceMenu';
 import ParticipantsIcon from '../assets/icons/ParticipantsIcon';
-import BackHandIcon from '@mui/icons-material/BackHand';
 import HandRaiseToggle from '../controls/HandRaiseToggle';
 import { ChatToggle } from '../controls/ChatToggle';
 import { TrackToggle } from '../controls/TrackToggle';
 import { useSelector } from 'react-redux';
 import { CustomTooltripWithArrow } from '../../CustomTooltripWithArrow';
+import ControlCameraIcon from '@mui/icons-material/ControlCamera';
+import { HostControlToggle } from '../controls/HostControlToggle';
 
 /** @public */
 export type ControlBarControls = {
@@ -40,6 +32,7 @@ export type ControlBarControls = {
   screenShare?: boolean;
   leave?: boolean;
   settings?: boolean;
+  hostControl?: boolean;
 };
 
 /** @public */
@@ -77,8 +70,10 @@ export function ControlBar({
   saveUserChoices = true,
   ...props
 }: ControlBarProps) {
-  const [isChatOpen, setIsChatOpen] = React.useState(false);
   const layoutContext = useMaybeLayoutContext();
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
+  const { control: hostControl } = useSelector((state: any) => state.hostControl);
+
   React.useEffect(() => {
     if (layoutContext?.widget.state?.showChat !== undefined) {
       setIsChatOpen(layoutContext?.widget.state?.showChat);
@@ -148,8 +143,7 @@ export function ControlBar({
       isUserInitiated ? saveVideoInputEnabled(enabled) : null,
     [saveVideoInputEnabled],
   );
-  const { control: hostControl } = useSelector((state: any) => state.hostControl);
-  console.log('🚀 ~ control:', hostControl);
+
   return (
     <div {...htmlProps}>
       {visibleControls.microphone && (
@@ -225,6 +219,12 @@ export function ControlBar({
           {showIcon && <GearIcon />}
           {showText && 'Settings'}
         </SettingsMenuToggle>
+      )}
+      {visibleControls.hostControl && showText && (
+        <HostControlToggle>
+          {showIcon && <ControlCameraIcon />}
+          {showText && 'Host Control'}
+        </HostControlToggle>
       )}
       {visibleControls.leave && (
         <DisconnectButton>

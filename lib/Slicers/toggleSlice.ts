@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     isParticipantModalOpen: false,
-    isChatOpen: false
+    isChatOpen: false,
+    isHostControlOpen: false,
 };
 
 export const toggleSlice = createSlice({
@@ -14,6 +15,9 @@ export const toggleSlice = createSlice({
         },
         setIsChatOpen: (state, { payload }) => {
             state.isChatOpen = payload
+        },
+        setIsHostControlOpen: (state, { payload }) => {
+            state.isHostControlOpen = payload
         }
 
     }
@@ -21,7 +25,8 @@ export const toggleSlice = createSlice({
 
 export const {
     setEventStore,
-    setIsChatOpen
+    setIsChatOpen,
+    setIsHostControlOpen
 } = toggleSlice.actions
 
 export default toggleSlice.reducer
