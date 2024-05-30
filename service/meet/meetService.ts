@@ -107,6 +107,10 @@ class MeetService {
         return axios.patch<IMeetHostControl>(`${API_URL}/host-control/${id}`, { ...payload });
     }
 
+    getHostControl = (id: string) => {
+        return axios.get<IMeetHostControl>(`${API_URL}/get-host-control/${id}`);
+    }
+
 }
 const meetService = new MeetService()
 export default meetService;
