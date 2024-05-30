@@ -17,7 +17,6 @@ import {
   RoomAudioRenderer,
   useCreateLayoutContext,
   useLocalParticipant,
-  useParticipants,
   useRemoteParticipants,
   useTracks,
 } from '@livekit/components-react';
@@ -27,13 +26,16 @@ import { ParticipantTile } from '../participant/ParticipantTile';
 import { ControlBar } from './ControlBar';
 import { Chat } from './Chat';
 import { Participant } from './Participant';
-import { useParticipantToggle } from '../hooks/useParticipantToggle';
 import { useSelector } from 'react-redux';
 import { usePinnedTracks } from '../hooks/usePinnedTracks';
 import { useRouter } from 'next/router';
 import meetService from '../../../../service/meet/meetService';
 import attendanceService from '../../../../service/attendance/attendanceService';
 import CustomToastAlert from '../../CustomToastAlert';
+import { HostControlModal } from './HostControlModal';
+import { setControls } from '../../../../lib/Slicers/hostControllSlicer';
+import { useDispatch } from 'react-redux';
+import { isEqual } from 'lodash';
 
 /**
  * @public
@@ -102,6 +104,10 @@ export function VideoConference({
   const [openToast, setOpenToast] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState('');
   const decoder = new TextDecoder();
+  const dispatch = useDispatch();
+  const { control } = useSelector((state: any) => state.hostControl);
+  const { userData } = useSelector((state: any) => state.auth);
+
   const fetchPinData = () => {
     meetService
       .getPinInfo(roomName)
@@ -113,6 +119,7 @@ export function VideoConference({
         console.log(err);
       });
   };
+
   room.on(
     RoomEvent.DataReceived,
     (payload: Uint8Array, participant: any, kind: string, topic: string) => {
@@ -121,6 +128,13 @@ export function VideoConference({
         if (email.email !== remotePinEmail) {
           setRemotePinEmail(email.email);
           setSelfPinEmail('no_self');
+        }
+      }
+      if (topic === 'hostControl') {
+        const hostControlDecode = decoder.decode(payload);
+        let parsedHostControl = JSON.parse(hostControlDecode);
+        if (!isEqual(control, parsedHostControl.control)) {
+          dispatch(setControls(parsedHostControl.control));
         }
       }
     },
@@ -193,9 +207,11 @@ export function VideoConference({
 
   useWarnAboutMissingStyles();
   const { isParticipantModalOpen, isChatOpen } = useSelector((state: any) => state.participant);
+  const { isHostControlOpen } = useSelector((state: any) => state.participant);
   const [prevParticipants, setPrevParticipants] = React.useState<any>([]);
   const remoteParticipants = useRemoteParticipants();
   const { localParticipant } = useLocalParticipant();
+
   const checkPariticantJoined = () => {
     if (remoteParticipants.length > prevParticipants.length) {
       if (
@@ -302,9 +318,21 @@ export function VideoConference({
             // @ts-ignore
             style={{ display: isChatOpen ? 'none' : isParticipantModalOpen ? 'grid' : 'none' }}
           />
-          <ControlBar
-              controls={{ chat: true, settings: !!SettingsComponent, participant: true }}
+          {userData.role === 'admin' && (
+            <HostControlModal
+              // @ts-ignore
+              style={{ display: isHostControlOpen ? 'grid' : 'none' }}
             />
+          )}
+
+          <ControlBar
+            controls={{
+              chat: true,
+              settings: !!SettingsComponent,
+              participant: true,
+              hostControl: userData.role === 'admin' ? true : false,
+            }}
+          />
           <Chat
             style={{
               display: isParticipantModalOpen ? 'none' : isChatOpen ? 'grid' : 'none',
