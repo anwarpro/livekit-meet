@@ -28,7 +28,8 @@ export function HostControlModal({ ...props }) {
       .updateControl(roomName, { ...state, [event.target.name]: event.target.checked })
       .then((res) => {
         console.log('🚀 ~ handleChange ~ res:', res?.data);
-      });
+      })
+      .catch((err) => console.log('err', err));
   };
 
   React.useEffect(() => {
