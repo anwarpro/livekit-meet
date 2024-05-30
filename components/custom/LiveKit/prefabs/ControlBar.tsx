@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { CustomTooltripWithArrow } from '../../CustomTooltripWithArrow';
 import ControlCameraIcon from '@mui/icons-material/ControlCamera';
 import { HostControlToggle } from '../controls/HostControlToggle';
+import MoreControlButton from '../controls/MoreControlButton';
 
 /** @public */
 export type ControlBarControls = {
@@ -80,6 +81,8 @@ export function ControlBar({
     }
   }, [layoutContext?.widget.state?.showChat]);
 
+  const enableMoreControl = useMediaQuery(`(max-width:1290px)`);
+  const disableControl = useMediaQuery(`(min-width:493px)`);
   const isTooLittleSpace = useMediaQuery(`(max-width: ${isChatOpen ? 1120 : 1100}px)`);
 
   const defaultVariation = isTooLittleSpace ? 'minimal' : 'verbose';
@@ -207,25 +210,26 @@ export function ControlBar({
           {showText && 'Chat'}
         </ChatToggle>
       )}
-      {visibleControls.participant && (
+      {visibleControls.participant && disableControl && (
         <ParticipantToggle>
           {showIcon && <ParticipantsIcon />}
           {showText && 'Participant'}
         </ParticipantToggle>
       )}
       <HandRaiseToggle showIcon={showIcon} showText={showText} />
-      {visibleControls.settings && showText && (
+      {visibleControls.settings && !enableMoreControl && (
         <SettingsMenuToggle>
           {showIcon && <GearIcon />}
           {showText && 'Settings'}
         </SettingsMenuToggle>
       )}
-      {visibleControls.hostControl && showText && (
+      {visibleControls.hostControl && !enableMoreControl && (
         <HostControlToggle>
           {showIcon && <ControlCameraIcon />}
           {showText && 'Host Control'}
         </HostControlToggle>
       )}
+      {enableMoreControl && <MoreControlButton showText={showText} showIcon={showIcon} />}
       {visibleControls.leave && (
         <DisconnectButton>
           {showIcon && <LeaveIcon />}
