@@ -1,23 +1,17 @@
 import * as React from 'react';
 import { ChatCloseIcon } from '../assets/icons';
 import { Box, FormControlLabel, FormGroup, Switch } from '@mui/material';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { HostControlToggle } from '../controls/HostControlToggle';
-import { setControls } from '../../../../lib/Slicers/hostControllSlicer';
 import { useDispatch } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
 import { useMaybeRoomContext } from '@livekit/components-react';
-import { DataPacket_Kind, RemoteParticipant, RoomEvent } from 'livekit-client';
 
 export function HostControlModal({ ...props }) {
   const Router = useRouter();
   const dispatch = useDispatch();
   const { name: roomName } = Router.query as { name: string };
-  const { control } = useSelector((state: any) => state.hostControl);
-  // console.log("🚀 ~ HostControlModal ~ control:", control)
   const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
   const room = useMaybeRoomContext();
 
   const [state, setState] = React.useState({
@@ -27,25 +21,18 @@ export function HostControlModal({ ...props }) {
     chat: false,
     handRaise: false,
   });
-  // console.log('🚀 ~ HostControlModal ~ state:', state);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [event.target.name]: event.target.checked });
-    
-    dispatch(
-      setControls({
-        ...control,
-        [event.target.name]: event.target.checked,
-      }),
-    );
-
-    // meetService
-    //   .updateControl(roomName, { [event.target.name]: event.target.checked })
-    //   .then((res) => console.log(res))
-    //   .catch((err) => console.log(err));
+    meetService
+      .updateControl(roomName, { ...state, [event.target.name]: event.target.checked })
+      .then((res) => {
+        console.log('🚀 ~ handleChange ~ res:', res?.data);
+      });
   };
 
   React.useEffect(() => {
+    // dispatch(setControls(state));
     if (room && room.state === 'connected') {
       const data = encoder.encode(
         JSON.stringify({
@@ -59,26 +46,15 @@ export function HostControlModal({ ...props }) {
         topic: 'hostControl',
       });
     }
-  }, [room, encoder, state]);
+  }, [room, state, dispatch]);
 
-  // room &&
-  //   room.on(
-  //     RoomEvent.DataReceived,
-  //     (
-  //       payload: Uint8Array,
-  //       participant?: RemoteParticipant,
-  //       kind?: DataPacket_Kind,
-  //       topic?: string,
-  //     ) => {
-  //       if (topic === 'hostControl') {
-  //         console.log('payload==>', payload);
-  //         const eachHandRaisedInfo = decoder.decode(payload);
-  //         console.log("payload==>", eachHandRaisedInfo)
-  //         let parsedHandRaisedInfo = JSON.parse(eachHandRaisedInfo);
-  //         console.log("payload==>", parsedHandRaisedInfo)
-  //       }
-  //     },
-  //   );
+  React.useEffect(() => {
+    meetService
+      .getHostControl(roomName)
+      .then((res: any) => setState(res?.data?.control))
+      .catch((error) => console.log(error));
+  }, [roomName]);
+
   return (
     <div {...props} className="lk-chat participant-modal">
       <div className="lk-chat-header d-flex justify-content-between align-items-center border-bottom border-dark border-2">
@@ -103,27 +79,27 @@ export function HostControlModal({ ...props }) {
         >
           <FormGroup>
             <FormControlLabel
-              control={<Switch checked={control.microphone} onChange={handleChange} />}
+              control={<Switch checked={state.microphone} onChange={handleChange} />}
               label="Turn of their microphone"
               name="microphone"
             />
             <FormControlLabel
-              control={<Switch checked={control.camera} onChange={handleChange} />}
+              control={<Switch checked={state.camera} onChange={handleChange} />}
               label="Turn of their video"
               name="camera"
             />
             <FormControlLabel
-              control={<Switch checked={control.screenShare} onChange={handleChange} />}
+              control={<Switch checked={state.screenShare} onChange={handleChange} />}
               label="Turn of Share their screen"
               name="screenShare"
             />
             <FormControlLabel
-              control={<Switch checked={control.chat} onChange={handleChange} />}
+              control={<Switch checked={state.chat} onChange={handleChange} />}
               label="Turn of chat messages"
               name="chat"
             />
             <FormControlLabel
-              control={<Switch checked={control.handRaise} onChange={handleChange} />}
+              control={<Switch checked={state.handRaise} onChange={handleChange} />}
               label="Turn of their hand"
               name="handRaise"
             />
