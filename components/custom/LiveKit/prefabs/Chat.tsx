@@ -144,7 +144,13 @@ export function Chat({
           type="text"
           placeholder={hostControl?.chat ? "Chat isn't available" : 'Enter a message...'}
           onInput={(ev) => ev.stopPropagation()}
-          onKeyDown={(ev) => ev.stopPropagation()}
+          onKeyDown={(ev) => {
+            ev.stopPropagation();
+            if (ev.key === 'Enter' && !ev.shiftKey) {
+              ev.preventDefault();
+              handleSubmit(ev);
+            }
+          }}
           onKeyUp={(ev) => ev.stopPropagation()}
           multiline
           maxRows={4}
