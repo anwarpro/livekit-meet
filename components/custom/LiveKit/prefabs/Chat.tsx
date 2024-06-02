@@ -10,6 +10,7 @@ import {
 } from '@livekit/components-react';
 import { cloneSingleChild } from '../utils';
 import { Input, TextField } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 /** @public */
 export interface ChatProps extends React.HTMLAttributes<HTMLDivElement>, ChatOptions {
@@ -88,6 +89,8 @@ export function Chat({
     }
   }, [chatMessages, layoutContext?.widget]);
 
+  const { control: hostControl } = useSelector((state: any) => state.hostControl);
+
   return (
     <div {...props} className="lk-chat">
       <div className="lk-chat-header">
@@ -122,27 +125,43 @@ export function Chat({
               );
             })}
       </ul>
-      <form className="d-flex justify-content-between align-items-center p-2" onSubmit={handleSubmit}>
+      <form
+        className="d-flex justify-content-between align-items-center p-2"
+        onSubmit={handleSubmit}
+      >
         <Input
           sx={{
             '& .MuiInputBase-input': {
               color: '#fff',
             },
+            '& .Mui-disabled': {
+              WebkitTextFillColor: '#fff !important'
+            },
           }}
           className="lk-form-control lk-chat-form-input"
-          disabled={isSending}
+          disabled={isSending || hostControl?.chat}
           inputRef={inputRef}
           type="text"
-          placeholder="Enter a message..."
+          placeholder={hostControl?.chat ? "Chat isn't available" : 'Enter a message...'}
           onInput={(ev) => ev.stopPropagation()}
-          onKeyDown={(ev) => ev.stopPropagation()}
+          onKeyDown={(ev) => {
+            ev.stopPropagation();
+            if (ev.key === 'Enter' && !ev.shiftKey) {
+              ev.preventDefault();
+              handleSubmit(ev);
+            }
+          }}
           onKeyUp={(ev) => ev.stopPropagation()}
           multiline
           maxRows={4}
           disableUnderline
         />
 
-        <button type="submit" className="lk-button lk-chat-form-button ms-2" disabled={isSending}>
+        <button
+          type="submit"
+          className="lk-button lk-chat-form-button ms-2"
+          disabled={isSending || hostControl?.chat}
+        >
           Send
         </button>
       </form>

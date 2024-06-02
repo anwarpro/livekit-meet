@@ -25,3 +25,13 @@ export type IMeetTokenResponseGuest = {
     name: string;
     role: string;
 }
+
+export type IMeetHostControl = {
+    _id?: string;
+    meetId: string;
+    microphone: boolean;
+    camera: boolean;
+    screenShare: boolean;
+    chat: boolean;
+    handRaise: boolean
+};

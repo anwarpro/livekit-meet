@@ -1,7 +1,7 @@
 import axios from "axios";
 import { MeetResponse } from "../../types/user";
 import objectToParams from "../../utils/objectToParams";
-import { IMeet } from "../../types/meet";
+import { IMeet, IMeetHostControl } from "../../types/meet";
 
 const getAuthorization = () => {
     // Getting user token and set to session storage
@@ -60,38 +60,38 @@ class MeetService {
     previousSchedule = () => {
         return axios.get<IMeet>(`${API_URL}/schedule/previous`);
     };
-    scheduleGetById = (id:string) => {
+    scheduleGetById = (id: string) => {
         return axios.get<IMeet>(`${API_URL}/schedule/single/${id}`);
     };
-    removerInternalParticipant = (id:string, payload: any) => {
-        return axios.put<IMeet>(`${API_URL}/schedule/remove_internal/${id}`,{ ...payload });
+    removerInternalParticipant = (id: string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/remove_internal/${id}`, { ...payload });
     }
-    removerExternalParticipant = (id:string, payload: any) => {
-        return axios.put<IMeet>(`${API_URL}/schedule/remove_external/${id}`,{ ...payload });
+    removerExternalParticipant = (id: string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/remove_external/${id}`, { ...payload });
     }
-    addInternalParticipant = (id:string, payload: any) => {
-        return axios.put<IMeet>(`${API_URL}/schedule/add_internal/${id}`,{ ...payload });
+    addInternalParticipant = (id: string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/add_internal/${id}`, { ...payload });
     }
-    addExternalParticipant = (id:string, payload: any) => {
-        return axios.put<IMeet>(`${API_URL}/schedule/add_external/${id}`,{ ...payload });
+    addExternalParticipant = (id: string, payload: any) => {
+        return axios.put<IMeet>(`${API_URL}/schedule/add_external/${id}`, { ...payload });
     }
-    getInternalParticipant = (id:string, search: string, limit: number, page: number) => {
+    getInternalParticipant = (id: string, search: string, limit: number, page: number) => {
         return axios.get<IMeet>(`${API_URL}/schedule/get_internal/${id}?limit=${limit}&page=${page}&search=${search}`);
     }
-    getexternalParticipant = (id:string, search: string, limit: number, page: number) => {
+    getexternalParticipant = (id: string, search: string, limit: number, page: number) => {
         return axios.get<IMeet>(`${API_URL}/schedule/get_external/${id}?limit=${limit}&page=${page}&search=${search}`);
     }
-    getHandRaisedInfo = (id:string) => {
+    getHandRaisedInfo = (id: string) => {
         return axios.get<string[]>(`${API_URL}/hand/${id}`);
     }
     handRaise = (payload: any) => {
-        return axios.put<IMeet>(`${API_URL}/hand`,{ ...payload });
+        return axios.put<IMeet>(`${API_URL}/hand`, { ...payload });
     }
-    getPinInfo = (id:string) => {
+    getPinInfo = (id: string) => {
         return axios.get<string[]>(`${API_URL}/pin/${id}`);
     }
     updatePin = (id: string, payload: any) => {
-        return axios.put<IMeet>(`${API_URL}/pin/${id}`,{ ...payload });
+        return axios.put<IMeet>(`${API_URL}/pin/${id}`, { ...payload });
     }
     disconnectRoom = (id: string) => {
         return axios.delete<IMeet>(`${API_URL}/disconnect/${id}`);
@@ -100,7 +100,15 @@ class MeetService {
         return axios.post<IMeet>(`${API_URL}/remove_participant/${id}/${identity}`);
     }
     muteParticipant = (id: string, identityList: string[]) => {
-        return axios.post<IMeet>(`${API_URL}/mute_participant/${id}`, {identityList});
+        return axios.post<IMeet>(`${API_URL}/mute_participant/${id}`, { identityList });
+    }
+
+    updateControl = (id: string, payload: any) => {
+        return axios.patch<IMeetHostControl>(`${API_URL}/host-control/${id}`, { ...payload });
+    }
+
+    getHostControl = (id: string) => {
+        return axios.get<IMeetHostControl>(`${API_URL}/get-host-control/${id}`);
     }
 
 }

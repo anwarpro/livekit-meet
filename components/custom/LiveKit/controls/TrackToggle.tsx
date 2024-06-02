@@ -2,6 +2,7 @@ import type { CaptureOptionsBySource, ToggleSource } from '@livekit/components-c
 import * as React from 'react';
 import { getSourceIcon } from '../assets/icons/util';
 import { useTrackToggle } from '@livekit/components-react';
+import { useSelector } from 'react-redux';
 
 /** @public */
 export interface TrackToggleProps<T extends ToggleSource>
@@ -34,8 +35,21 @@ export const TrackToggle = /* @__PURE__ */ React.forwardRef(function TrackToggle
   T extends ToggleSource,
 >({ showIcon, ...props }: TrackToggleProps<T>, ref: React.ForwardedRef<HTMLButtonElement>) {
   const { buttonProps, enabled } = useTrackToggle(props);
+  const { control: hostControl } = useSelector((state: any) => state.hostControl);
+
   return (
-    <button ref={ref} {...buttonProps}>
+    <button
+      ref={ref}
+      {...buttonProps}
+      disabled={
+        // @ts-ignore
+        (buttonProps?.['data-lk-source'] === 'microphone' && hostControl?.microphone) ||
+        // @ts-ignore
+        (buttonProps?.['data-lk-source'] === 'camera' && hostControl?.camera) ||
+        // @ts-ignore
+        (buttonProps?.['data-lk-source'] === 'screen_share' && hostControl?.screenShare)
+      }
+    >
       {(showIcon ?? true) && getSourceIcon(props.source, enabled)}
       {props.children}
     </button>

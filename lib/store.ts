@@ -8,6 +8,7 @@ import meetSlice from './Slicers/meetSlice';
 import eventSlice from './Slicers/eventSlice';
 import participantSlice from './Slicers/toggleSlice';
 import handRaisedSlice from './Slicers/handRaisedSlicer';
+import hostControllSlicer from './Slicers/hostControllSlicer';
 
 
 const reducers = combineReducers({
@@ -15,7 +16,8 @@ const reducers = combineReducers({
     room: meetSlice,
     events: eventSlice,
     participant: participantSlice,
-    handRaise: handRaisedSlice
+    handRaise: handRaisedSlice,
+    hostControl: hostControllSlicer
 });
 
 const persistConfig = {

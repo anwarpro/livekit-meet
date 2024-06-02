@@ -3,7 +3,7 @@ import { mergeProps } from '../mergeProps';
 import * as React from 'react';
 import { useLayoutContext } from '@livekit/components-react';
 import { useDispatch } from 'react-redux';
-import { setEventStore, setIsChatOpen } from '../../../../lib/Slicers/toggleSlice';
+import { setEventStore, setIsChatOpen, setIsHostControlOpen } from '../../../../lib/Slicers/toggleSlice';
 import { useSelector } from 'react-redux';
 
 /** @public */
@@ -27,6 +27,7 @@ export function useChatToggle({ props }: UseChatToggleProps) {
         return mergeProps(props, {
             className,
             onClick: () => {
+                dispatchParticipant(setIsHostControlOpen(false))
                 dispatchParticipant(setEventStore(false))
                 if (isChatOpen) {
                     dispatchParticipant(setIsChatOpen(false))
