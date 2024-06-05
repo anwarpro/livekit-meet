@@ -110,6 +110,9 @@ class MeetService {
     getHostControl = (id: string) => {
         return axios.get<IMeetHostControl>(`${API_URL}/get-host-control/${id}`);
     }
+    meetingRecording = (payload: any) => {
+        return axios.post<IMeetHostControl>(`${API_URL}/meeting-record/`, {...payload });
+    }
 
 }
 const meetService = new MeetService()

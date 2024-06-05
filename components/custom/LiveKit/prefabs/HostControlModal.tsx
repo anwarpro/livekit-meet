@@ -28,7 +28,8 @@ export function HostControlModal({ ...props }) {
       .updateControl(roomName, { ...state, [event.target.name]: event.target.checked })
       .then((res) => {
         console.log('🚀 ~ handleChange ~ res:', res?.data);
-      }).catch((err) => console.log('err', err));
+      })
+      .catch((err) => console.log('err', err));
   };
 
   React.useEffect(() => {
@@ -54,6 +55,28 @@ export function HostControlModal({ ...props }) {
       .then((res: any) => setState(res?.data?.control))
       .catch((error) => console.log(error));
   }, [roomName]);
+
+  const handleRecordingSession = async () => {
+    console.log('calling ');
+    // meetService
+    //   .meetingRecording({ roomId: roomName })
+    //   .then((res) => console.log('res', res))
+    //   .catch((error) => console.log('error', error));
+
+    fetchData(roomName);
+  };
+
+  const fetchData = async (roomName: string) => {
+    const response = await fetch('http://localhost:7859/api/record', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({roomName}),
+    });
+    // const result = await response?.json();
+    console.log('🚀 ~ fetchData ~ result:', response);
+  };
 
   return (
     <div {...props} className="lk-chat participant-modal">
@@ -105,6 +128,13 @@ export function HostControlModal({ ...props }) {
             />
           </FormGroup>
         </Box>
+
+        <div className="p-2">
+          <p>##Recoding Session</p>
+          <button onClick={() => handleRecordingSession()} className=" btn btn-primary">
+            Start Recording
+          </button>
+        </div>
       </div>
     </div>
   );
