@@ -111,7 +111,10 @@ class MeetService {
         return axios.get<IMeetHostControl>(`${API_URL}/get-host-control/${id}`);
     }
     meetingRecording = (payload: any) => {
-        return axios.post<IMeetHostControl>(`${API_URL}/meeting-record/`, {...payload });
+        return axios.post<IMeetHostControl>(`${process.env.NEXT_PUBLIC_API_URL}recording/screen-capture/`, { ...payload });
+    }
+    recordingStatus = () => {
+        return axios.get<IMeetHostControl>(`${process.env.NEXT_PUBLIC_API_URL}recording/status`);
     }
 
 }
