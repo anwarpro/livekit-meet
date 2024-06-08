@@ -6,6 +6,8 @@ import { HostControlToggle } from '../controls/HostControlToggle';
 import { useDispatch } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
 import { useMaybeRoomContext } from '@livekit/components-react';
+import { useSelector } from 'react-redux';
+import CustomToastAlert from '../../CustomToastAlert';
 
 export function HostControlModal({ ...props }) {
   const Router = useRouter();
@@ -13,6 +15,10 @@ export function HostControlModal({ ...props }) {
   const { name: roomName } = Router.query as { name: string };
   const encoder = new TextEncoder();
   const room = useMaybeRoomContext();
+  const { userData } = useSelector((state: any) => state.auth);
+  const [success, setSuccess] = React.useState(false);
+  const [fail, setIsFail] = React.useState(false);
+  const [disableRecordBtn, setDisableRecordBtn] = React.useState(false);
 
   const [state, setState] = React.useState({
     microphone: false,
@@ -28,7 +34,8 @@ export function HostControlModal({ ...props }) {
       .updateControl(roomName, { ...state, [event.target.name]: event.target.checked })
       .then((res) => {
         console.log('🚀 ~ handleChange ~ res:', res?.data);
-      }).catch((err) => console.log('err', err));
+      })
+      .catch((err) => console.log('err', err));
   };
 
   React.useEffect(() => {
@@ -55,57 +62,121 @@ export function HostControlModal({ ...props }) {
       .catch((error) => console.log(error));
   }, [roomName]);
 
+  const handleRecordingSession = async () => {
+    setSuccess(false);
+    setIsFail(false);
+    meetService
+      .meetingRecording({ roomId: roomName, hostId: userData?._id })
+      .then((res) => {
+        setDisableRecordBtn(true);
+        setSuccess(true);
+      })
+      .catch((error) => {
+        setIsFail(true);
+        console.log('error', error);
+      });
+  };
+
+  React.useEffect(() => {
+    meetService
+      .recordingStatus()
+      .then((res: any) => {
+        const egressLists = res?.data?.egressList;
+        const roomEgress = egressLists.find((egress: any) => egress.roomName === roomName);
+        if (roomEgress && roomEgress.status === 0) {
+          setDisableRecordBtn(true);
+        } else {
+          setDisableRecordBtn(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  }, [roomName]);
+
   return (
-    <div {...props} className="lk-chat participant-modal">
-      <div className="lk-chat-header d-flex justify-content-between align-items-center border-bottom border-dark border-2">
-        <p className="participant-title m-0">Host Control</p>
-        <HostControlToggle className="lk-close-button">
-          <ChatCloseIcon />
-        </HostControlToggle>
+    <>
+      <div {...props} className="lk-chat participant-modal">
+        <div className="lk-chat-header d-flex justify-content-between align-items-center border-bottom border-dark border-2">
+          <p className="participant-title m-0">Host Control</p>
+          <HostControlToggle className="lk-close-button">
+            <ChatCloseIcon />
+          </HostControlToggle>
+        </div>
+        <div className="p-2">
+          <p>
+            Use these host settings to keep control of your meeting. Only hosts have access to these
+            controls.
+          </p>
+          <Box
+            sx={{
+              p: 2,
+              '.MuiFormControlLabel-root': {
+                flexDirection: 'row-reverse',
+                justifyContent: 'space-between',
+              },
+            }}
+          >
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={state.microphone} onChange={handleChange} />}
+                label="Turn of their microphone"
+                name="microphone"
+              />
+              <FormControlLabel
+                control={<Switch checked={state.camera} onChange={handleChange} />}
+                label="Turn of their video"
+                name="camera"
+              />
+              <FormControlLabel
+                control={<Switch checked={state.screenShare} onChange={handleChange} />}
+                label="Turn of Share their screen"
+                name="screenShare"
+              />
+              <FormControlLabel
+                control={<Switch checked={state.chat} onChange={handleChange} />}
+                label="Turn of chat messages"
+                name="chat"
+              />
+              <FormControlLabel
+                control={<Switch checked={state.handRaise} onChange={handleChange} />}
+                label="Turn of their hand"
+                name="handRaise"
+              />
+            </FormGroup>
+          </Box>
+
+          <div className="p-2">
+            <p>##Recoding Session</p>
+            <button
+              disabled={disableRecordBtn}
+              onClick={() => handleRecordingSession()}
+              className=" btn btn-primary"
+            >
+              Start Recording
+            </button>
+          </div>
+        </div>
       </div>
-      <div className="p-2">
-        <p>
-          Use these host settings to keep control of your meeting. Only hosts have access to these
-          controls.
-        </p>
-        <Box
-          sx={{
-            p: 2,
-            '.MuiFormControlLabel-root': {
-              flexDirection: 'row-reverse',
-              justifyContent: 'space-between',
-            },
-          }}
-        >
-          <FormGroup>
-            <FormControlLabel
-              control={<Switch checked={state.microphone} onChange={handleChange} />}
-              label="Turn of their microphone"
-              name="microphone"
-            />
-            <FormControlLabel
-              control={<Switch checked={state.camera} onChange={handleChange} />}
-              label="Turn of their video"
-              name="camera"
-            />
-            <FormControlLabel
-              control={<Switch checked={state.screenShare} onChange={handleChange} />}
-              label="Turn of Share their screen"
-              name="screenShare"
-            />
-            <FormControlLabel
-              control={<Switch checked={state.chat} onChange={handleChange} />}
-              label="Turn of chat messages"
-              name="chat"
-            />
-            <FormControlLabel
-              control={<Switch checked={state.handRaise} onChange={handleChange} />}
-              label="Turn of their hand"
-              name="handRaise"
-            />
-          </FormGroup>
-        </Box>
-      </div>
-    </div>
+
+      {success && (
+        <CustomToastAlert
+          open={success}
+          setOpen={setSuccess}
+          duration={2000}
+          status={'info'}
+          message="Session recording starting"
+          vertical="top"
+        />
+      )}
+      {fail && (
+        <CustomToastAlert
+          open={fail}
+          setOpen={setIsFail}
+          duration={2000}
+          status={'danger'}
+          message="failed to start recording"
+          vertical="top"
+        />
+      )}
+    </>
   );
 }

@@ -8,6 +8,7 @@ import graphIcon from '../assets/icons/graph.png';
 import UserIcon from '../assets/icons/user.png';
 import shoppingCartIcon from '../assets/icons/shopping-cart.png';
 import googleMeet from '../assets/icons/google-meet.png';
+import recordingIcon from '../assets/icons/recording.png';
 import Image from 'next/image';
 
 const navItems = [
@@ -35,6 +36,11 @@ const navItems = [
     title: 'Schedule Reports',
     href: '/dashboard/report',
     icon: shoppingCartIcon,
+  },
+  {
+    title: 'Recording',
+    href: '/dashboard/recording',
+    icon: recordingIcon,
   },
 ];
 
