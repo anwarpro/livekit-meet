@@ -31,6 +31,19 @@ const RecordManagement = () => {
     fetchData();
   };
 
+  const handleDownload = (fileName: string) => {
+    console.log('fileName', fileName);
+    meetService
+      .downloadRecord({ fileName })
+      .then((res) => {
+        // @ts-ignore
+        const signedUrl = res?.data?.url;
+        window.location.href = signedUrl;
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="schedule-meet-component ">
       <button className="btn btn-info mb-3" onClick={() => handleGetRecord()}>
@@ -43,6 +56,7 @@ const RecordManagement = () => {
               <TableCell>roomId</TableCell>
               <TableCell align="right">Status</TableCell>
               <TableCell align="right">File name</TableCell>
+              <TableCell align="right">action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -59,11 +73,12 @@ const RecordManagement = () => {
                   {record.status === 0 ? 'recording' : 'completed'}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  <a
-                    href={`https://${process.env.NEXT_PUBLIC_BUCKET_NAME}.s3.amazonaws.com/${record.file.filename}`}
-                  >
-                    {`https://${process.env.NEXT_PUBLIC_BUCKET_NAME}.s3.amazonaws.com/${record.file.filename}`}
+                  <a href={`https://meetify.sgp1.digitaloceanspaces.com/${record.file.filename}`}>
+                    {`https://meetify.sgp1.digitaloceanspaces.com/${record.file.filename}`}
                   </a>
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  <button onClick={() => handleDownload(record.file.filename)}>download</button>
                 </TableCell>
               </TableRow>
             ))}

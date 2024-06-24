@@ -73,6 +73,19 @@ export function HostControlModal({ ...props }) {
       })
       .catch((error) => {
         setIsFail(true);
+        setDisableRecordBtn(false);
+        console.log('error', error);
+      });
+  };
+
+  const handleStopRecording = () => {
+    meetService
+      .meetingRecordingStop({ roomId: roomName })
+      .then((res) => {
+        setDisableRecordBtn(false);
+        console.log('🚀 ~ .then ~ res:', res);
+      })
+      .catch((error) => {
         console.log('error', error);
       });
   };
@@ -89,7 +102,10 @@ export function HostControlModal({ ...props }) {
           setDisableRecordBtn(false);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setDisableRecordBtn(false);
+        console.log(err);
+      });
   }, [roomName]);
 
   return (
@@ -146,13 +162,23 @@ export function HostControlModal({ ...props }) {
 
           <div className="p-2">
             <p>##Recoding Session</p>
-            <button
-              disabled={disableRecordBtn}
-              onClick={() => handleRecordingSession()}
-              className=" btn btn-primary"
-            >
-              Start Recording
-            </button>
+            {disableRecordBtn ? (
+              <button
+                // disabled={disableRecordBtn}
+                onClick={() => handleStopRecording()}
+                className=" btn btn-primary"
+              >
+                Stop Recording
+              </button>
+            ) : (
+              <button
+                // disabled={disableRecordBtn}
+                onClick={() => handleRecordingSession()}
+                className=" btn btn-primary"
+              >
+                Start Recording
+              </button>
+            )}
           </div>
         </div>
       </div>
