@@ -1,0 +1,21 @@
+version: '2.24.5'
+services:
+  client-stage:
+    build:
+      context: .
+      dockerfile: Dockerfile.stage
+    ports:
+      - "7859:7859"
+    volumes:
+      - .:/app 
+      - /app/node_modules
+    env_file:
+      - .env.local
+  client-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "4000:7859"
+    env_file:
+      - .env.local
