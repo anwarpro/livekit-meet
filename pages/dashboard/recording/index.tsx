@@ -9,47 +9,61 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import RecordingListTable from '../../../components/recording/RecordingListTable';
+
+const recordingFields = [
+  { id: 'roomId', label: 'Meeting Room' },
+  { id: 'egressId', label: 'Livekit Egress ID' },
+  { id: 'file', label: 'file Name' },
+  { id: 'action', label: 'Action' },
+];
 
 const RecordManagement = () => {
   const { roomInfo } = useSelector((state: any) => state.room);
   const [recordings, setIsRecording] = useState();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
 
-  const fetchData = () => {
-    meetService
-      .recordingStatus()
-      .then((res: any) => {
-        setIsRecording(res?.data?.egressList);
-      })
-      .catch((err) => console.log(err));
-  };
+  // const fetchData = () => {
+  //   meetService
+  //     .recordingStatus()
+  //     .then((res: any) => {
+  //       setIsRecording(res?.data?.egressList);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, [roomInfo.roomId]);
-
-  const handleGetRecord = () => {
-    fetchData();
-  };
+  // useEffect(() => {
+  //   fetchData();
+  // }, [roomInfo.roomId]);
 
   const handleDownload = (fileName: string) => {
-    console.log('fileName', fileName);
     meetService
       .downloadRecord({ fileName })
       .then((res) => {
         // @ts-ignore
         const signedUrl = res?.data?.url;
         window.location.href = signedUrl;
-        console.log(res);
       })
       .catch((err) => console.log(err));
   };
 
+  useEffect(() => {
+    meetService
+      .getRecordingList(limit, page)
+      .then((res) => {
+        // @ts-ignore
+        setIsRecording(res?.data?.data);
+        // @ts-ignore
+        setTotal(res?.data?.data?.length);
+      })
+      .catch((err) => console.log(err));
+  }, [limit, page]);
+
   return (
     <div className="schedule-meet-component ">
-      <button className="btn btn-info mb-3" onClick={() => handleGetRecord()}>
-        Refresh
-      </button>
-      <TableContainer component={Paper}>
+      {/* <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -60,7 +74,7 @@ const RecordManagement = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* @ts-ignore */}
+          
             {recordings?.map((record: any) => (
               <TableRow
                 key={record.roomId}
@@ -84,7 +98,21 @@ const RecordManagement = () => {
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
+
+      <RecordingListTable
+        fields={recordingFields}
+        // @ts-ignore
+        items={recordings}
+        // fetchData={fetchData}
+        page={page}
+        setPage={setPage}
+        limit={limit}
+        setLimit={setLimit}
+        total={total}
+        // @ts-ignore
+        handleDownload={handleDownload}
+      />
     </div>
   );
 };

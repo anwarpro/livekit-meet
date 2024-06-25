@@ -8,6 +8,7 @@ import meetService from '../../../../service/meet/meetService';
 import { useMaybeRoomContext } from '@livekit/components-react';
 import { useSelector } from 'react-redux';
 import CustomToastAlert from '../../CustomToastAlert';
+import CustomConfirmationModal from '../../CustomConfirmationModal';
 
 export function HostControlModal({ ...props }) {
   const Router = useRouter();
@@ -19,6 +20,7 @@ export function HostControlModal({ ...props }) {
   const [success, setSuccess] = React.useState(false);
   const [fail, setIsFail] = React.useState(false);
   const [disableRecordBtn, setDisableRecordBtn] = React.useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
 
   const [state, setState] = React.useState({
     microphone: false,
@@ -83,10 +85,11 @@ export function HostControlModal({ ...props }) {
       .meetingRecordingStop({ roomId: roomName })
       .then((res) => {
         setDisableRecordBtn(false);
-        console.log('🚀 ~ .then ~ res:', res);
+        setOpenConfirmModal(false);
       })
       .catch((error) => {
         console.log('error', error);
+        setOpenConfirmModal(false);
       });
   };
 
@@ -107,6 +110,10 @@ export function HostControlModal({ ...props }) {
         console.log(err);
       });
   }, [roomName]);
+
+  const confirmClicked = () => {
+    handleStopRecording();
+  };
 
   return (
     <>
@@ -165,7 +172,9 @@ export function HostControlModal({ ...props }) {
             {disableRecordBtn ? (
               <button
                 // disabled={disableRecordBtn}
-                onClick={() => handleStopRecording()}
+                onClick={() => {
+                  setOpenConfirmModal(true);
+                }}
                 className=" btn btn-primary"
               >
                 Stop Recording
@@ -203,6 +212,14 @@ export function HostControlModal({ ...props }) {
           vertical="top"
         />
       )}
+
+      <CustomConfirmationModal
+        open={openConfirmModal}
+        setOpen={setOpenConfirmModal}
+        message="Are You Sure Want To Stop Recording ?"
+        work="stop recording"
+        confirmClicked={confirmClicked}
+      />
     </>
   );
 }
