@@ -73,9 +73,10 @@ const RootLayout = ({ children }: Props) => {
               dispatch(setUserData({ ...userData.user }));
             }
           } catch (error) {
-            // sessionStorage.clear();
-            // await deleteAllCookies();
+            sessionStorage.clear();
+            await deleteAllCookies();
             await checkCookie();
+            navigateUser();
           }
         };
 
