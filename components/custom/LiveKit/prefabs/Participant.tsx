@@ -102,22 +102,22 @@ export function Participant({ ...props }) {
       <List>
         {participants?.map((p, index) => {
           return (
-            <ListItem key={p.identity}>
+            <ListItem key={p.identity} style={{ overflow: 'auto' }}>
               {/* <ListItemButton> */}
-                <ListItemIcon>
-                  <PersonIcon sx={{ color: 'white' }} />
-                </ListItemIcon>
-                <ListItemText primary={p.name} />
-                {/* @ts-ignore */}
-                {handRaised?.some((hData: any) => hData?.email === p.identity) && (
-                  <Image src={handRiseIcon} height="24" width="24" alt="" />
-                )}
-                {p.isSpeaking && (
-                  <IconButton sx={{ ml: 1, color: 'white' }} size="small">
-                    <SettingsVoiceIcon onClick={() => handleMuteSpacificParticipant(p)} />
-                  </IconButton>
-                )}
-                {/* {Track.Source.Microphone && JSON.parse(localStorage.getItem('track')!) ? <MicDisabledIcon /> : ''} */}
+              <ListItemIcon>
+                <PersonIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+              <ListItemText primary={p.name} />
+              {/* @ts-ignore */}
+              {handRaised?.some((hData: any) => hData?.email === p.identity) && (
+                <Image src={handRiseIcon} height="24" width="24" alt="" />
+              )}
+              {p.isSpeaking && (
+                <IconButton sx={{ ml: 1, color: 'white' }} size="small">
+                  <SettingsVoiceIcon onClick={() => handleMuteSpacificParticipant(p)} />
+                </IconButton>
+              )}
+              {/* {Track.Source.Microphone && JSON.parse(localStorage.getItem('track')!) ? <MicDisabledIcon /> : ''} */}
               {/* </ListItemButton> */}
             </ListItem>
           );
