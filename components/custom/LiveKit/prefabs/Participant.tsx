@@ -99,10 +99,10 @@ export function Participant({ ...props }) {
           <ChatCloseIcon />
         </ParticipantToggle>
       </div>
-      <List>
+      <List style={{ overflow: 'auto' }}>
         {participants?.map((p, index) => {
           return (
-            <ListItem key={p.identity} style={{ overflow: 'auto' }}>
+            <ListItem key={p.identity}>
               {/* <ListItemButton> */}
               <ListItemIcon>
                 <PersonIcon sx={{ color: 'white' }} />
