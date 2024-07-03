@@ -47,7 +47,7 @@ const Home: NextPage = () => {
   }
 
   const [joinApiCalled, setJoinApiCalled] = React.useState(false);
-  const [joinApiError, setJoinApiError] = React.useState("");
+  const [joinApiError, setJoinApiError] = React.useState('');
   React.useEffect(() => {
     if (roomName && !joinApiCalled) {
       setJoinApiCalled(true);
@@ -56,7 +56,7 @@ const Home: NextPage = () => {
           .joinMeet(roomName, user_t)
           .then((res: any) => {
             dispatch(setRoom(res?.data?.data));
-            setJoinApiError("");
+            setJoinApiError('');
           })
           .catch((err) => {
             dispatch(clearRoom());
@@ -68,7 +68,7 @@ const Home: NextPage = () => {
             .joinMeet(roomName, '', user?.token)
             .then((res: any) => {
               dispatch(setRoom(res?.data?.data));
-              setJoinApiError("");
+              setJoinApiError('');
             })
             .catch((err) => {
               dispatch(clearRoom());
@@ -104,7 +104,7 @@ const Home: NextPage = () => {
                 videoEnabled: false,
                 audioEnabled: false,
               }}
-              userLabel={""}
+              userLabel={''}
               errorLabel={joinApiError}
               joinLabel="Join Meeting"
               onValidate={(values: LocalUserChoices) => {
@@ -196,8 +196,8 @@ const ActiveRoom = ({ roomName, userChoices, onLeave }: ActiveRoomProps) => {
           token={roomInfo?.accessToken}
           serverUrl={liveKitUrl}
           connectOptions={connectOptions}
-          video={userChoices.videoEnabled}
-          audio={userChoices.audioEnabled}
+          video={false}
+          audio={false}
           onDisconnected={onLeave}
         >
           <VideoConference

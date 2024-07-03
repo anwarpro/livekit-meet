@@ -74,6 +74,7 @@ export function ControlBar({
   const layoutContext = useMaybeLayoutContext();
   const [isChatOpen, setIsChatOpen] = React.useState(false);
   const { control: hostControl } = useSelector((state: any) => state.hostControl);
+  const { userData } = useSelector((state: any) => state.auth);
 
   React.useEffect(() => {
     if (layoutContext?.widget.state?.showChat !== undefined) {
@@ -153,7 +154,9 @@ export function ControlBar({
         <div className="lk-button-group">
           <CustomTooltripWithArrow
             title="You're not allowed to turn on your microphone"
-            className={`${hostControl?.microphone ? 'd-block' : 'd-none'}`}
+            className={`${
+              hostControl?.microphone && userData?.role === 'student' ? 'd-block' : 'd-none'
+            }`}
           >
             <TrackToggle
               source={Track.Source.Microphone}
@@ -175,7 +178,9 @@ export function ControlBar({
         <div className="lk-button-group">
           <CustomTooltripWithArrow
             title="You're not allowed to turn on your camera"
-            className={`${hostControl?.camera ? 'd-block' : 'd-none'}`}
+            className={`${
+              hostControl?.camera && userData?.role === 'student' ? 'd-block' : 'd-none'
+            }`}
           >
             <TrackToggle source={Track.Source.Camera} showIcon={showIcon} onChange={cameraOnChange}>
               {showText && 'Camera'}
@@ -192,7 +197,9 @@ export function ControlBar({
       {visibleControls.screenShare && browserSupportsScreenSharing && (
         <CustomTooltripWithArrow
           title="You're not allowed to share your screen"
-          className={`${hostControl?.screenShare ? 'd-block' : 'd-none'}`}
+          className={`${
+            hostControl?.screenShare && userData?.role === 'student' ? 'd-block' : 'd-none'
+          }`}
         >
           <TrackToggle
             source={Track.Source.ScreenShare}

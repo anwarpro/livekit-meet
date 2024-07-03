@@ -35,7 +35,7 @@ export function SettingsMenu(props: SettingsMenuProps) {
   );
   const { microphoneTrack } = useLocalParticipant();
 
-  const [activeTab, setActiveTab] = React.useState(tabs[0]);
+  const [activeTab, setActiveTab] = React.useState(tabs[1]);
   const [isNoiseFilterEnabled, setIsNoiseFilterEnabled] = React.useState(true);
 
   React.useEffect(() => {
@@ -83,7 +83,7 @@ export function SettingsMenu(props: SettingsMenuProps) {
         )}
       </div>
       <div className="tab-content">
-        {activeTab === 'media' && (
+        {/* {activeTab === 'media' && (
           <>
             {settings.media && settings.media.camera && (
               <>
@@ -116,7 +116,7 @@ export function SettingsMenu(props: SettingsMenuProps) {
               </>
             )}
           </>
-        )}
+        )} */}
         {activeTab === 'effects' && (
           <>
             <h3>Audio</h3>
