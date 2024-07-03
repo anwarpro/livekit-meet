@@ -183,34 +183,34 @@ export function HostControlModal({ ...props }) {
             <FormGroup>
               <FormControlLabel
                 control={<Switch checked={state.microphone} onChange={handleChange} />}
-                label="Turn of their microphone"
+                label="Turn off their microphone"
                 name="microphone"
               />
               <FormControlLabel
                 control={<Switch checked={state.camera} onChange={handleChange} />}
-                label="Turn of their video"
+                label="Turn off their video"
                 name="camera"
               />
               <FormControlLabel
                 control={<Switch checked={state.screenShare} onChange={handleChange} />}
-                label="Turn of Share their screen"
+                label="Turn off Share their screen"
                 name="screenShare"
               />
               <FormControlLabel
                 control={<Switch checked={state.chat} onChange={handleChange} />}
-                label="Turn of chat messages"
+                label="Turn off chat messages"
                 name="chat"
               />
               <FormControlLabel
                 control={<Switch checked={state.handRaise} onChange={handleChange} />}
-                label="Turn of their hand"
+                label="Turn off their hand"
                 name="handRaise"
               />
             </FormGroup>
           </Box>
 
           <div className="p-2">
-            <p>##Recoding Session</p>
+            <p>##Recording Session</p>
             {disableRecordBtn ? (
               <button
                 // disabled={disableRecordBtn}
