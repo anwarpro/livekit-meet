@@ -182,14 +182,14 @@ const HandRaiseToggle = ({ showIcon, showText }: { showIcon: boolean; showText: 
   return (
     <CustomTooltripWithArrow
       title="You're not allowed to hand raise"
-      className={`${hostControl?.handRaise ? 'd-block' : 'd-none'}`}
+      className={`${hostControl?.handRaise && userData?.role === 'student' ? 'd-block' : 'd-none'}`}
     >
       <div>
         <button
           aria-pressed={isHandRaised ? 'true' : 'false'}
           onClick={() => handleHandRaised()}
           className="lk-button lk-chat-toggle"
-          disabled={hostControl?.handRaise}
+          disabled={hostControl?.handRaise && userData?.role === 'student'}
         >
           {showIcon && <Image src={handRiseIcon} height="22" width="22" alt="hand" />}
           {showText && 'Hand Raise'}

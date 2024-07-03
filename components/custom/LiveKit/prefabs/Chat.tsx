@@ -90,6 +90,7 @@ export function Chat({
   }, [chatMessages, layoutContext?.widget]);
 
   const { control: hostControl } = useSelector((state: any) => state.hostControl);
+  const { userData } = useSelector((state: any) => state.auth);
 
   return (
     <div {...props} className="lk-chat">
@@ -135,14 +136,18 @@ export function Chat({
               color: '#fff',
             },
             '& .Mui-disabled': {
-              WebkitTextFillColor: '#fff !important'
+              WebkitTextFillColor: '#fff !important',
             },
           }}
           className="lk-form-control lk-chat-form-input"
-          disabled={isSending || hostControl?.chat}
+          disabled={isSending || (hostControl?.chat && userData?.role === 'student')}
           inputRef={inputRef}
           type="text"
-          placeholder={hostControl?.chat ? "Chat isn't available" : 'Enter a message...'}
+          placeholder={
+            hostControl?.chat && userData?.role === 'student'
+              ? "Chat isn't available"
+              : 'Enter a message...'
+          }
           onInput={(ev) => ev.stopPropagation()}
           onKeyDown={(ev) => {
             ev.stopPropagation();
