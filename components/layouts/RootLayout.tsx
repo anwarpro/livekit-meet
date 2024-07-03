@@ -60,7 +60,7 @@ const RootLayout = ({ children }: Props) => {
             //   }
             // });
           } catch (error) {
-            navigateUser();
+            // navigateUser();
           }
         };
 
@@ -76,7 +76,7 @@ const RootLayout = ({ children }: Props) => {
             sessionStorage.clear();
             await deleteAllCookies();
             await checkCookie();
-            navigateUser();
+            // navigateUser();
           }
         };
 
