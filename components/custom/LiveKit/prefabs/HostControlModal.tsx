@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { HostControlToggle } from '../controls/HostControlToggle';
 import { useDispatch } from 'react-redux';
 import meetService from '../../../../service/meet/meetService';
-import { useMaybeRoomContext } from '@livekit/components-react';
+import { useMaybeRoomContext, useParticipants } from '@livekit/components-react';
 import { useSelector } from 'react-redux';
 import CustomToastAlert from '../../CustomToastAlert';
 import CustomConfirmationModal from '../../CustomConfirmationModal';
@@ -14,6 +14,7 @@ export function HostControlModal({ ...props }) {
   const Router = useRouter();
   const dispatch = useDispatch();
   const { name: roomName } = Router.query as { name: string };
+  const participants = useParticipants();
   const encoder = new TextEncoder();
   const room = useMaybeRoomContext();
   const { userData } = useSelector((state: any) => state.auth);
@@ -38,6 +39,47 @@ export function HostControlModal({ ...props }) {
         console.log('🚀 ~ handleChange ~ res:', res?.data);
       })
       .catch((err) => console.log('err', err));
+
+    //mute all participant
+    if (event.target.name === 'microphone') {
+      const state = { [event.target.name]: event.target.checked };
+      if (state && state.microphone) {
+        const filteredParticipant = (participants || [])
+          .map((pr) => pr.identity)
+          .filter((identity) => identity !== userData.email);
+
+        meetService
+          .muteParticipant(room?.name || '', filteredParticipant)
+          .then((res: any) => {
+            console.log('🚀 ~ .then ~ res:', res);
+          })
+          .catch((err: any) => {
+            console.log('🚀 ~ handleChange ~ err:', err);
+          });
+      }
+    }
+
+    // if (event.target.name === 'camera') {
+    //   const state = { [event.target.name]: event.target.checked };
+    //   if (state && state.camera) {
+    //     console.log('true camera ');
+
+    //     const filteredParticipant = (participants || [])
+    //       .map((pr) => pr.identity)
+    //       .filter((identity) => identity !== userData.email);
+
+    //     if (room) {
+    //       const videoTrack = participants.forEach((publication) => {
+    //         const vTrack = publication.getTrackPublication(Track.Source.Camera);
+    //         console.log('🚀 ~ videoTrack ~ vTrack:', vTrack);
+    //         if (vTrack) {
+    //           vTrack.setEnabled(false);
+    //         }
+    //       });
+    //       console.log('🚀 ~ videoTrack ~ videoTrack:', videoTrack);
+    //     }
+    //   }
+    // }
   };
 
   React.useEffect(() => {
