@@ -51,16 +51,16 @@ const RootLayout = ({ children }: Props) => {
         const savedToken = sessionStorage.getItem('jwt-token');
         const checkCookie = async () => {
           try {
-            // await authService.verifyCookie().then((res) => {
-            //   if (!mounted) return;
-            //   if (res.success) {
-            //     getUserDetails(res.token);
-            //   } else {
-            //     navigateUser();
-            //   }
-            // });
+            await authService.verifyCookie().then((res) => {
+              if (!mounted) return;
+              if (res.success) {
+                getUserDetails(res.token);
+              } else {
+                navigateUser();
+              }
+            });
           } catch (error) {
-            // navigateUser();
+            navigateUser();
           }
         };
 
@@ -76,7 +76,7 @@ const RootLayout = ({ children }: Props) => {
             sessionStorage.clear();
             await deleteAllCookies();
             await checkCookie();
-            // navigateUser();
+            navigateUser();
           }
         };
 
