@@ -9,6 +9,7 @@ import { useMaybeRoomContext, useParticipants } from '@livekit/components-react'
 import { useSelector } from 'react-redux';
 import CustomToastAlert from '../../CustomToastAlert';
 import CustomConfirmationModal from '../../CustomConfirmationModal';
+import swal from 'sweetalert';
 
 export function HostControlModal({ ...props }) {
   const Router = useRouter();
@@ -22,6 +23,8 @@ export function HostControlModal({ ...props }) {
   const [fail, setIsFail] = React.useState(false);
   const [disableRecordBtn, setDisableRecordBtn] = React.useState(false);
   const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
+  const { isHostControlOpen } = useSelector((state: any) => state.participant);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [state, setState] = React.useState({
     microphone: false,
@@ -109,49 +112,91 @@ export function HostControlModal({ ...props }) {
   const handleRecordingSession = async () => {
     setSuccess(false);
     setIsFail(false);
+    setIsLoading(true);
     meetService
       .meetingRecording({ roomId: roomName, hostId: userData?._id })
       .then((res) => {
+        console.log('🚀 ~ .then ~ res:', res);
         setDisableRecordBtn(true);
         setSuccess(true);
+        setIsLoading(false);
       })
       .catch((error) => {
         setIsFail(true);
         setDisableRecordBtn(false);
+        setIsLoading(false);
         console.log('error', error);
+        if (error.response?.data?.message.code) {
+          swal(error.response?.data?.message.code, error.response.data.message.msg, 'error');
+        }
+        if (error.response?.data?.message) {
+          swal('error', error.response.message, 'error');
+        }
+        if (error.response?.data?.egressError) {
+          swal(
+            `status code: ${error.response?.data?.data?.statusCode}`,
+            error.response.data.egressError,
+            'error',
+          );
+        }
       });
   };
 
   const handleStopRecording = () => {
+    setIsLoading(true);
     meetService
       .meetingRecordingStop({ roomId: roomName })
       .then((res) => {
         setDisableRecordBtn(false);
         setOpenConfirmModal(false);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log('error', error);
         setOpenConfirmModal(false);
+        setIsLoading(false);
       });
   };
 
-  React.useEffect(() => {
+  const fetchEgressStatus = () => {
     meetService
       .recordingStatus()
       .then((res: any) => {
         const egressLists = res?.data?.egressList;
         const roomEgress = egressLists.find((egress: any) => egress.roomName === roomName);
-        if (roomEgress && roomEgress.status === 0) {
-          setDisableRecordBtn(true);
-        } else {
+
+        if (
+          (roomEgress && roomEgress.status === 4) ||
+          roomEgress.status === 5 ||
+          roomEgress.status === 6 ||
+          roomEgress.status === -1
+        ) {
+          swal(`status code: ${roomEgress.status}`, 'recording failed', 'error');
+        }
+
+        if (
+          (roomEgress && roomEgress.status === 3) ||
+          roomEgress.status === 4 ||
+          roomEgress.status === 5 ||
+          roomEgress.status === 6 ||
+          roomEgress.status === -1
+        ) {
           setDisableRecordBtn(false);
+        } else {
+          setDisableRecordBtn(true);
         }
       })
       .catch((err) => {
         setDisableRecordBtn(false);
         console.log(err);
       });
-  }, [roomName]);
+  };
+
+  React.useEffect(() => {
+    if (isHostControlOpen) {
+      fetchEgressStatus();
+    }
+  }, [roomName, isHostControlOpen]);
 
   const confirmClicked = () => {
     handleStopRecording();
@@ -213,7 +258,7 @@ export function HostControlModal({ ...props }) {
             <p>##Recording Session</p>
             {disableRecordBtn ? (
               <button
-                // disabled={disableRecordBtn}
+                disabled={isLoading}
                 onClick={() => {
                   setOpenConfirmModal(true);
                 }}
@@ -223,7 +268,7 @@ export function HostControlModal({ ...props }) {
               </button>
             ) : (
               <button
-                // disabled={disableRecordBtn}
+                disabled={isLoading}
                 onClick={() => handleRecordingSession()}
                 className=" btn btn-primary"
               >
