@@ -16,7 +16,7 @@ const InstantMeet = () => {
       .getInstantMeet()
       .then((res: any) => {
         router.push(`/rooms/${res?.data?.data?.roomId}`);
-        dispatch(setRoom(res?.data?.data));
+        // dispatch(setRoom(res?.data?.data));
         if (res?.data?.data?.roomId && router.pathname.includes('/dashboard/instant-meet')) {
           setIsLoading(true);
         } else {
