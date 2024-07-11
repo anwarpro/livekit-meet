@@ -44,6 +44,10 @@ class AuthService {
 
     };
 
+    checkServerHealth = () => {
+        return axios.get(`http://localhost:7869/api/server-health`)
+    }
+
 
 }
 const authService = new AuthService()

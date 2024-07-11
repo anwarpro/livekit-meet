@@ -1,3 +1,4 @@
+// use-client
 import { useEffect, useState } from 'react';
 import authService from '../../service/auth/authService';
 import { setToken, setUserData } from '../../lib/Slicers/authSlice';
@@ -6,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'next/navigation';
+import SkeletonRoot from '../elements/skeleton-root';
 
 type Props = {
   children: string | JSX.Element | JSX.Element[];
@@ -16,6 +18,7 @@ const RootLayout = ({ children }: Props) => {
   const { userData } = useSelector((state: any) => state.auth);
   const searchParams = useSearchParams();
   const guestToken = searchParams.get('user_t');
+  const [isLoading, setIsLoading] = useState(true);
 
   const deleteAllCookies = async (): Promise<boolean> => {
     const cookies = document.cookie.split(';');
@@ -54,12 +57,17 @@ const RootLayout = ({ children }: Props) => {
             await authService.verifyCookie().then((res) => {
               if (!mounted) return;
               if (res.success) {
+                setIsLoading(true);
                 getUserDetails(res.token);
               } else {
+                dispatch(setToken(''));
+                dispatch(setUserData({}));
                 navigateUser();
               }
             });
           } catch (error) {
+            dispatch(setToken(''));
+            dispatch(setUserData({}));
             navigateUser();
           }
         };
@@ -68,11 +76,14 @@ const RootLayout = ({ children }: Props) => {
           try {
             const userData: any = await authService.getUser(token, hasOldToken);
             if (userData?.user._id) {
+              setIsLoading(false);
               sessionStorage.setItem('jwt-token', `${userData.token}`);
               dispatch(setToken(userData.token));
               dispatch(setUserData({ ...userData.user }));
             }
           } catch (error) {
+            dispatch(setToken(''));
+            dispatch(setUserData({}));
             sessionStorage.clear();
             await deleteAllCookies();
             await checkCookie();
@@ -98,6 +109,10 @@ const RootLayout = ({ children }: Props) => {
       router.push('/');
     }
   }, [router, userData]);
+
+  if (isLoading) {
+    return <SkeletonRoot />;
+  }
 
   return (
     <main>

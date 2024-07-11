@@ -34,7 +34,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   }, [pathname]);
   //end
 
-  if (pathname.includes('/verify')) {
+  if (pathname.includes('/verify') || pathname.includes('/server-maintenances')) {
     return <Component {...pageProps} />;
   } else {
     return getLayout(
