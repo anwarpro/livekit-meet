@@ -1,9 +1,7 @@
-// use-client
 import { useEffect, useState } from 'react';
 import authService from '../../service/auth/authService';
 import { setToken, setUserData } from '../../lib/Slicers/authSlice';
 import { useRouter } from 'next/router';
-
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'next/navigation';
@@ -18,7 +16,7 @@ const RootLayout = ({ children }: Props) => {
   const { userData } = useSelector((state: any) => state.auth);
   const searchParams = useSearchParams();
   const guestToken = searchParams.get('user_t');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const deleteAllCookies = async (): Promise<boolean> => {
     const cookies = document.cookie.split(';');
