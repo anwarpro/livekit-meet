@@ -9,6 +9,7 @@ import UserIcon from '../assets/icons/user.png';
 import shoppingCartIcon from '../assets/icons/shopping-cart.png';
 import googleMeet from '../assets/icons/google-meet.png';
 import recordingIcon from '../assets/icons/recording.png';
+import serverIcon from '../assets/icons/maintenance.png';
 import Image from 'next/image';
 
 const navItems = [
@@ -41,6 +42,11 @@ const navItems = [
     title: 'Recording',
     href: '/dashboard/recording',
     icon: recordingIcon,
+  },
+  {
+    title: 'Server Manage',
+    href: '/dashboard/manage-server',
+    icon: serverIcon,
   },
 ];
 

@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
 import { useEffect } from 'react';
-import authService from '../../service/auth/authService';
+import serverMaintenanceService from '../../service/serverMaintenance/serverMaintenanceService';
 import { useRouter } from 'next/router';
 
 const ServerMaintenance = () => {
   const router = useRouter();
   useEffect(() => {
-    authService
+    serverMaintenanceService
       .checkServerHealth()
       .then((res) => {
         router.push('/');
