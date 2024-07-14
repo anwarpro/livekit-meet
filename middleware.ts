@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export async function middleware(req: NextRequest, res: NextResponse) {
     try {
-        const response = await fetch(`${API_URL}server-health`).then(res => res.json())
+        const response = await fetch(`${API_URL}maintenance/server-health`).then(res => res.json())
         console.log("🚀 ~ middleware ~ response:", response)
         if (response.serverStatus) {
             return NextResponse.next();
