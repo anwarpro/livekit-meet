@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CustomeModal from '../custom/CustomModal';
 import { MenuItem, Select } from '@mui/material';
 import maintenanceService from '../../service/serverMaintenance/serverMaintenanceService';
+import swal from 'sweetalert';
 
 type IProps = {
   openModal: { edit: boolean };
+  editable?: any;
+  fetchAllNotice: Dispatch<SetStateAction<void>>;
+  setEditable: any;
 };
 
 type Inputs = {
@@ -21,6 +25,7 @@ const MaintenanceModal = (props: IProps) => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<Inputs>();
   const onSubmit = (data: any) => {
@@ -29,14 +34,36 @@ const MaintenanceModal = (props: IProps) => {
     } else {
       data.status = false;
     }
-    console.log(data);
-    maintenanceService
-      .addNotice(data)
-      .then((res) => console.log('res', res))
-      .catch((err) => console.log('err', err));
+    if (props.editable?._id) {
+      maintenanceService
+        .updateNotice(props.editable?._id, data)
+        .then((res) => {
+          reset();
+          setCloseModal({ status: false });
+          props.fetchAllNotice();
+          swal('success', 'Notice Updated Successfully', 'success');
+        })
+        .catch((err) => swal('error', err?.response?.message, 'error'));
+    } else {
+      maintenanceService
+        .addNotice(data)
+        .then((res) => {
+          reset();
+          setCloseModal({ status: false });
+          props.fetchAllNotice();
+          swal('success', 'Notice Created Successfully', 'success');
+        })
+        .catch((err) => swal('error', err?.response?.message, 'error'));
+    }
   };
 
-  console.log(watch('status')); // watch input value by passing the name of it
+  useEffect(() => {
+    reset();
+    if (props.editable?._id) {
+      reset(props.editable);
+    }
+  }, [props.editable]);
+
   return (
     <div>
       <CustomeModal
@@ -54,7 +81,11 @@ const MaintenanceModal = (props: IProps) => {
           <div>
             <div className="mb-2">
               <p>Title</p>
-              <input className="form-control" {...register('title', { required: true })} />
+              <input
+                className="form-control"
+                placeholder="write a title"
+                {...register('title', { required: true })}
+              />
             </div>
             {errors.title && <span className="text-danger">Title is required</span>}
           </div>
@@ -64,6 +95,7 @@ const MaintenanceModal = (props: IProps) => {
               <textarea
                 rows={5}
                 className="form-control"
+                placeholder="write a description"
                 {...register('description', { required: true })}
               />
             </div>
@@ -96,7 +128,11 @@ const MaintenanceModal = (props: IProps) => {
             {errors.status && <span className="text-danger">Status is required</span>}
           </div>
 
-          <input className="btn btn-primary mt-4" type="submit" />
+          <input
+            className="btn btn-primary mt-4"
+            type="submit"
+            value={props.editable?._id ? 'Update' : 'Submit'}
+          />
         </form>
       </CustomeModal>
     </div>

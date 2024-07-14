@@ -1,6 +1,7 @@
 import React, { SetStateAction, Dispatch } from 'react';
 import {
   IconButton,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -10,10 +11,11 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
+import moment from 'moment';
 
 type IProps = {
-  // fetchData: Dispatch<SetStateAction<void>>;
   fields: object[];
   items: object[];
   total: number;
@@ -21,7 +23,9 @@ type IProps = {
   setPage: Dispatch<SetStateAction<number>>;
   limit: number;
   setLimit: Dispatch<SetStateAction<number>>;
-  handleDownload: any;
+  handleEdit: Dispatch<SetStateAction<void>>;
+  handleDelete: Dispatch<SetStateAction<void>>;
+  //   setChecked: Dispatch<SetStateAction<boolean>>;
 };
 const MaintenanceTable = (props: IProps) => {
   const handleChangePage = (event: any, newPage: any) => {
@@ -32,6 +36,11 @@ const MaintenanceTable = (props: IProps) => {
     props?.setLimit(+event.target.value);
     props?.setPage(1);
   };
+
+  //   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     props.setChecked(event.target.checked);
+  //   };
+
   return (
     <div>
       <>
@@ -72,24 +81,33 @@ const MaintenanceTable = (props: IProps) => {
                           {column.id === 'action' ? (
                             <TableCell className="pe-auto">
                               <div className="d-flex">
-                                <Tooltip title="Preview and Download record">
-                                  <IconButton
-                                    aria-label="delete"
-                                    color="info"
-                                    onClick={() => props.handleDownload(row?.file?.[0]?.filename)}
-                                  >
-                                    <DownloadForOfflineIcon />
-                                  </IconButton>
-                                </Tooltip>
+                                <IconButton
+                                  aria-label="delete"
+                                  color="info"
+                                  onClick={() => props.handleEdit(row?._id)}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                                <IconButton
+                                  aria-label="delete"
+                                  color="info"
+                                  onClick={() => props.handleDelete(row?._id)}
+                                >
+                                  <DeleteForeverIcon />
+                                </IconButton>
                               </div>
                             </TableCell>
-                          ) : column.id === 'file' ? (
+                          ) : column.id === 'createdAt' ? (
                             <TableCell className="pe-auto">
-                              <a
-                                href={`https://meetify.sgp1.digitaloceanspaces.com/${value?.[0]?.filename}`}
-                              >
-                                {`https://meetify.sgp1.digitaloceanspaces.com/${value?.[0]?.filename}`}
-                              </a>
+                              {moment(row.createdAt).format('DD MMM yyy')}
+                            </TableCell>
+                          ) : column.id === 'status' ? (
+                            <TableCell className="pe-auto">
+                              <Switch
+                                checked={row.status}
+                                // onChange={handleChange}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                              />
                             </TableCell>
                           ) : (
                             <TableCell key={column.id} align={column.align}>

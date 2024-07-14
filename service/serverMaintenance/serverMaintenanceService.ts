@@ -27,6 +27,22 @@ class serverMaintenanceService {
         return axios.get(`${API_URL}/server-health`)
     }
 
+    allNotice = (page: number, limit: number) => {
+        return axios.get(`${API_URL}/all-notice?page=${page}&limit=${limit}`)
+    }
+
+    noticeById = (id: string) => {
+        return axios.get(`${API_URL}/single-notice/${id}`)
+    }
+
+    updateNotice = (id: string, payload: any) => {
+        return axios.patch(`${API_URL}/update-notice/${id}`, { ...payload })
+    }
+
+    deleteNotice = (id: string) => {
+        return axios.delete(`${API_URL}/delete-notice/${id}`)
+    }
+
 }
 const maintenanceService = new serverMaintenanceService()
 export default maintenanceService;
