@@ -25,6 +25,7 @@ export function HostControlModal({ ...props }) {
   const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
   const { isHostControlOpen } = useSelector((state: any) => state.participant);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [recordingError, setRecordingError] = React.useState(false);
 
   const [state, setState] = React.useState({
     microphone: false,
@@ -113,6 +114,7 @@ export function HostControlModal({ ...props }) {
     setSuccess(false);
     setIsFail(false);
     setIsLoading(true);
+    setRecordingError(false);
     meetService
       .meetingRecording({ roomId: roomName, hostId: userData?._id })
       .then((res) => {
@@ -122,6 +124,7 @@ export function HostControlModal({ ...props }) {
         setIsLoading(false);
       })
       .catch((error) => {
+        console.log('🚀 ~ handleRecordingSession ~ error:', error);
         setIsFail(true);
         setDisableRecordBtn(false);
         setIsLoading(false);
@@ -159,12 +162,11 @@ export function HostControlModal({ ...props }) {
   };
 
   const fetchEgressStatus = () => {
+    setRecordingError(false);
     meetService
-      .recordingStatus()
+      .recordingStatus(roomName)
       .then((res: any) => {
-        const egressLists = res?.data?.egressList;
-        const roomEgress = egressLists.find((egress: any) => egress.roomName === roomName);
-
+        const roomEgress = res?.data?.egressList;
         if (
           (roomEgress && roomEgress.status === 4) ||
           roomEgress.status === 5 ||
@@ -172,6 +174,7 @@ export function HostControlModal({ ...props }) {
           roomEgress.status === -1
         ) {
           swal(`status code: ${roomEgress.status}`, 'recording failed', 'error');
+          setRecordingError(true);
         }
 
         if (
@@ -187,6 +190,7 @@ export function HostControlModal({ ...props }) {
         }
       })
       .catch((err) => {
+        console.log('🚀 ~ fetchEgressStatus ~ err:', err);
         setDisableRecordBtn(false);
         console.log(err);
       });
@@ -267,13 +271,18 @@ export function HostControlModal({ ...props }) {
                 Stop Recording
               </button>
             ) : (
-              <button
-                disabled={isLoading}
-                onClick={() => handleRecordingSession()}
-                className=" btn btn-primary"
-              >
-                Start Recording
-              </button>
+              <>
+                <button
+                  disabled={isLoading}
+                  onClick={() => handleRecordingSession()}
+                  className=" btn btn-primary"
+                >
+                  Start Recording
+                </button>
+                {recordingError && (
+                  <p className="text-danger pt-2">Failed to record. Please try again.</p>
+                )}
+              </>
             )}
           </div>
         </div>

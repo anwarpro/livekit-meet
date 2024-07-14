@@ -116,8 +116,8 @@ class MeetService {
     meetingRecordingStop = (payload: any) => {
         return axios.post<IMeetHostControl>(`${process.env.NEXT_PUBLIC_API_URL}recording/screen-capture-stop/`, { ...payload });
     }
-    recordingStatus = () => {
-        return axios.get<IMeetHostControl>(`${process.env.NEXT_PUBLIC_API_URL}recording/status`);
+    recordingStatus = (roomId: string) => {
+        return axios.get<IMeetHostControl>(`${process.env.NEXT_PUBLIC_API_URL}recording/status/${roomId}`);
     }
     getRecordingList = (limit: any, page: any) => {
         return axios.get<IMeetHostControl>(`${process.env.NEXT_PUBLIC_API_URL}recording/recording-list?limit=${limit}&page=${page}`);
