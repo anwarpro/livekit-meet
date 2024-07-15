@@ -20,7 +20,6 @@ const Maintenance = () => {
   const [total, setTotal] = useState(0);
   const [checked, setChecked] = React.useState(true);
   const [editable, setEditable] = React.useState('');
-  console.log("🚀 ~ Maintenance ~ editable:", editable)
 
   const fetchAllNotice = () => {
     maintenanceService

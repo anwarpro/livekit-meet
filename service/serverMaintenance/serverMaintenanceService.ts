@@ -27,7 +27,7 @@ class serverMaintenanceService {
         return axios.get(`${API_URL}/server-health`)
     }
 
-    allNotice = (page: number, limit: number) => {
+    allNotice = (page?: number, limit?: number) => {
         return axios.get(`${API_URL}/all-notice?page=${page}&limit=${limit}`)
     }
 
