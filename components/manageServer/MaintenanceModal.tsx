@@ -43,7 +43,7 @@ const MaintenanceModal = (props: IProps) => {
           props.fetchAllNotice();
           swal('success', 'Notice Updated Successfully', 'success');
         })
-        .catch((err) => swal('error', err?.response?.message, 'error'));
+        .catch((err) => swal('error', 'Failed to update notice', 'error'));
     } else {
       maintenanceService
         .addNotice(data)
@@ -53,7 +53,7 @@ const MaintenanceModal = (props: IProps) => {
           props.fetchAllNotice();
           swal('success', 'Notice Created Successfully', 'success');
         })
-        .catch((err) => swal('error', err?.response?.message, 'error'));
+        .catch((err) => swal('error', 'Failed to create notice', 'error'));
     }
   };
 
@@ -103,26 +103,10 @@ const MaintenanceModal = (props: IProps) => {
           </div>
           <div className="pt-3">
             <div className="mb-2">
-              <p>Notification Type</p>
-              <select
-                {...register('notificationType', { required: true })}
-                className="form-control mt-2"
-              >
-                <option value="">Select notice type</option>
-                <option value="server-maintenance">Maintenance notice</option>
-                <option value="meeting">meeting notice</option>
-              </select>
-            </div>
-            {errors.notificationType && (
-              <span className="text-danger">Notification type is required</span>
-            )}
-          </div>
-          <div className="pt-3">
-            <div className="mb-2">
               <p>Status</p>
               <select {...register('status', { required: true })} className="form-control mt-2">
-                <option value="hide">hide</option>
-                <option value="show">show</option>
+                <option value="hide">Hide</option>
+                <option value="show">Show</option>
               </select>
             </div>
             {errors.status && <span className="text-danger">Status is required</span>}

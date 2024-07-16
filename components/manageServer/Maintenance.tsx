@@ -52,11 +52,11 @@ const Maintenance = () => {
       .deleteNotice(id)
       .then((res) => {
         fetchAllNotice();
-        swal('success', 'Notice Deleted Successfully', 'delete');
+        swal('success', 'Notice Deleted Successfully', 'success');
       })
       .catch((err) => {
         console.log('err', err);
-        swal('error', err.response.message, 'error');
+        swal('error', 'Failed to delete notice', 'error');
       });
   };
 
