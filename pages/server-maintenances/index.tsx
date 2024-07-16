@@ -9,6 +9,7 @@ import maintenanceService from '../../service/serverMaintenance/serverMaintenanc
 const ServerMaintenance = () => {
   const router = useRouter();
   const sm = useMediaQuery(`(min-width:768px)`);
+  const [isMeetifyDown, setIsMeetifyDown] = useState(false);
   const [noticeList, setNoticeList] = useState([]);
 
   const fetchAllNotice = () => {
@@ -29,7 +30,10 @@ const ServerMaintenance = () => {
       .then((res) => {
         router.push('/');
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        setIsMeetifyDown(true);
+        console.error(err);
+      });
   }, []);
 
   return (
@@ -73,6 +77,7 @@ const ServerMaintenance = () => {
           }}
         >
           <Image src={announcementIcon} width={200} height={200} alt="icon" />
+          {isMeetifyDown && <h1>Meetify Under Maintenance</h1>}
           {noticeList?.map((notice: any) => (
             <>
               <h1>{notice?.title}</h1>
