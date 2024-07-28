@@ -31,17 +31,22 @@ const RootLayout = ({ children }: Props) => {
   };
 
   const navigateUser = () => {
-    if (
-      process.env.NEXT_PUBLIC_ENVIRONMENT === 'development' ||
-      process.env.NEXT_PUBLIC_ENVIRONMENT === 'stage'
-    ) {
-      window.location.href = 'https://jsdude.com/login?ref=meetify';
-      return;
-    } else if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'production') {
-      window.location.href = 'https://web.programming-hero.com/login?ref=meetify';
-      return;
-    } else {
-      console.log('No environment found');
+    const alreadyRedirected = localStorage.getItem('redirection');
+    if (alreadyRedirected !== 'true') {
+      if (
+        process.env.NEXT_PUBLIC_ENVIRONMENT === 'development' ||
+        process.env.NEXT_PUBLIC_ENVIRONMENT === 'stage'
+      ) {
+        window.location.href = 'https://jsdude.com/login?ref=meetify';
+        localStorage.setItem('redirection', 'true');
+        return;
+      } else if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'production') {
+        window.location.href = 'https://web.programming-hero.com/login?ref=meetify';
+        localStorage.setItem('redirection', 'true');
+        return;
+      } else {
+        console.log('No environment found');
+      }
     }
   };
 
@@ -58,12 +63,14 @@ const RootLayout = ({ children }: Props) => {
                 setIsLoading(true);
                 getUserDetails(res.token);
               } else {
+                setIsLoading(true);
                 dispatch(setToken(''));
                 dispatch(setUserData({}));
                 navigateUser();
               }
             });
           } catch (error) {
+            setIsLoading(true);
             dispatch(setToken(''));
             dispatch(setUserData({}));
             navigateUser();
@@ -75,6 +82,7 @@ const RootLayout = ({ children }: Props) => {
             const userData: any = await authService.getUser(token, hasOldToken);
             if (userData?.user._id) {
               setIsLoading(false);
+              localStorage.setItem('redirection', 'false');
               sessionStorage.setItem('jwt-token', `${userData.token}`);
               dispatch(setToken(userData.token));
               dispatch(setUserData({ ...userData.user }));
