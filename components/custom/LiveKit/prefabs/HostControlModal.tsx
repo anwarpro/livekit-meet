@@ -128,7 +128,6 @@ export function HostControlModal({ ...props }) {
         setIsFail(true);
         setDisableRecordBtn(false);
         setIsLoading(false);
-        console.log('error', error);
         if (error.response?.data?.message.code) {
           swal(error.response?.data?.message.code, error.response.data.message.msg, 'error');
         }
@@ -192,7 +191,6 @@ export function HostControlModal({ ...props }) {
       .catch((err) => {
         console.log('🚀 ~ fetchEgressStatus ~ err:', err);
         setDisableRecordBtn(false);
-        console.log(err);
       });
   };
 

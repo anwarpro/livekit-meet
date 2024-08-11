@@ -37,6 +37,7 @@ export function SettingsMenu(props: SettingsMenuProps) {
 
   const [activeTab, setActiveTab] = React.useState(tabs[1]);
   const [isNoiseFilterEnabled, setIsNoiseFilterEnabled] = React.useState(true);
+  const [isDisabled, setIsDisabled] = React.useState(false);
 
   React.useEffect(() => {
     const micPublication = microphoneTrack;
@@ -61,6 +62,14 @@ export function SettingsMenu(props: SettingsMenuProps) {
       }
     }
   }, [isNoiseFilterEnabled, microphoneTrack]);
+
+  React.useEffect(() => {
+    setIsDisabled(true);
+    // Re-enable the button after 1 minute (60000 milliseconds)
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 2000);
+  }, [isNoiseFilterEnabled]);
 
   return (
     <div className="settings-menu" style={{ width: '100%' }} {...props}>
@@ -120,14 +129,17 @@ export function SettingsMenu(props: SettingsMenuProps) {
         {activeTab === 'effects' && (
           <>
             <h3>Audio</h3>
-            <section>
+            <section className='d-flex justify-content-start align-items-center'>
               <label htmlFor="noise-filter"> Enhanced Noise Cancellation</label>
               <input
+              style={{zoom : "2"}}
+                className="ms-2"
                 type="checkbox"
                 id="noise-filter"
                 onChange={(ev) => setIsNoiseFilterEnabled(ev.target.checked)}
                 checked={isNoiseFilterEnabled}
-              ></input>
+                disabled={isDisabled}
+              />
             </section>
           </>
         )}
