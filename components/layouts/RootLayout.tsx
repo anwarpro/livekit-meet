@@ -114,6 +114,9 @@ const RootLayout = ({ children }: Props) => {
     if (userData.role && router.pathname.includes('/dashboard') && userData.role !== 'admin') {
       router.push('/');
     }
+    if (userData.role && router.pathname === '/' && userData.role === 'admin') {
+      router.push('/dashboard');
+    }
   }, [router, userData]);
 
   if (isLoading) {
